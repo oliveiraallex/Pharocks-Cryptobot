@@ -5,6 +5,7 @@ Class {
 		'cryptoPair',
 		'quantity',
 		'buyPrice',
+		'soldPrice',
 		'sellPriceProfit',
 		'sellPriceLoss',
 		'profitPercentage',
@@ -17,14 +18,14 @@ Class {
 PharocksAssets class >> cryptoPair: aString buyPrice: aNumberBuy quantity: aNumber1 profitPercentage: aNumberProfit lossPercentage: aNumberLoss [
 
 	| assert sellPriceProfit sellPriceLoss| 
-	sellPriceProfit := (aNumberBuy * aNumberProfit) +  aNumberBuy.
-	sellPriceLoss :=  aNumberBuy - (aNumberBuy * aNumberLoss).
+	sellPriceProfit := (aNumberBuy * aNumberProfit/100) +  aNumberBuy asFloat.
+	sellPriceLoss :=  aNumberBuy - (aNumberBuy * aNumberLoss/100) asFloat.
 	assert := self new.
 	assert cryptoPair: aString;
-	buyPrice: aNumberBuy;
-	quantity: aNumber1;
-	profitPercentage: aNumberProfit;
-	lossPercentage: aNumberLoss;
+	buyPrice: aNumberBuy asFloat;
+	quantity: aNumber1 asFloat;
+	profitPercentage: aNumberProfit asFloat;
+	lossPercentage: aNumberLoss asFloat;
 	sellPriceProfit: sellPriceProfit;
 	sellPriceLoss: sellPriceLoss.
 	
@@ -107,4 +108,14 @@ PharocksAssets >> sellPriceProfit [
 { #category : #accessing }
 PharocksAssets >> sellPriceProfit: anObject [
 	sellPriceProfit := anObject
+]
+
+{ #category : #accessing }
+PharocksAssets >> soldPrice [
+	^ soldPrice
+]
+
+{ #category : #accessing }
+PharocksAssets >> soldPrice: anObject [
+	soldPrice := anObject
 ]

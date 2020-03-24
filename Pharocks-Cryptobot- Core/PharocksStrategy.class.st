@@ -4,39 +4,33 @@ Class {
 	#instVars : [
 		'numberOfAssets',
 		'cryptoPair',
-		'assets'
+		'assetsPercentage'
 	],
 	#category : #'Pharocks-Cryptobot- Core'
 }
 
 { #category : #'as yet unclassified' }
 PharocksStrategy class >> simpleWinLossPercentage [
-	| strategy strategyProfitLoss |
+	| strategy |
 	strategy := self new.
-	strategyProfitLoss := PharocksStrategyPercentageProfitLoss new.
 	strategy numberOfAssets: 10.
 	strategy cryptoPair: 'BNBUSDT'.
-	strategy assetsAdd: (strategyProfitLoss profitPercentage: 0.5/100 ; lossPercentage: 0.3/100).
-	strategy assetsAdd: (strategyProfitLoss profitPercentage: 0.8/100 ; lossPercentage: 0.5/100).
-	strategy assetsAdd: (strategyProfitLoss profitPercentage: 1/100 ; lossPercentage: 0.8/100).
-	strategy assetsAdd: (strategyProfitLoss profitPercentage: 2/100 ; lossPercentage: 1.6/100).
+	strategy assetsPercentage add: (PharocksStrategyPercentageProfitLoss new profitPercentage: 0.5 ; lossPercentage: 0.3).
+	strategy assetsPercentage add: (PharocksStrategyPercentageProfitLoss new profitPercentage: 0.8 ; lossPercentage: 0.5).
+	strategy assetsPercentage add: (PharocksStrategyPercentageProfitLoss new profitPercentage: 1 ; lossPercentage: 0.8).
+	strategy assetsPercentage add: (PharocksStrategyPercentageProfitLoss new profitPercentage: 2 ; lossPercentage: 1.6).
 	
 	^ strategy
 ]
 
 { #category : #accessing }
-PharocksStrategy >> assets [
-	^ assets
+PharocksStrategy >> assetsPercentage [
+	^ assetsPercentage
 ]
 
 { #category : #accessing }
-PharocksStrategy >> assets: anObject [
-	assets := anObject
-]
-
-{ #category : #initialization }
-PharocksStrategy >> assetsAdd: anObject [
-	assets add: anObject
+PharocksStrategy >> assetsPercentage: anObject [
+	assetsPercentage := anObject
 ]
 
 { #category : #accessing }
@@ -50,8 +44,8 @@ PharocksStrategy >> cryptoPair: anObject [
 ]
 
 { #category : #initialization }
-PharocksStrategy >> initialize [ 
-	assets := OrderedCollection new.
+PharocksStrategy >> initialize [
+	assetsPercentage := OrderedCollection new
 ]
 
 { #category : #accessing }

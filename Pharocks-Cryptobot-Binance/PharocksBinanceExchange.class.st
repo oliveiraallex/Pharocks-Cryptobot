@@ -3,10 +3,9 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'apiKey',
-		'secretKey',
+		'apiSecretKey',
 		'website',
-		'apiUrl',
-		'runQuery'
+		'apiUrl'
 	],
 	#category : #'Pharocks-Cryptobot-Binance'
 }
@@ -22,31 +21,44 @@ PharocksBinanceExchange >> apiKey: aString [
 ]
 
 { #category : #accessing }
+PharocksBinanceExchange >> apiSecretKey [
+	^ apiSecretKey
+]
+
+{ #category : #accessing }
+PharocksBinanceExchange >> apiSecretKey: aString [
+	apiSecretKey := aString
+]
+
+{ #category : #accessing }
+PharocksBinanceExchange >> apiUrl [
+	^ apiUrl
+]
+
+{ #category : #accessing }
+PharocksBinanceExchange >> apiUrl: anObject [
+	apiUrl := anObject
+]
+
+{ #category : #accessing }
 PharocksBinanceExchange >> configuration [
 	website := 'https://www.binance.com'.
 	apiUrl := 'https://www.binance.com/api/'
 ]
 
 { #category : #initialization }
-PharocksBinanceExchange >> cryptoPairPrice [
-	
-	"runQuery to take the data from Binance"
-	^ 12.21 "hardcoded"
-]
-
-{ #category : #initialization }
 PharocksBinanceExchange >> initialize [
 	self configuration .
 	
-	runQuery := PharocksBinanceOperations new.
+	"runQuery := PharocksBinanceOperations new."
 ]
 
 { #category : #accessing }
-PharocksBinanceExchange >> secretKey [
-	^ secretKey
+PharocksBinanceExchange >> website [
+	^ website
 ]
 
 { #category : #accessing }
-PharocksBinanceExchange >> secretKey: aString [
-	secretKey := aString
+PharocksBinanceExchange >> website: anObject [
+	website := anObject
 ]

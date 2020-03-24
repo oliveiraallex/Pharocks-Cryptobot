@@ -1,3 +1,22 @@
+"
+binance := PharocksBinance new apiKey: 'abc123'; apiSecretKey: 'abc123'.
+exchange := PharocksCryptocurrencyExchange exchangePlugin: binance.
+exchange cryptoPairPrice: 'BNBUSDT'.
+exchange walletAmount. 
+exchange systemStatus.
+cryptoRobot := PharocksOperator setExchange: exchange.
+cryptoRobot setStrategy: PharocksStrategy simpleWinLossPercentage.
+cryptoRobot walletSync.
+cryptoRobot createAssets. 
+
+
+assets := PharocksAssets new.
+wallet := PharocksWallet new.
+strategy := PharocksStrategy simpleWinLossPercentage.
+broker := PharocksBroker new.
+broker strategy: PharocksStrategy simpleWinLossPercentage.
+
+"
 Class {
 	#name : #PharocksOperator,
 	#superclass : #Object,
@@ -11,13 +30,8 @@ Class {
 PharocksOperator class >> setExchange: anObject [
 	| broker |
 	broker := PharocksBroker new.
-	broker setWalletExchange: anObject.
+	broker setExchange: anObject.
 	^ self new broker: broker
-]
-
-{ #category : #accessing }
-PharocksOperator >> applyStrategy [
-	broker applyStrategy
 ]
 
 { #category : #accessing }
@@ -31,14 +45,21 @@ PharocksOperator >> broker: anObject [
 ]
 
 { #category : #accessing }
+PharocksOperator >> createAssets [
+	broker createAssets
+]
+
+{ #category : #accessing }
 PharocksOperator >> initialize [
 	
 	
 ]
 
 { #category : #accessing }
-PharocksOperator >> setStrategy: anObject [
-	broker 
+PharocksOperator >> setStrategy:  anObject [  
+	broker strategy: anObject.
+	broker setStrategy
+
 ]
 
 { #category : #accessing }
@@ -50,7 +71,6 @@ PharocksOperator >> start [
 ]
 
 { #category : #accessing }
-PharocksOperator >> strategy: anObject [  
-	broker strategy: anObject 
-
+PharocksOperator >> walletSync [
+	broker walletSync
 ]

@@ -4,8 +4,8 @@ Class {
 	#instVars : [
 		'assets',
 		'amountTotal',
-		'exchange',
-		'strategy'
+		'currencyPriceNow',
+		'cryptoPair'
 	],
 	#category : #'Pharocks-Cryptobot- Core'
 }
@@ -36,49 +36,27 @@ PharocksWallet >> assetsTotal [
 ]
 
 { #category : #accessing }
-PharocksWallet >> createAsset: aString profit: aNumber loss: aNumber2 [
-	
+PharocksWallet >> cryptoPair [
+	^ cryptoPair
 ]
 
 { #category : #accessing }
-PharocksWallet >> createAssets [
-	| numberOfAssets assetsPercentages| 
-	numberOfAssets := strategy numberOfAssets.
-	assets := Array new: numberOfAssets.
-	assetsPercentages := strategy assets.
-	
-	assetsPercentages do: [ :each | each ].
-	self halt.
+PharocksWallet >> cryptoPair: anObject [
+	cryptoPair := anObject
 ]
 
 { #category : #accessing }
-PharocksWallet >> exchange [
-	^ exchange
+PharocksWallet >> currencyPriceNow [
+	^ currencyPriceNow
 ]
 
 { #category : #accessing }
-PharocksWallet >> exchange: anObject [
-	exchange := anObject
+PharocksWallet >> currencyPriceNow: anObject [
+	currencyPriceNow := anObject
 ]
 
 { #category : #initialization }
 PharocksWallet >> initialize [
-	self walletSync.
+	"self walletSync."
 	
-]
-
-{ #category : #accessing }
-PharocksWallet >> strategy [
-	^ strategy
-]
-
-{ #category : #accessing }
-PharocksWallet >> strategy: anObject [
-	strategy := anObject
-]
-
-{ #category : #initialization }
-PharocksWallet >> walletSync [
-	"check in Binance the amount of the USDT wallet"
-	amountTotal := 100 
 ]
