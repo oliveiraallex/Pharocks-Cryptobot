@@ -43,7 +43,7 @@ PharocksBinanceExchange >> apiUrl: anObject [
 { #category : #accessing }
 PharocksBinanceExchange >> configuration [
 	website := 'https://www.binance.com'.
-	apiUrl := 'https://www.binance.com/api/'
+	apiUrl := 'https://api.binance.com'
 ]
 
 { #category : #initialization }

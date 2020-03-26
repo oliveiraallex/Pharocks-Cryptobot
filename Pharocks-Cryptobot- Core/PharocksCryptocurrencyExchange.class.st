@@ -35,6 +35,11 @@ PharocksCryptocurrencyExchange >> cryptoPairPrice: aString [
 	^ exchangePlugin cryptoPairPrice: aString.
 ]
 
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> exchangeInfo [ 
+	^ exchangePlugin exchangeInfo
+]
+
 { #category : #accessing }
 PharocksCryptocurrencyExchange >> exchangePlugin [
 	^ exchangePlugin
@@ -50,8 +55,26 @@ PharocksCryptocurrencyExchange >> initialize [
 ]
 
 { #category : #operation }
+PharocksCryptocurrencyExchange >> orderBookcryptoPair: aString limit: aNumber [
+	"Limit default 100; max 5000. Valid limits:[5, 10, 20, 50, 100, 500, 1000, 5000]"
+	^ exchangePlugin orderBookcryptoPair: aString limit: aNumber 
+	
+	
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> pingServer [ 
+	^ exchangePlugin pingServer
+]
+
+{ #category : #operation }
 PharocksCryptocurrencyExchange >> sellAllAssets [ 
 	^ exchangePlugin sellAllAssets
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> serverTime [ 
+	^ exchangePlugin serverTime
 ]
 
 { #category : #operation }
