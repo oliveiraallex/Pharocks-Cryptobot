@@ -3,7 +3,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'numberOfAssets',
-		'assetsPercentage'
+		'assetsPercentage',
+		'market'
 	],
 	#category : #'Pharocks-Cryptobot- Core'
 }
@@ -13,6 +14,7 @@ PharocksStrategy class >> simpleWinLossPercentage [
 	| strategy |
 	strategy := self new.
 	strategy numberOfAssets: 10.
+	strategy market: 'USDT'.
 	strategy assetsPercentage add: (PharocksStrategyProfitLoss new cryptoPair: 'BTCUSDT'; profitPercentage: 3 ; lossPercentage: 1).
 	strategy assetsPercentage add: (PharocksStrategyProfitLoss new cryptoPair: 'BNBUSDT'; profitPercentage: 0.8 ; lossPercentage: 0.5).
 	strategy assetsPercentage add: (PharocksStrategyProfitLoss new cryptoPair: 'BNBUSDT'; profitPercentage: 1 ; lossPercentage: 0.8).
@@ -34,6 +36,16 @@ PharocksStrategy >> assetsPercentage: anObject [
 { #category : #initialization }
 PharocksStrategy >> initialize [
 	assetsPercentage := OrderedCollection new
+]
+
+{ #category : #accessing }
+PharocksStrategy >> market [
+	^ market
+]
+
+{ #category : #accessing }
+PharocksStrategy >> market: aString [
+	market := aString
 ]
 
 { #category : #accessing }

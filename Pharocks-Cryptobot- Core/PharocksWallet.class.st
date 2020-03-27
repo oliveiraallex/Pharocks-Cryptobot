@@ -5,7 +5,7 @@ Class {
 		'assets',
 		'amountTotal',
 		'currencyPriceNow',
-		'cryptoPair'
+		'market'
 	],
 	#category : #'Pharocks-Cryptobot- Core'
 }
@@ -36,16 +36,6 @@ PharocksWallet >> assetsTotal [
 ]
 
 { #category : #accessing }
-PharocksWallet >> cryptoPair [
-	^ cryptoPair
-]
-
-{ #category : #accessing }
-PharocksWallet >> cryptoPair: anObject [
-	cryptoPair := anObject
-]
-
-{ #category : #accessing }
 PharocksWallet >> currencyPriceNow [
 	^ currencyPriceNow
 ]
@@ -59,4 +49,14 @@ PharocksWallet >> currencyPriceNow: anObject [
 PharocksWallet >> initialize [
 	"self walletSync."
 	
+]
+
+{ #category : #accessing }
+PharocksWallet >> market [
+	^ market
+]
+
+{ #category : #accessing }
+PharocksWallet >> market: anObject [
+	market := anObject
 ]

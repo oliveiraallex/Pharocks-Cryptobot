@@ -17,7 +17,8 @@ PharocksBroker >> configuration [
 
 { #category : #accessing }
 PharocksBroker >> createAssets [
-	| numberOfAssets assetsPercentages quantity buyPrice cryptoPair |
+	| numberOfAssets assetsPercentages quantity buyPrice |
+	"need refactory"
 	numberOfAssets := strategy numberOfAssets.
 	wallet assets: (Array new: numberOfAssets).
 	assetsPercentages := strategy assetsPercentage.
@@ -54,7 +55,7 @@ PharocksBroker >> setExchange: anObject [
 
 { #category : #control }
 PharocksBroker >> setStrategy [
-	"wallet cryptoPair: strategy cryptoPair "
+	wallet market strategy market 
 	"wallet createAssets"
 ]
 
@@ -86,9 +87,9 @@ PharocksBroker >> wallet: anObject [
 { #category : #control }
 PharocksBroker >> walletSync [
 	"setting the cypto pair defined in the strategy"
-	"wallet cryptoPair: strategy cryptoPair. "
+	wallet market: strategy market.
 	"check in Binance the amount of the USDT wallet"
 	wallet amountTotal: exchange walletAmount.
 	"check in Binance the price of the pairCurrency"
-	wallet currencyPriceNow: (exchange cryptoPairPrice: wallet cryptoPair)
+	wallet currencyPriceNow: "(exchange cryptoPairPrice: wallet cryptoPair)" 8989.29
 ]
