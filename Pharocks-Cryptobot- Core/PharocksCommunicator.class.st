@@ -17,7 +17,7 @@ PharocksCommunicator >> get: path parameters: aDictionary [
 	| webClient | 
 	webClient := ZnClient new. 
 	webClient url: path.
-	webClient formAddAll: aDictionary.
+	webClient queryAddAll: aDictionary.
 	"self halt."
 	^ NeoJSONReader fromString: webClient get. 
 ]

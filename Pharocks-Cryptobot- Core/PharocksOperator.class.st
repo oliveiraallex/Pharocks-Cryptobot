@@ -1,9 +1,16 @@
 "
 binance := PharocksBinance new apiKey: 'abc123'; apiSecretKey: 'abc123'.
 exchange := PharocksCryptocurrencyExchange exchangePlugin: binance.
-exchange cryptoPairPrice: 'BNBUSDT'.
-exchange walletAmount. 
-exchange systemStatus.
+exchange exchangeInfo. ""anObject""
+exchange exchangePing. ""true""
+exchange exchangeStatus. ""true""
+exchange exchangeTime. ""1585330938078""
+exchange orderBook: 'BNBUSDT' lastOrders: 5. ""anObject""
+exchange symbolAvaregePrice: 'BNBUSDT'. ""12.90751442""
+exchange symbolPrice: 'BNBUSDT' lastOrders: 5 type: 'bids'. ""12.89462""
+exchange symbolPriceBuy: 'BNBUSDT' lastOrders: 5. ""12.89074""
+exchange symbolPriceSell: 'BNBUSDT' lastOrders: 5. ""12.89724""
+
 cryptoRobot := PharocksOperator setExchange: exchange.
 cryptoRobot setStrategy: PharocksStrategy simpleWinLossPercentage.
 cryptoRobot walletSync.

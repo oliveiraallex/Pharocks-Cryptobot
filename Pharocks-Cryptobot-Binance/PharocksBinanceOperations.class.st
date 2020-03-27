@@ -5,43 +5,14 @@ Class {
 }
 
 { #category : #initialization }
-PharocksBinanceOperations >> cancelAllOrders [
-	
-	"runQuery to take the data from Binance"
-	^ true "hardcoded"
-]
-
-{ #category : #initialization }
-PharocksBinanceOperations >> createBuyOrderCryptoPair: aString atPrice: aNumber [
-	^ true
-]
-
-{ #category : #initialization }
-PharocksBinanceOperations >> createSellOrderCryptoPair: aString atPrice: aNumber [
-	^ true
-]
-
-{ #category : #initialization }
-PharocksBinanceOperations >> cryptoPairPrice: aString [
-	
-	"runQuery to take the data from Binance"
-	^ 9684.29 "hardcoded"
-]
-
-{ #category : #initialization }
 PharocksBinanceOperations >> exchangeInfo [
 	^ self queryExchangeInfo
 ]
 
 { #category : #initialization }
-PharocksBinanceOperations >> orderBookcryptoPair: aString limit: aNumber [
-	^ self queryOrderBookcryptoPair: aString limit: aNumber
-]
-
-{ #category : #initialization }
-PharocksBinanceOperations >> pingServer [
+PharocksBinanceOperations >> exchangePing [
 	| answerSystemStatus status |
-	answerSystemStatus := self queryPingServer.
+	answerSystemStatus := self queryExchangePing.
 	status := answerSystemStatus isEmpty
 		ifTrue: [ true ]
 		ifFalse: [ false ].
@@ -49,17 +20,7 @@ PharocksBinanceOperations >> pingServer [
 ]
 
 { #category : #initialization }
-PharocksBinanceOperations >> serverTime [
-	| answerSystemStatus status |
-	answerSystemStatus := self queryServerTime.
-	status := answerSystemStatus isEmpty 
-		ifTrue: [ false ]
-		ifFalse: [ answerSystemStatus at: 'serverTime' ].
-	^ status
-]
-
-{ #category : #initialization }
-PharocksBinanceOperations >> systemStatus [
+PharocksBinanceOperations >> exchangeStatus [
 	| answerSystemStatus status |
 	answerSystemStatus := self querySystemStatus.
 	status := (answerSystemStatus at: 'status') = 0
@@ -69,8 +30,44 @@ PharocksBinanceOperations >> systemStatus [
 ]
 
 { #category : #initialization }
-PharocksBinanceOperations >> walletAmount [
-	
-	"runQuery to take the data from Binance"
-	^ 1000 "hardcoded"
+PharocksBinanceOperations >> exchangeTime [
+	| answerSystemStatus status |
+	answerSystemStatus := self queryExchangeTime.
+	status := answerSystemStatus isEmpty 
+		ifTrue: [ false ]
+		ifFalse: [ answerSystemStatus at: #serverTime ].
+	^ status
+]
+
+{ #category : #initialization }
+PharocksBinanceOperations >> orderBook: aString lastOrders: aNumber [
+	| answer result msg |
+	answer := self queryOrderBook: aString lastOrders: aNumber.
+	(answer includesKey: 'code') ifTrue: [ ((answer at: 'code') = -1100)
+		ifTrue: [ msg := answer at: 'msg'.
+			Object new error: msg ] ]
+		ifFalse: [ ^ answer ]
+]
+
+{ #category : #initialization }
+PharocksBinanceOperations >> orderCreateBuy: aString atPrice: aNumber [
+	^ true "hardcoded"
+]
+
+{ #category : #initialization }
+PharocksBinanceOperations >> orderCreateSell: aString atPrice: aNumber [
+	^ true "hardcoded"
+]
+
+{ #category : #initialization }
+PharocksBinanceOperations >> ordersCancelAll [
+	^ true "hardcoded"
+]
+
+{ #category : #initialization }
+PharocksBinanceOperations >> symbolAvaregePrice: aString [
+	"Average of price of a cryptocoin in the last 5 minutes"
+	| price | 
+	price := self querySymbolAveragePrice: aString.
+	^ (price at: 'price') asNumber
 ]

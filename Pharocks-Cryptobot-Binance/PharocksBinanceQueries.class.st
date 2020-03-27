@@ -29,7 +29,17 @@ PharocksBinanceQueries >> queryExchangeInfo [
 ]
 
 { #category : #controling }
-PharocksBinanceQueries >> queryOrderBookcryptoPair: aString limit: aNumber [
+PharocksBinanceQueries >> queryExchangePing [
+	^ self get: self apiUrl,'/api/v3/ping'
+]
+
+{ #category : #controling }
+PharocksBinanceQueries >> queryExchangeTime [
+	^ self get: self apiUrl,'/api/v3/time'
+]
+
+{ #category : #controling }
+PharocksBinanceQueries >> queryOrderBook: aString lastOrders: aNumber [
 	^ self
 		get: self apiUrl , '/api/v3/depth'
 		parameters:
@@ -38,16 +48,23 @@ PharocksBinanceQueries >> queryOrderBookcryptoPair: aString limit: aNumber [
 ]
 
 { #category : #controling }
-PharocksBinanceQueries >> queryPingServer [
-	^ self get: self apiUrl,'/api/v3/ping'
-]
-
-{ #category : #controling }
-PharocksBinanceQueries >> queryServerTime [
-	^ self get: self apiUrl,'/api/v3/time'
+PharocksBinanceQueries >> querySymbolAveragePrice: aString [ 
+	^ self
+		get: self apiUrl , '/api/v3/avgPrice'
+		parameters:
+			{('symbol' -> aString asString)} asDictionary
 ]
 
 { #category : #controling }
 PharocksBinanceQueries >> querySystemStatus [
 	^ self get: self website,'/wapi/v3/systemStatus.html'
+]
+
+{ #category : #controling }
+PharocksBinanceQueries >> queryTrades: aString lastTrades: aNumber [
+	^ self
+		get: self apiUrl , '/api/v3/trades'
+		parameters:
+			{('symbol' -> aString asString).
+			('limit' -> aNumber asString)} asDictionary
 ]

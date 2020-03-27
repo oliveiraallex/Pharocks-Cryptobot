@@ -16,28 +16,13 @@ PharocksCryptocurrencyExchange class >> exchangePlugin: anObject [
 ]
 
 { #category : #operation }
-PharocksCryptocurrencyExchange >> cancelAllOrders [ 
-	^ exchangePlugin cancelAllOrders
-]
-
-{ #category : #operation }
-PharocksCryptocurrencyExchange >> createBuyOrderCryptoPair: aString atPrice: aNumber [
-	^ exchangePlugin createBuyOrderCryptoPair: aString atPrice: aNumber
-]
-
-{ #category : #operation }
-PharocksCryptocurrencyExchange >> createSellOrderCryptoPair: aString atPrice: aNumber [
-	^ exchangePlugin createSellOrderCryptoPair: aString atPrice: aNumber
-]
-
-{ #category : #operation }
-PharocksCryptocurrencyExchange >> cryptoPairPrice: aString [ 
-	^ exchangePlugin cryptoPairPrice: aString.
-]
-
-{ #category : #operation }
 PharocksCryptocurrencyExchange >> exchangeInfo [ 
 	^ exchangePlugin exchangeInfo
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> exchangePing [ 
+	^ exchangePlugin exchangePing
 ]
 
 { #category : #accessing }
@@ -50,39 +35,74 @@ PharocksCryptocurrencyExchange >> exchangePlugin: anObject [
 	exchangePlugin := anObject
 ]
 
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> exchangeStatus [ 
+	^ exchangePlugin exchangeStatus
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> exchangeTime [ 
+	^ exchangePlugin exchangeTime
+]
+
 { #category : #initialization }
 PharocksCryptocurrencyExchange >> initialize [ 
 ]
 
 { #category : #operation }
-PharocksCryptocurrencyExchange >> orderBookcryptoPair: aString limit: aNumber [
-	"Limit default 100; max 5000. Valid limits:[5, 10, 20, 50, 100, 500, 1000, 5000]"
-	^ exchangePlugin orderBookcryptoPair: aString limit: aNumber 
+PharocksCryptocurrencyExchange >> orderBook: aString lastOrders: aNumber [
+	"LastOrders limit default 100; max 5000. Valid limits:[5, 10, 20, 50, 100, 500, 1000, 5000]"
+	^ exchangePlugin orderBook: aString lastOrders: aNumber 
+	
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> orderCreateBuy: aString atPrice: aNumber [
+	^ exchangePlugin orderCreateBuy: aString atPrice: aNumber
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> orderCreateSell: aString atPrice: aNumber [
+	^ exchangePlugin orderCreateSell: aString atPrice: aNumber
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> ordersCancelAll [ 
+	^ exchangePlugin ordersCancelAll
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> symbolAvaregePrice: aString [ 
+	"Average of price of a cryptocoin in the last 5 minutes"
+	^ exchangePlugin symbolAvaregePrice: aString.
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> symbolPrice: aString lastOrders: aNumber type: aStringBidsOrAsks [
+	| answer lastPrices|
+	lastPrices := 0.
+	answer := exchangePlugin orderBook: aString lastOrders: aNumber.
+	((answer at: aStringBidsOrAsks) do: [ :i | lastPrices := lastPrices + (i at: 1) asNumber]). .
+	^ lastPrices / aNumber
 	
 	
+	
 ]
 
 { #category : #operation }
-PharocksCryptocurrencyExchange >> pingServer [ 
-	^ exchangePlugin pingServer
+PharocksCryptocurrencyExchange >> symbolPriceBuy: aString lastOrders: aNumber [
+	"lastOrders limit default 100; max 5000. Valid limits:[5, 10, 20, 50, 100, 500, 1000, 5000]"
+	^ self symbolPrice: aString lastOrders: aNumber type: 'bids'
+	
+	
+	
 ]
 
 { #category : #operation }
-PharocksCryptocurrencyExchange >> sellAllAssets [ 
-	^ exchangePlugin sellAllAssets
-]
-
-{ #category : #operation }
-PharocksCryptocurrencyExchange >> serverTime [ 
-	^ exchangePlugin serverTime
-]
-
-{ #category : #operation }
-PharocksCryptocurrencyExchange >> systemStatus [ 
-	^ exchangePlugin systemStatus
-]
-
-{ #category : #operation }
-PharocksCryptocurrencyExchange >> walletAmount [
-	^ exchangePlugin walletAmount
+PharocksCryptocurrencyExchange >> symbolPriceSell: aString lastOrders: aNumber [
+	"lastOrders limit default 100; max 5000. Valid limits:[5, 10, 20, 50, 100, 500, 1000, 5000]"
+	^ self symbolPrice: aString lastOrders: aNumber type: 'asks'
+	
+	
+	
 ]
