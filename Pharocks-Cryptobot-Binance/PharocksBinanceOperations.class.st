@@ -25,7 +25,7 @@ PharocksBinanceOperations >> createSellOrderCryptoPair: aString atPrice: aNumber
 PharocksBinanceOperations >> cryptoPairPrice: aString [
 	
 	"runQuery to take the data from Binance"
-	^ 14 "hardcoded"
+	^ 9684.29 "hardcoded"
 ]
 
 { #category : #initialization }
@@ -72,5 +72,5 @@ PharocksBinanceOperations >> systemStatus [
 PharocksBinanceOperations >> walletAmount [
 	
 	"runQuery to take the data from Binance"
-	^ 106.2 "hardcoded"
+	^ 1000 "hardcoded"
 ]

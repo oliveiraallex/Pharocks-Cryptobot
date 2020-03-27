@@ -3,7 +3,6 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'numberOfAssets',
-		'cryptoPair',
 		'assetsPercentage'
 	],
 	#category : #'Pharocks-Cryptobot- Core'
@@ -14,11 +13,10 @@ PharocksStrategy class >> simpleWinLossPercentage [
 	| strategy |
 	strategy := self new.
 	strategy numberOfAssets: 10.
-	strategy cryptoPair: 'BNBUSDT'.
-	strategy assetsPercentage add: (PharocksStrategyPercentageProfitLoss new profitPercentage: 0.5 ; lossPercentage: 0.3).
-	strategy assetsPercentage add: (PharocksStrategyPercentageProfitLoss new profitPercentage: 0.8 ; lossPercentage: 0.5).
-	strategy assetsPercentage add: (PharocksStrategyPercentageProfitLoss new profitPercentage: 1 ; lossPercentage: 0.8).
-	strategy assetsPercentage add: (PharocksStrategyPercentageProfitLoss new profitPercentage: 2 ; lossPercentage: 1.6).
+	strategy assetsPercentage add: (PharocksStrategyProfitLoss new cryptoPair: 'BTCUSDT'; profitPercentage: 3 ; lossPercentage: 1).
+	strategy assetsPercentage add: (PharocksStrategyProfitLoss new cryptoPair: 'BNBUSDT'; profitPercentage: 0.8 ; lossPercentage: 0.5).
+	strategy assetsPercentage add: (PharocksStrategyProfitLoss new cryptoPair: 'BNBUSDT'; profitPercentage: 1 ; lossPercentage: 0.8).
+	strategy assetsPercentage add: (PharocksStrategyProfitLoss new cryptoPair: 'ZENUSDT'; profitPercentage: 2 ; lossPercentage: 1.6).
 	
 	^ strategy
 ]
@@ -31,16 +29,6 @@ PharocksStrategy >> assetsPercentage [
 { #category : #accessing }
 PharocksStrategy >> assetsPercentage: anObject [
 	assetsPercentage := anObject
-]
-
-{ #category : #accessing }
-PharocksStrategy >> cryptoPair [
-	^ cryptoPair
-]
-
-{ #category : #accessing }
-PharocksStrategy >> cryptoPair: anObject [
-	cryptoPair := anObject
 ]
 
 { #category : #initialization }

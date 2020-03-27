@@ -24,6 +24,7 @@ PharocksBroker >> createAssets [
 	quantity := wallet amountTotal / numberOfAssets.
 	buyPrice := wallet currencyPriceNow.
 	cryptoPair := strategy cryptoPair.
+	self halt.
 	1 to: assetsPercentages size do: [ :i | wallet assets at: i put:
 		(PharocksAssets
 			cryptoPair: cryptoPair
@@ -55,7 +56,7 @@ PharocksBroker >> setExchange: anObject [
 
 { #category : #control }
 PharocksBroker >> setStrategy [
-	wallet cryptoPair: strategy cryptoPair 
+	"wallet cryptoPair: strategy cryptoPair "
 	"wallet createAssets"
 ]
 
@@ -84,10 +85,10 @@ PharocksBroker >> wallet: anObject [
 	wallet := anObject
 ]
 
-{ #category : #initialization }
+{ #category : #control }
 PharocksBroker >> walletSync [
 	"setting the cypto pair defined in the strategy"
-	wallet cryptoPair: strategy cryptoPair. 
+	"wallet cryptoPair: strategy cryptoPair. "
 	"check in Binance the amount of the USDT wallet"
 	wallet amountTotal: exchange walletAmount.
 	"check in Binance the price of the pairCurrency"

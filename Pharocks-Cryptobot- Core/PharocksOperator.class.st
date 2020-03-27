@@ -58,7 +58,7 @@ PharocksOperator >> initialize [
 { #category : #accessing }
 PharocksOperator >> setStrategy:  anObject [  
 	broker strategy: anObject.
-	broker setStrategy
+	"broker setStrategy"
 
 ]
 
