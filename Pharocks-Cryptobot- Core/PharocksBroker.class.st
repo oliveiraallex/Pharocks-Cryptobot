@@ -23,11 +23,9 @@ PharocksBroker >> createAssets [
 	assetsPercentages := strategy assetsPercentage.
 	quantity := wallet amountTotal / numberOfAssets.
 	buyPrice := wallet currencyPriceNow.
-	cryptoPair := strategy cryptoPair.
-	self halt.
 	1 to: assetsPercentages size do: [ :i | wallet assets at: i put:
 		(PharocksAssets
-			cryptoPair: cryptoPair
+			cryptoPair: (assetsPercentages at: i) cryptoPair
 			buyPrice: buyPrice
 			quantity: quantity
 			profitPercentage: (assetsPercentages at: i) profitPercentage
