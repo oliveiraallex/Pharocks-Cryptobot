@@ -78,6 +78,34 @@ PharocksCryptocurrencyExchange >> symbolAvaregePrice: aString [
 ]
 
 { #category : #operation }
+PharocksCryptocurrencyExchange >> symbolBestPrice: aString [ 
+	"Best price/qty on the order book for a symbol or symbols."
+	^ exchangePlugin symbolBestPrice: aString.
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> symbolBestPriceBuy: aString [ 
+	"Best price/qty on the order book for a symbol or symbols."
+	| price | 
+	price := exchangePlugin symbolBestPrice: aString.
+	^ (price at: 'bidPrice') asNumber
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> symbolBestPriceSell: aString [ 
+	"Best price/qty on the order book for a symbol or symbols."
+	| price | 
+	price := exchangePlugin symbolBestPrice: aString.
+	^ (price at: 'askPrice') asNumber
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> symbolLatestPrice: aString [ 
+	"Latest price for a symbol or symbols"
+	^ exchangePlugin symbolLatestPrice: aString.
+]
+
+{ #category : #operation }
 PharocksCryptocurrencyExchange >> symbolPrice: aString lastOrders: aNumber type: aStringBidsOrAsks [
 	| answer lastPrices|
 	lastPrices := 0.

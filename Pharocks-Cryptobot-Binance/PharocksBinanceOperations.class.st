@@ -71,3 +71,17 @@ PharocksBinanceOperations >> symbolAvaregePrice: aString [
 	price := self querySymbolAveragePrice: aString.
 	^ (price at: 'price') asNumber
 ]
+
+{ #category : #initialization }
+PharocksBinanceOperations >> symbolBestPrice: aString [
+	"Average of price of a cryptocoin in the last 5 minutes"
+	^ self querySymbolBestPrice: aString.
+]
+
+{ #category : #initialization }
+PharocksBinanceOperations >> symbolLatestPrice: aString [
+	"Average of price of a cryptocoin in the last 5 minutes"
+	| price | 
+	price := self querySymbolLatestPrice: aString.
+	^ (price at: 'price') asNumber
+]

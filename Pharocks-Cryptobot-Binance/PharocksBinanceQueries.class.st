@@ -56,6 +56,22 @@ PharocksBinanceQueries >> querySymbolAveragePrice: aString [
 ]
 
 { #category : #controling }
+PharocksBinanceQueries >> querySymbolBestPrice: aString [ 
+	^ self
+		get: self apiUrl , '/api/v3/ticker/bookTicker'
+		parameters:
+			{('symbol' -> aString asString)} asDictionary
+]
+
+{ #category : #controling }
+PharocksBinanceQueries >> querySymbolLatestPrice: aString [ 
+	^ self
+		get: self apiUrl , '/api/v3/ticker/price'
+		parameters:
+			{('symbol' -> aString asString)} asDictionary
+]
+
+{ #category : #controling }
 PharocksBinanceQueries >> querySystemStatus [
 	^ self get: self website,'/wapi/v3/systemStatus.html'
 ]
