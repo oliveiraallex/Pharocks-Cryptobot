@@ -71,6 +71,21 @@ PharocksCryptocurrencyExchange >> ordersCancelAll [
 	^ exchangePlugin ordersCancelAll
 ]
 
+{ #category : #controlling }
+PharocksCryptocurrencyExchange >> privateAccountInformation [
+	^ exchangePlugin privateAccountInformation
+]
+
+{ #category : #controling }
+PharocksCryptocurrencyExchange >> privateOrders: aString last: anInteger [ 
+	^ exchangePlugin privateOrders: aString last: anInteger 
+]
+
+{ #category : #controlling }
+PharocksCryptocurrencyExchange >> queryPrivateAccountInformation [
+	^ exchangePlugin queryPrivateAccountInformation
+]
+
 { #category : #operation }
 PharocksCryptocurrencyExchange >> symbolAvaregePrice: aString [ 
 	"Average of price of a cryptocoin in the last 5 minutes"

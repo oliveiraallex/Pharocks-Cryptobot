@@ -64,6 +64,16 @@ PharocksBinanceOperations >> ordersCancelAll [
 	^ true "hardcoded"
 ]
 
+{ #category : #operations }
+PharocksBinanceOperations >> privateAccountInformation [
+	^ self queryPrivateAccountInformation
+]
+
+{ #category : #operating }
+PharocksBinanceOperations >> privateOrders: aString last: anInteger [ 
+	^ self queryPrivateOrders: aString last: anInteger 
+]
+
 { #category : #initialization }
 PharocksBinanceOperations >> symbolAvaregePrice: aString [
 	"Average of price of a cryptocoin in the last 5 minutes"

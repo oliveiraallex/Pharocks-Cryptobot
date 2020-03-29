@@ -46,11 +46,69 @@ PharocksBinanceExchange >> configuration [
 	apiUrl := 'https://api.binance.com'
 ]
 
+{ #category : #accessing }
+PharocksBinanceExchange >> get: query [
+	| webClient | 
+	webClient := ZnClient new. 
+	webClient url: query.
+	^ NeoJSONReader fromString: webClient get. 
+]
+
+{ #category : #accessing }
+PharocksBinanceExchange >> get: path parameters: aDictionary [
+	| webClient | 
+	webClient := ZnClient new. 
+	webClient url: path.
+	webClient queryAddAll: aDictionary.
+	^ NeoJSONReader fromString: webClient get. 
+]
+
+{ #category : #accessing }
+PharocksBinanceExchange >> getPrivate: query [
+	| webClient | 
+	webClient := ZnClient new. 
+	webClient url: query.
+	^ NeoJSONReader fromString: webClient get. 
+]
+
+{ #category : #accessing }
+PharocksBinanceExchange >> getPrivate: path parameters: aDictionary [
+	| webClient queryString signature |
+	webClient := ZnClient new.
+	queryString := self getQueryAsString: aDictionary.
+	signature := self signQuery: queryString.
+	webClient := ZnClient new
+		url: path;
+		headerAddAll: {('X-MBX-APIKEY' -> apiKey)} asDictionary;
+		queryAddAll: aDictionary;
+		queryAddAll: {(#signature -> signature)} asDictionary.
+	^ NeoJSONReader fromString: webClient get
+]
+
+{ #category : #accessing }
+PharocksBinanceExchange >> getQueryAsString: aDictionary [ 
+	| webClient requestLine |
+	webClient := ZnClient new queryAddAll: aDictionary.
+	requestLine := webClient request requestLine uri asString .
+	^ requestLine copyReplaceAll: '/?'  with: ''
+	
+]
+
 { #category : #initialization }
 PharocksBinanceExchange >> initialize [
 	self configuration .
 	
 	"runQuery := PharocksBinanceOperations new."
+]
+
+{ #category : #accessing }
+PharocksBinanceExchange >> signQuery: aString [
+	| msg signature |
+	msg := aString asByteArray.
+	signature := (HMAC on: SHA256)
+		key: apiSecretKey asByteArray;
+		digestMessage: msg.
+	^ signature hex
 ]
 
 { #category : #accessing }

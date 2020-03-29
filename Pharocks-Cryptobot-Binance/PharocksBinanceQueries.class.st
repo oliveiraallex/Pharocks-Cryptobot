@@ -8,19 +8,13 @@ Class {
 }
 
 { #category : #controling }
-PharocksBinanceQueries >> get: aUri [
-	^ query get: aUri
-]
-
-{ #category : #controling }
-PharocksBinanceQueries >> get: aPathString parameters: aDictionary [
-	^ query get: aPathString parameters: aDictionary
+PharocksBinanceQueries >> exchangeTime [
+	self subclassResponsibility 
 ]
 
 { #category : #controling }
 PharocksBinanceQueries >> initialize [
 	super initialize.
-	query := PharocksCommunicator new
 ]
 
 { #category : #controling }
@@ -45,6 +39,26 @@ PharocksBinanceQueries >> queryOrderBook: aString lastOrders: aNumber [
 		parameters:
 			{('symbol' -> aString asString).
 			('limit' -> aNumber asString)} asDictionary
+]
+
+{ #category : #controling }
+PharocksBinanceQueries >> queryPrivateAccountInformation [
+	| timestamp |
+	timestamp := self exchangeTime. 
+	^ self
+		getPrivate: self apiUrl , '/api/v3/account'
+		parameters:
+			{('timestamp' -> timestamp asString)} asDictionary
+]
+
+{ #category : #controling }
+PharocksBinanceQueries >> queryPrivateOrders: aString last: aNumber [
+	^ self
+		getPrivate: self apiUrl , '/api/v3/allOrders'
+		parameters:
+			{('symbol' -> aString asString).
+			('limit' -> aNumber asString).
+			('timestamp' -> self timeStamp)} asDictionary
 ]
 
 { #category : #controling }
@@ -82,5 +96,13 @@ PharocksBinanceQueries >> queryTrades: aString lastTrades: aNumber [
 		get: self apiUrl , '/api/v3/trades'
 		parameters:
 			{('symbol' -> aString asString).
-			('limit' -> aNumber asString)} asDictionary
+			('limit' -> aNumber asString).
+			('timestamp' -> self timeStamp)} asDictionary
+]
+
+{ #category : #controling }
+PharocksBinanceQueries >> timeStamp [
+	| timestamp | 
+	^ timestamp := self exchangeTime asString.
+	
 ]

@@ -10,6 +10,8 @@ exchange symbolAvaregePrice: 'BNBUSDT'. ""12.90751442""
 exchange symbolPrice: 'BNBUSDT' lastOrders: 5 type: 'bids'. ""12.89462""
 exchange symbolPriceBuy: 'BNBUSDT' lastOrders: 5. ""12.89074""
 exchange symbolPriceSell: 'BNBUSDT' lastOrders: 5. ""12.89724""
+exchange privateOrders: 'BNBUSDT' last: 5 ""anObject""
+exchange privateAccountInformation. 
 
 cryptoRobot := PharocksOperator setExchange: exchange.
 cryptoRobot setStrategy: PharocksStrategy simpleWinLossPercentage.
