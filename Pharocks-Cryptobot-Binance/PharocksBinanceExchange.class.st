@@ -47,11 +47,8 @@ PharocksBinanceExchange >> configuration [
 ]
 
 { #category : #accessing }
-PharocksBinanceExchange >> get: query [
-	| webClient | 
-	webClient := ZnClient new. 
-	webClient url: query.
-	^ NeoJSONReader fromString: webClient get. 
+PharocksBinanceExchange >> get: path [
+	^ self get: path parameters: {} asDictionary
 ]
 
 { #category : #accessing }
@@ -64,17 +61,14 @@ PharocksBinanceExchange >> get: path parameters: aDictionary [
 ]
 
 { #category : #accessing }
-PharocksBinanceExchange >> getPrivate: query [
-	| webClient | 
-	webClient := ZnClient new. 
-	webClient url: query.
-	^ NeoJSONReader fromString: webClient get. 
+PharocksBinanceExchange >> getPrivate: path [
+	^ self getPrivate: path parameters: {} asDictionary
 ]
 
 { #category : #accessing }
 PharocksBinanceExchange >> getPrivate: path parameters: aDictionary [
 	| webClient queryString signature |
-	webClient := ZnClient new.
+	aDictionary at: 'timestamp' put: self timestamp.
 	queryString := self getQueryAsString: aDictionary.
 	signature := self signQuery: queryString.
 	webClient := ZnClient new
@@ -109,6 +103,11 @@ PharocksBinanceExchange >> signQuery: aString [
 		key: apiSecretKey asByteArray;
 		digestMessage: msg.
 	^ signature hex
+]
+
+{ #category : #accessing }
+PharocksBinanceExchange >> timestamp [
+	^ self subclassResponsibility 
 ]
 
 { #category : #accessing }

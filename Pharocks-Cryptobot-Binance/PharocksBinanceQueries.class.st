@@ -43,12 +43,7 @@ PharocksBinanceQueries >> queryOrderBook: aString lastOrders: aNumber [
 
 { #category : #controling }
 PharocksBinanceQueries >> queryPrivateAccountInformation [
-	| timestamp |
-	timestamp := self exchangeTime. 
-	^ self
-		getPrivate: self apiUrl , '/api/v3/account'
-		parameters:
-			{('timestamp' -> timestamp asString)} asDictionary
+	^ self getPrivate: self apiUrl , '/api/v3/account'
 ]
 
 { #category : #controling }
@@ -57,8 +52,7 @@ PharocksBinanceQueries >> queryPrivateOrders: aString last: aNumber [
 		getPrivate: self apiUrl , '/api/v3/allOrders'
 		parameters:
 			{('symbol' -> aString asString).
-			('limit' -> aNumber asString).
-			('timestamp' -> self timeStamp)} asDictionary
+			('limit' -> aNumber asString)} asDictionary
 ]
 
 { #category : #controling }
@@ -101,7 +95,7 @@ PharocksBinanceQueries >> queryTrades: aString lastTrades: aNumber [
 ]
 
 { #category : #controling }
-PharocksBinanceQueries >> timeStamp [
+PharocksBinanceQueries >> timestamp [
 	| timestamp | 
 	^ timestamp := self exchangeTime asString.
 	
