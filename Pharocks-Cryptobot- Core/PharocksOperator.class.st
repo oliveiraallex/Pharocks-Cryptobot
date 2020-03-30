@@ -12,6 +12,10 @@ exchange symbolPriceBuy: 'BNBUSDT' lastOrders: 5. ""12.89074""
 exchange symbolPriceSell: 'BNBUSDT' lastOrders: 5. ""12.89724""
 exchange privateOrders: 'BNBUSDT' last: 5 ""anObject""
 exchange privateAccountInformation. 
+exchange symbolsInAccount.
+exchange symbolsAmountFree.
+exchange symbolsAmountLocked.
+exchange symbolsAmountTotal.
 
 cryptoRobot := PharocksOperator setExchange: exchange.
 cryptoRobot setStrategy: PharocksStrategy simpleWinLossPercentage.
@@ -24,6 +28,7 @@ wallet := PharocksWallet new.
 strategy := PharocksStrategy simpleWinLossPercentage.
 broker := PharocksBroker new.
 broker strategy: PharocksStrategy simpleWinLossPercentage.
+
 
 "
 Class {

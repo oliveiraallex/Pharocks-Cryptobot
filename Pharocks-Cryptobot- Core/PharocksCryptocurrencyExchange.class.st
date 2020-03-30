@@ -149,3 +149,46 @@ PharocksCryptocurrencyExchange >> symbolPriceSell: aString lastOrders: aNumber [
 	
 	
 ]
+
+{ #category : #accessing }
+PharocksCryptocurrencyExchange >> symbolsAmount: aString [
+	| symbolsAmount accountSymbols |
+	accountSymbols := self symbolsInAccount.
+	symbolsAmount := Dictionary new.
+	accountSymbols
+		do: [ :i | symbolsAmount at: (i at: 'asset') put: (i at: aString) ].
+	^ symbolsAmount
+]
+
+{ #category : #accessing }
+PharocksCryptocurrencyExchange >> symbolsAmountFree [
+	^ self symbolsAmount: 'free'
+]
+
+{ #category : #accessing }
+PharocksCryptocurrencyExchange >> symbolsAmountLocked [
+	^ self symbolsAmount: 'locked'
+]
+
+{ #category : #accessing }
+PharocksCryptocurrencyExchange >> symbolsAmountTotal [
+	| symbolsAmount accountSymbols |
+	accountSymbols := self symbolsInAccount.
+	symbolsAmount := Dictionary new. 
+	accountSymbols do: [ :i | symbolsAmount at:  (i at: 'asset' ) put: ((i at: 'free' )asNumber + (i at: 'locked' )asNumber) ].
+	^ symbolsAmount.
+]
+
+{ #category : #accessing }
+PharocksCryptocurrencyExchange >> symbolsInAccount [
+	| accountInformation accountSymbols j |
+	accountInformation := self privateAccountInformation.
+	accountSymbols := OrderedCollection new.
+	j := 1.
+	(accountInformation at: 'balances')
+		do: [ :i | 
+			(i at: 'free') asNumber > 0
+				ifTrue: [ accountSymbols add: (accountInformation at: 'balances' at: j) ].
+			j := j + 1 ].
+	^ accountSymbols
+]

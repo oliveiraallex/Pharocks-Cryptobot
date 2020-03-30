@@ -97,11 +97,10 @@ PharocksBinanceExchange >> initialize [
 
 { #category : #accessing }
 PharocksBinanceExchange >> signQuery: aString [
-	| msg signature |
-	msg := aString asByteArray.
+	| signature |
 	signature := (HMAC on: SHA256)
 		key: apiSecretKey asByteArray;
-		digestMessage: msg.
+		digestMessage: aString asByteArray.
 	^ signature hex
 ]
 
