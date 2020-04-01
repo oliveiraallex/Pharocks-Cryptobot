@@ -60,11 +60,6 @@ PharocksBroker >> setStrategy [
 ]
 
 { #category : #accessing }
-PharocksBroker >> setWalletExchange: anObject [
-	exchange := anObject
-]
-
-{ #category : #accessing }
 PharocksBroker >> strategy [
 	^ strategy
 ]
@@ -89,7 +84,7 @@ PharocksBroker >> walletSync [
 	"setting the cypto pair defined in the strategy"
 	wallet market: strategy market.
 	"check in Binance the amount of the USDT wallet"
-	wallet amountTotal: exchange walletAmount.
+	wallet amountTotal: exchange symbolsAmountTotalInUSD.
 	"check in Binance the price of the pairCurrency"
-	wallet currencyPriceNow: "(exchange cryptoPairPrice: wallet cryptoPair)" 8989.29
+	wallet currencyPriceNow: (exchange symbolLatestPrice: 'BNBUSDT')
 ]

@@ -114,6 +114,15 @@ PharocksCryptocurrencyExchange >> symbolBestPriceSell: aString [
 	^ (price at: 'askPrice') asNumber
 ]
 
+{ #category : #accessing }
+PharocksCryptocurrencyExchange >> symbolGetPriceUSD: aString [
+	aString = 'JEX' | (aString = 'BCHSV')
+		ifTrue: [ ^ 0 ]
+		ifFalse: [ aString = 'USDT'
+				ifTrue: [ ^ 1 ]
+				ifFalse: [ ^ self symbolLatestPrice: aString , 'USDT'	"usdt market hardcoded" ] ]
+]
+
 { #category : #operation }
 PharocksCryptocurrencyExchange >> symbolLatestPrice: aString [ 
 	"Latest price for a symbol or symbols"
@@ -175,8 +184,22 @@ PharocksCryptocurrencyExchange >> symbolsAmountTotal [
 	| symbolsAmount accountSymbols |
 	accountSymbols := self symbolsInAccount.
 	symbolsAmount := Dictionary new. 
-	accountSymbols do: [ :i | symbolsAmount at:  (i at: 'asset' ) put: ((i at: 'free' )asNumber + (i at: 'locked' )asNumber) ].
+	accountSymbols do: [ :i | symbolsAmount at:  (i at: 'asset' ) put: ((i at: 'free' )asNumber + (i at: 'locked' )asNumber round:8) ].
 	^ symbolsAmount.
+]
+
+{ #category : #accessing }
+PharocksCryptocurrencyExchange >> symbolsAmountTotalInUSD [
+	| symbols total |
+	total := 0.
+	symbols := self symbolsAmountTotal.
+	symbols keys
+		do: [ :i | 
+			symbols
+				at: i
+				put: ((symbols at: i) * (self symbolGetPriceUSD: i) round: 8) ].
+	symbols do: [ :value | total := total + value ].
+	^ total
 ]
 
 { #category : #accessing }
