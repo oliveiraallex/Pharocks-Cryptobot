@@ -9,7 +9,8 @@ Class {
 		'sellPriceProfit',
 		'sellPriceLoss',
 		'profitPercentage',
-		'lossPercentage'
+		'lossPercentage',
+		'soldPercentage'
 	],
 	#category : #'Pharocks-Cryptobot- Core'
 }
@@ -23,11 +24,11 @@ PharocksAssets class >> cryptoPair: aString buyPrice: aNumberBuy quantity: aNumb
 	assert := self new.
 	assert cryptoPair: aString;
 	buyPrice: aNumberBuy asFloat;
-	quantity: aNumber1 asFloat;
+	quantity: (aNumber1 asFloat round:8);
 	profitPercentage: aNumberProfit asFloat;
 	lossPercentage: aNumberLoss asFloat;
-	sellPriceProfit: sellPriceProfit;
-	sellPriceLoss: sellPriceLoss.
+	sellPriceProfit: (sellPriceProfit round:2);
+	sellPriceLoss: (sellPriceLoss round:2).
 	
 	
 	^ assert
@@ -108,6 +109,16 @@ PharocksAssets >> sellPriceProfit [
 { #category : #accessing }
 PharocksAssets >> sellPriceProfit: anObject [
 	sellPriceProfit := anObject
+]
+
+{ #category : #accessing }
+PharocksAssets >> soldPercentage [
+	^ soldPercentage
+]
+
+{ #category : #accessing }
+PharocksAssets >> soldPercentage: anObject [
+	soldPercentage := anObject
 ]
 
 { #category : #accessing }

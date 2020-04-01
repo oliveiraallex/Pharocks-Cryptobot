@@ -3,21 +3,20 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'assets',
-		'amountTotal',
-		'currencyPriceNow',
+		'amountTotalUSD',
 		'market'
 	],
 	#category : #'Pharocks-Cryptobot- Core'
 }
 
 { #category : #accessing }
-PharocksWallet >> amountTotal [
-	^ amountTotal
+PharocksWallet >> amountTotalUSD [
+	^ amountTotalUSD
 ]
 
 { #category : #accessing }
-PharocksWallet >> amountTotal: anObject [
-	amountTotal := anObject
+PharocksWallet >> amountTotalUSD: anObject [
+	amountTotalUSD := anObject
 ]
 
 { #category : #accessing }
@@ -33,16 +32,6 @@ PharocksWallet >> assets: anObject [
 { #category : #accessing }
 PharocksWallet >> assetsTotal [
 	^ assets size
-]
-
-{ #category : #accessing }
-PharocksWallet >> currencyPriceNow [
-	^ currencyPriceNow
-]
-
-{ #category : #accessing }
-PharocksWallet >> currencyPriceNow: anObject [
-	currencyPriceNow := anObject
 ]
 
 { #category : #initialization }

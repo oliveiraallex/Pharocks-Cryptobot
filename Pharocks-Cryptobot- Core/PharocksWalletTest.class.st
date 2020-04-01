@@ -8,5 +8,5 @@ Class {
 PharocksWalletTest >> testWalletAtCreationIsZero [
 	| w |
 	w := PharocksWallet new.
-	self assert: w amountTotal = 0
+	self assert: w amountTotalUSD = 0
 ]

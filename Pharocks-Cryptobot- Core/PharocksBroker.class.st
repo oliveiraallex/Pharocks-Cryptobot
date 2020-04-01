@@ -17,20 +17,23 @@ PharocksBroker >> configuration [
 
 { #category : #accessing }
 PharocksBroker >> createAssets [
-	| numberOfAssets assetsPercentages quantity buyPrice |
+	| numberOfAssets assetsPercentages symbol lastPrice |
 	"need refactory"
 	numberOfAssets := strategy numberOfAssets.
 	wallet assets: (Array new: numberOfAssets).
 	assetsPercentages := strategy assetsPercentage.
-	quantity := wallet amountTotal / numberOfAssets.
-	buyPrice := wallet currencyPriceNow.
-	assetsPercentages size do: [ :i | wallet assets at: i put:
-		(PharocksAssets
-			cryptoPair: (assetsPercentages at: i) cryptoPair
-			buyPrice: buyPrice
-			quantity: quantity
-			profitPercentage: (assetsPercentages at: i) profitPercentage
-			lossPercentage: (assetsPercentages at: i) lossPercentage) ]
+	1 to: assetsPercentages size do: [ :i | 
+		symbol := (assetsPercentages at: i) cryptoPair.
+		lastPrice := exchange symbolLatestPrice: symbol.
+		wallet assets
+			at: i
+			put:
+				(PharocksAssets
+					cryptoPair: symbol
+					buyPrice: lastPrice
+					quantity: (wallet amountTotalUSD / numberOfAssets / lastPrice )
+					profitPercentage: (assetsPercentages at: i) profitPercentage
+					lossPercentage: (assetsPercentages at: i) lossPercentage) ]
 ]
 
 { #category : #initialization }
@@ -84,7 +87,7 @@ PharocksBroker >> walletSync [
 	"setting the cypto pair defined in the strategy"
 	wallet market: strategy market.
 	"check in Binance the amount of the USDT wallet"
-	wallet amountTotal: exchange symbolsAmountTotalInUSD.
+	wallet amountTotalUSD: exchange symbolsAmountTotalInUSD.
 	"check in Binance the price of the pairCurrency"
-	wallet currencyPriceNow: (exchange symbolLatestPrice: 'BNBUSDT')
+	"wallet currencyPriceNow: (exchange symbolLatestPrice: 'BNBUSDT')"
 ]
