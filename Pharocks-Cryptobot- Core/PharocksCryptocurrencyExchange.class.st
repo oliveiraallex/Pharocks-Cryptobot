@@ -81,6 +81,21 @@ PharocksCryptocurrencyExchange >> privateOrderCreateSell: aString quantity: aNum
 	^ self privateOrderCreate: aString side: 'SELL' quantity: aNumber1 atPrice: aNumber2
 ]
 
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> privateOrderOCOCreate: aString1 side: aString2 quantity: aNumber1 atPrice: aNumber2 stopPrice: aNumber3 stopLimitPrice: aNumber4 [
+	^ exchangePlugin privateOrderOCOCreate: aString1 side: aString2 quantity: aNumber1 atPrice: aNumber2 stopPrice: aNumber3 stopLimitPrice: aNumber4
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> privateOrderOCOCreateBuy: aString1 quantity: aNumber1 atPrice: aNumber2 stopPrice: aNumber3 stopLimitPrice: aNumber4 [
+	^ self privateOrderOCOCreate: aString1 side: 'BUY' quantity: aNumber1 atPrice: aNumber2 stopPrice: aNumber3 stopLimitPrice: aNumber4
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> privateOrderOCOCreateSell: aString1 quantity: aNumber1 atPrice: aNumber2 stopPrice: aNumber3 stopLimitPrice: aNumber4 [
+	^ self privateOrderOCOCreate: aString1 side: 'SELL' quantity: aNumber1 atPrice: aNumber2 stopPrice: aNumber3 stopLimitPrice: aNumber4
+]
+
 { #category : #controling }
 PharocksCryptocurrencyExchange >> privateOrders: aString last: anInteger [ 
 	^ exchangePlugin privateOrders: aString last: anInteger 

@@ -62,6 +62,11 @@ PharocksBroker >> orderCreateBuy: aString atPrice: aNumber [
 ]
 
 { #category : #control }
+PharocksBroker >> orderCreateOCOSell: aString atPrice: aNumber [
+	exchange orderCreateOCOSell: aString atPrice: aNumber
+]
+
+{ #category : #control }
 PharocksBroker >> orderCreateSell: aString atPrice: aNumber [
 	exchange orderCreateSell: aString atPrice: aNumber
 ]

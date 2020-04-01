@@ -19,6 +19,13 @@ exchange symbolsAmountTotal.
 exchange privateOrderCreateBuy: 'BNBUSDT' quantity: 1 atPrice: (exchange symbolBestPriceBuy: 'BNBUSDT').
 exchange privateOrderCreateSell: 'BNBUSDT' quantity: 1 atPrice: (exchange symbolBestPriceSell: 'BNBUSDT').
 
+buyPrice := (exchange symbolLatestPrice: 'BNBUSDT').
+exchange privateOrderCreateBuy: 'BNBUSDT' quantity: 1 atPrice: buyPrice.
+sellPriceProfit := (buyPrice * 2/100) +  buyPrice asFloat round:4 .
+sellPriceLoss := buyPrice - (buyPrice * 1/100) asFloat round:4.
+sellPriceLimit := sellPriceLoss - (sellPriceLoss * 0.1/100) asFloat round:4.
+exchange privateOrderOCOCreateSell: 'BNBUSDT' quantity: 1 atPrice: sellPriceProfit stopPrice: sellPriceLoss stopLimitPrice: sellPriceLimit.
+
 cryptoRobot := PharocksOperator setExchange: exchange.
 cryptoRobot setStrategy: PharocksStrategy simpleWinLossPercentage.
 cryptoRobot walletSync.

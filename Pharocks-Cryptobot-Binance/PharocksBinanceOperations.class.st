@@ -74,6 +74,11 @@ PharocksBinanceOperations >> privateOrderCreate: aString1 side: aString2 quantit
 	^ self queryPrivateOrderCreate: aString1 side: aString2 quantity: aNumber1 atPrice: aNumber2
 ]
 
+{ #category : #initialization }
+PharocksBinanceOperations >> privateOrderOCOCreate: aString1 side: aString2 quantity: aNumber1 atPrice: aNumber2 stopPrice: aNumber3 stopLimitPrice: aNumber4 [
+	^ self queryPrivateOrderOCOCreate: aString1 side: aString2 quantity: aNumber1 atPrice: aNumber2 stopPrice: aNumber3 stopLimitPrice: aNumber4
+]
+
 { #category : #operating }
 PharocksBinanceOperations >> privateOrders: aString last: anInteger [ 
 	^ self queryPrivateOrders: aString last: anInteger 

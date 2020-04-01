@@ -60,6 +60,20 @@ PharocksBinanceQueries >> queryPrivateOrderCreate: aString1 side: aString2 quant
 ]
 
 { #category : #controling }
+PharocksBinanceQueries >> queryPrivateOrderOCOCreate: aString1 side: aString2 quantity: aNumber1 atPrice: aNumber2 stopPrice: aNumber3 stopLimitPrice: aNumber4 [
+	^ self
+		postPrivate: self apiUrl , '/api/v3/order/oco'
+		parameters:
+			{('symbol' -> aString1 asString).
+			('side' -> aString2 asString).
+			('quantity' -> aNumber1).
+			('price' -> aNumber2).
+			('stopPrice' -> aNumber3).
+			('stopLimitPrice' -> aNumber4).
+			('stopLimitTimeInForce' -> 'GTC')} asDictionary
+]
+
+{ #category : #controling }
 PharocksBinanceQueries >> queryPrivateOrders: aString last: aNumber [
 	^ self
 		getPrivate: self apiUrl , '/api/v3/allOrders'
