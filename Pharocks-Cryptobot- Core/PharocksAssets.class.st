@@ -2,16 +2,17 @@ Class {
 	#name : #PharocksAssets,
 	#superclass : #Object,
 	#instVars : [
+		'status',
 		'cryptoPair',
 		'quantity',
 		'buyPrice',
 		'soldPrice',
 		'sellPriceProfit',
 		'sellPriceLoss',
+		'sellPriceLossLimit',
 		'profitPercentage',
 		'lossPercentage',
-		'soldPercentage',
-		'status'
+		'soldPercentage'
 	],
 	#category : #'Pharocks-Cryptobot- Core'
 }
@@ -19,17 +20,19 @@ Class {
 { #category : #'as yet unclassified' }
 PharocksAssets class >> cryptoPair: aString buyPrice: aNumberBuy quantity: aNumber1 profitPercentage: aNumberProfit lossPercentage: aNumberLoss [
 
-	| assert sellPriceProfit sellPriceLoss| 
+	| assert sellPriceProfit sellPriceLoss sellPriceLossLimit| 
 	sellPriceProfit := (aNumberBuy * aNumberProfit/100) +  aNumberBuy asFloat.
 	sellPriceLoss :=  aNumberBuy - (aNumberBuy * aNumberLoss/100) asFloat.
+	sellPriceLossLimit := sellPriceLoss - (sellPriceLoss * 0.1/100) asFloat.  "hard coded"
 	assert := self new.
 	assert cryptoPair: aString;
 	buyPrice: aNumberBuy asFloat;
-	quantity: (aNumber1 asFloat round:8);
+	quantity: (aNumber1 asFloat round:2);
 	profitPercentage: aNumberProfit asFloat;
 	lossPercentage: aNumberLoss asFloat;
 	sellPriceProfit: (sellPriceProfit round:2);
 	sellPriceLoss: (sellPriceLoss round:2);
+	sellPriceLossLimit: (sellPriceLossLimit round:2);
 	status: 'WAITING_TO_BUY'.
 	
 	
@@ -101,6 +104,16 @@ PharocksAssets >> sellPriceLoss [
 { #category : #accessing }
 PharocksAssets >> sellPriceLoss: anObject [
 	sellPriceLoss := anObject
+]
+
+{ #category : #accessing }
+PharocksAssets >> sellPriceLossLimit [
+	^ sellPriceLossLimit
+]
+
+{ #category : #accessing }
+PharocksAssets >> sellPriceLossLimit: anObject [
+	sellPriceLossLimit := anObject
 ]
 
 { #category : #accessing }

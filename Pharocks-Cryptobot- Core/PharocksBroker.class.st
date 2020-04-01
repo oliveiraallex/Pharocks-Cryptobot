@@ -5,10 +5,48 @@ Class {
 		'wallet',
 		'strategy',
 		'exchange',
-		'processMonitor'
+		'processMonitor',
+		'result'
 	],
 	#category : #'Pharocks-Cryptobot- Core'
 }
+
+{ #category : #accessing }
+PharocksBroker >> assetsBuy [
+	| resultBuy |
+	resultBuy := OrderedCollection new.
+	wallet assets
+		do: [ :asset | 
+			asset
+				ifNotNil: [ asset status = 'WAITING_TO_BUY'
+						ifTrue: [ resultBuy
+								add:
+									(exchange
+										privateOrderCreateBuy: asset cryptoPair
+										quantity: asset quantity
+										atPrice: asset buyPrice) ] ] ].
+	result add: resultBuy
+]
+
+{ #category : #accessing }
+PharocksBroker >> assetsSellOCO [
+	| resultSell |
+	resultSell := OrderedCollection new.
+	wallet assets
+		do: [ :asset | 
+			asset
+				ifNotNil: [ asset status = 'WAITING_TO_BUY'
+						ifTrue: [ resultSell
+								add:
+									(exchange
+										privateOrderOCOCreateSell: asset cryptoPair
+										quantity: (asset quantity - (asset quantity * 0.2 / 100) round: 2)
+										atPrice: asset sellPriceProfit
+										stopPrice: asset sellPriceLoss
+										stopLimitPrice: asset sellPriceLossLimit).
+							asset status: 'WAITING_TO_SELL' ] ] ].
+	result add: resultSell
+]
 
 { #category : #accessing }
 PharocksBroker >> checkPriceToSell: aString priceProfit: aNumber1 priceLoss: aNumber2 [
@@ -33,16 +71,28 @@ PharocksBroker >> createAssets [
 	assetsPercentages := strategy assetsPercentage.
 	1 to: assetsPercentages size do: [ :i | 
 		symbol := (assetsPercentages at: i) cryptoPair.
-		lastPrice := exchange symbolLatestPrice: symbol.
+		lastPrice := exchange symbolPriceSell: symbol lastOrders: 5.
+		"lastPrice := (lastPrice * 0.1/100) +  lastPrice asFloat round:4. ""hard coded"
 		wallet assets
 			at: i
 			put:
 				(PharocksAssets
 					cryptoPair: symbol
-					buyPrice: lastPrice
+					buyPrice: (lastPrice round:4)
 					quantity: (wallet amountTotalUSD / numberOfAssets / lastPrice )
 					profitPercentage: (assetsPercentages at: i) profitPercentage
 					lossPercentage: (assetsPercentages at: i) lossPercentage) ]
+]
+
+{ #category : #accessing }
+PharocksBroker >> executeStrategyOnServer [
+	result := OrderedCollection new.
+	self strategy: PharocksStrategy simpleWinLossPercentage.
+	self walletSync.
+	self createAssets.
+	self assetsBuy.
+	10 seconds wait.
+	self assetsSellOCO. 	
 ]
 
 { #category : #initialization }
@@ -69,6 +119,16 @@ PharocksBroker >> orderCreateOCOSell: aString atPrice: aNumber [
 { #category : #control }
 PharocksBroker >> orderCreateSell: aString atPrice: aNumber [
 	exchange orderCreateSell: aString atPrice: aNumber
+]
+
+{ #category : #accessing }
+PharocksBroker >> result [
+	^ result
+]
+
+{ #category : #accessing }
+PharocksBroker >> result: anObject [
+	result := anObject
 ]
 
 { #category : #initialization }
