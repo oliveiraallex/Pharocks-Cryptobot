@@ -10,7 +10,8 @@ Class {
 		'sellPriceLoss',
 		'profitPercentage',
 		'lossPercentage',
-		'soldPercentage'
+		'soldPercentage',
+		'status'
 	],
 	#category : #'Pharocks-Cryptobot- Core'
 }
@@ -28,7 +29,8 @@ PharocksAssets class >> cryptoPair: aString buyPrice: aNumberBuy quantity: aNumb
 	profitPercentage: aNumberProfit asFloat;
 	lossPercentage: aNumberLoss asFloat;
 	sellPriceProfit: (sellPriceProfit round:2);
-	sellPriceLoss: (sellPriceLoss round:2).
+	sellPriceLoss: (sellPriceLoss round:2);
+	status: 'WAITING_TO_BUY'.
 	
 	
 	^ assert
@@ -129,4 +131,14 @@ PharocksAssets >> soldPrice [
 { #category : #accessing }
 PharocksAssets >> soldPrice: anObject [
 	soldPrice := anObject
+]
+
+{ #category : #accessing }
+PharocksAssets >> status [
+	^ status
+]
+
+{ #category : #accessing }
+PharocksAssets >> status: anObject [
+	status := anObject
 ]

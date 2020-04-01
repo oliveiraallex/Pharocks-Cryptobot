@@ -57,16 +57,6 @@ PharocksCryptocurrencyExchange >> orderBook: aString lastOrders: aNumber [
 ]
 
 { #category : #operation }
-PharocksCryptocurrencyExchange >> orderCreateBuy: aString atPrice: aNumber [
-	^ exchangePlugin orderCreateBuy: aString atPrice: aNumber
-]
-
-{ #category : #operation }
-PharocksCryptocurrencyExchange >> orderCreateSell: aString atPrice: aNumber [
-	^ exchangePlugin orderCreateSell: aString atPrice: aNumber
-]
-
-{ #category : #operation }
 PharocksCryptocurrencyExchange >> ordersCancelAll [ 
 	^ exchangePlugin ordersCancelAll
 ]
@@ -76,14 +66,24 @@ PharocksCryptocurrencyExchange >> privateAccountInformation [
 	^ exchangePlugin privateAccountInformation
 ]
 
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> privateOrderCreate: aString1 side: aString2 quantity: aNumber1 atPrice: aNumber2 [
+	^ exchangePlugin privateOrderCreate: aString1 side: aString2 quantity: aNumber1 atPrice: aNumber2
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> privateOrderCreateBuy: aString quantity: aNumber1 atPrice: aNumber2 [
+	^ self privateOrderCreate: aString side: 'BUY' quantity: aNumber1 atPrice: aNumber2
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> privateOrderCreateSell: aString quantity: aNumber1 atPrice: aNumber2 [
+	^ self privateOrderCreate: aString side: 'SELL' quantity: aNumber1 atPrice: aNumber2
+]
+
 { #category : #controling }
 PharocksCryptocurrencyExchange >> privateOrders: aString last: anInteger [ 
 	^ exchangePlugin privateOrders: aString last: anInteger 
-]
-
-{ #category : #controlling }
-PharocksCryptocurrencyExchange >> queryPrivateAccountInformation [
-	^ exchangePlugin queryPrivateAccountInformation
 ]
 
 { #category : #operation }

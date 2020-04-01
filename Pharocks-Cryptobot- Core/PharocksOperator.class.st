@@ -16,6 +16,8 @@ exchange symbolsInAccount.
 exchange symbolsAmountFree.
 exchange symbolsAmountLocked.
 exchange symbolsAmountTotal.
+exchange privateOrderCreateBuy: 'BNBUSDT' quantity: 1 atPrice: (exchange symbolBestPriceBuy: 'BNBUSDT').
+exchange privateOrderCreateSell: 'BNBUSDT' quantity: 1 atPrice: (exchange symbolBestPriceSell: 'BNBUSDT').
 
 cryptoRobot := PharocksOperator setExchange: exchange.
 cryptoRobot setStrategy: PharocksStrategy simpleWinLossPercentage.
@@ -82,6 +84,11 @@ PharocksOperator >> start [
 	"exchange ifNil: [ (Object new) error: 'Set the Exchange before start the aplication' ]"
 	
 
+]
+
+{ #category : #accessing }
+PharocksOperator >> startMonitor [
+	broker startMonitor
 ]
 
 { #category : #accessing }

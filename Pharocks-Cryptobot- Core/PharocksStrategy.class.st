@@ -16,9 +16,9 @@ PharocksStrategy class >> simpleWinLossPercentage [
 	strategy numberOfAssets: 10.
 	strategy market: 'USDT'.
 	strategy assetsPercentage add: (PharocksStrategyProfitLoss new cryptoPair: 'BNBUSDT'; profitPercentage: 3 ; lossPercentage: 1).
-	strategy assetsPercentage add: (PharocksStrategyProfitLoss new cryptoPair: 'BNBUSDT'; profitPercentage: 0.8 ; lossPercentage: 0.5).
+	"strategy assetsPercentage add: (PharocksStrategyProfitLoss new cryptoPair: 'BNBUSDT'; profitPercentage: 0.8 ; lossPercentage: 0.5).
 	strategy assetsPercentage add: (PharocksStrategyProfitLoss new cryptoPair: 'BNBUSDT'; profitPercentage: 1 ; lossPercentage: 0.8).
-	strategy assetsPercentage add: (PharocksStrategyProfitLoss new cryptoPair: 'BNBUSDT'; profitPercentage: 2 ; lossPercentage: 1.6).
+	strategy assetsPercentage add: (PharocksStrategyProfitLoss new cryptoPair: 'BNBUSDT'; profitPercentage: 2 ; lossPercentage: 1.6)."
 	
 	^ strategy
 ]

@@ -69,6 +69,11 @@ PharocksBinanceOperations >> privateAccountInformation [
 	^ self queryPrivateAccountInformation
 ]
 
+{ #category : #initialization }
+PharocksBinanceOperations >> privateOrderCreate: aString1 side: aString2 quantity: aNumber1 atPrice: aNumber2 [
+	^ self queryPrivateOrderCreate: aString1 side: aString2 quantity: aNumber1 atPrice: aNumber2
+]
+
 { #category : #operating }
 PharocksBinanceOperations >> privateOrders: aString last: anInteger [ 
 	^ self queryPrivateOrders: aString last: anInteger 

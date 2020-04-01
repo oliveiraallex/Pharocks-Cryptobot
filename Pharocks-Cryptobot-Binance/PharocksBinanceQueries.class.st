@@ -47,6 +47,19 @@ PharocksBinanceQueries >> queryPrivateAccountInformation [
 ]
 
 { #category : #controling }
+PharocksBinanceQueries >> queryPrivateOrderCreate: aString1 side: aString2 quantity: aNumber1 atPrice: aNumber2 [
+	^ self
+		postPrivate: self apiUrl , '/api/v3/order'
+		parameters:
+			{('symbol' -> aString1 asString).
+			('side' -> aString2 asString).
+			('type' -> 'LIMIT').
+			('timeInForce' -> 'GTC').
+			('quantity' -> aNumber1).
+			('price' -> aNumber2)} asDictionary
+]
+
+{ #category : #controling }
 PharocksBinanceQueries >> queryPrivateOrders: aString last: aNumber [
 	^ self
 		getPrivate: self apiUrl , '/api/v3/allOrders'

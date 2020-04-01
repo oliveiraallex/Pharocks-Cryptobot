@@ -67,7 +67,7 @@ PharocksBinanceExchange >> getPrivate: path [
 
 { #category : #accessing }
 PharocksBinanceExchange >> getPrivate: path parameters: aDictionary [
-	| webClient queryString signature |
+	| webClient queryString signature answer|
 	aDictionary at: 'timestamp' put: self timestamp.
 	queryString := self getQueryAsString: aDictionary.
 	signature := self signQuery: queryString.
@@ -76,7 +76,8 @@ PharocksBinanceExchange >> getPrivate: path parameters: aDictionary [
 		headerAddAll: {('X-MBX-APIKEY' -> apiKey)} asDictionary;
 		queryAddAll: aDictionary;
 		queryAddAll: {(#signature -> signature)} asDictionary.
-	^ NeoJSONReader fromString: webClient get
+	answer := NeoJSONReader fromString: webClient get.
+	^ answer
 ]
 
 { #category : #accessing }
@@ -93,6 +94,21 @@ PharocksBinanceExchange >> initialize [
 	self configuration .
 	
 	"runQuery := PharocksBinanceOperations new."
+]
+
+{ #category : #accessing }
+PharocksBinanceExchange >> postPrivate: path parameters: aDictionary [
+	| webClient queryString signature answer|
+	aDictionary at: 'timestamp' put: self timestamp.
+	queryString := self getQueryAsString: aDictionary.
+	signature := self signQuery: queryString.
+	webClient := ZnClient new
+		url: path;
+		headerAddAll: {('X-MBX-APIKEY' -> apiKey)} asDictionary;
+		queryAddAll: aDictionary;
+		queryAddAll: {(#signature -> signature)} asDictionary.
+	answer := NeoJSONReader fromString: webClient post.
+	^ answer
 ]
 
 { #category : #accessing }
