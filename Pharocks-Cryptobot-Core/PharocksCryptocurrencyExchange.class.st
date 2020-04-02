@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'exchangePlugin'
 	],
-	#category : #'Pharocks-Cryptobot- Core'
+	#category : #'Pharocks-Cryptobot-Core'
 }
 
 { #category : #accessing }

@@ -1,7 +1,7 @@
 Class {
 	#name : #PharocksWalletTest,
 	#superclass : #TestCase,
-	#category : #'Pharocks-Cryptobot- Core'
+	#category : #'Pharocks-Cryptobot-Core'
 }
 
 { #category : #running }

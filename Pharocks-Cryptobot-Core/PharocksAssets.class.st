@@ -14,7 +14,7 @@ Class {
 		'lossPercentage',
 		'soldPercentage'
 	],
-	#category : #'Pharocks-Cryptobot- Core'
+	#category : #'Pharocks-Cryptobot-Core'
 }
 
 { #category : #'as yet unclassified' }

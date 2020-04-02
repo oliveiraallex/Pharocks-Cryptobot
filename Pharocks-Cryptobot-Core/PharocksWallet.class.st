@@ -6,7 +6,7 @@ Class {
 		'amountTotalUSD',
 		'market'
 	],
-	#category : #'Pharocks-Cryptobot- Core'
+	#category : #'Pharocks-Cryptobot-Core'
 }
 
 { #category : #accessing }

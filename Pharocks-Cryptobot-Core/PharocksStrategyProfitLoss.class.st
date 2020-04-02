@@ -6,7 +6,7 @@ Class {
 		'lossPercentage',
 		'cryptoPair'
 	],
-	#category : #'Pharocks-Cryptobot- Core'
+	#category : #'Pharocks-Cryptobot-Core'
 }
 
 { #category : #accessing }

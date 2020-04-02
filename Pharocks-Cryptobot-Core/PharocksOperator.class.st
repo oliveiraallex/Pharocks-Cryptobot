@@ -60,7 +60,7 @@ Class {
 	#instVars : [
 		'broker'
 	],
-	#category : #'Pharocks-Cryptobot- Core'
+	#category : #'Pharocks-Cryptobot-Core'
 }
 
 { #category : #accessing }

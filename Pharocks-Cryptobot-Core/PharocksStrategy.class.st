@@ -6,7 +6,7 @@ Class {
 		'assetsPercentage',
 		'market'
 	],
-	#category : #'Pharocks-Cryptobot- Core'
+	#category : #'Pharocks-Cryptobot-Core'
 }
 
 { #category : #'as yet unclassified' }

@@ -8,7 +8,7 @@ Class {
 		'processMonitor',
 		'result'
 	],
-	#category : #'Pharocks-Cryptobot- Core'
+	#category : #'Pharocks-Cryptobot-Core'
 }
 
 { #category : #accessing }
