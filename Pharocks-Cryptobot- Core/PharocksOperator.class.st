@@ -1,15 +1,17 @@
 "
+Binance API documentation: https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md
+
 How to use:
 binance := PharocksBinance new apiKey: 'abc123'; apiSecretKey: 'abc123'.
 exchange := PharocksCryptocurrencyExchange exchangePlugin: binance.
 cryptoRobot := PharocksOperator setExchange: exchange.
-cryptoRobot executeStrategyOnServer. 
+cryptoRobot executeStrategyOnExchange. 
 
-After run executeStrategyOnServer, the Pharocks will buy the numbers of assets configured in strategy method and create the sell orders OCO (One-Cancels-the-Other) Orders with the price setted in strategy method. 
-
-
+After run executeStrategyOnExchange, the Pharocks will buy the numbers of assets configured in strategy method and create the sell orders OCO (One-Cancels-the-Other) Orders with the price setted in strategy method. 
 
 
+
+Some examples:
 
 exchange exchangeInfo. ""anObject""
 exchange exchangePing. ""true""
@@ -85,8 +87,8 @@ PharocksOperator >> createAssets [
 ]
 
 { #category : #accessing }
-PharocksOperator >> executeStrategyOnServer [
-	broker executeStrategyOnServer
+PharocksOperator >> executeStrategyOnExchange [
+	broker executeStrategyOnExchange
 ]
 
 { #category : #accessing }

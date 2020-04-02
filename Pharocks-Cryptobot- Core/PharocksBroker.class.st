@@ -85,9 +85,8 @@ PharocksBroker >> createAssets [
 ]
 
 { #category : #accessing }
-PharocksBroker >> executeStrategyOnServer [
+PharocksBroker >> executeStrategyOnExchange [
 	result := OrderedCollection new.
-	self strategy: PharocksStrategy simpleWinLossPercentage.
 	self walletSync.
 	self createAssets.
 	self assetsBuy.
