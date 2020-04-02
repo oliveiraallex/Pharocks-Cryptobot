@@ -7,7 +7,11 @@ Class {
 { #category : #baselines }
 BaselineOfPharocks >> baseline: spec [
 	<baseline>
-	spec for: #common do: [  ].
+	spec
+		for: #common
+		do: [ spec
+				package: 'Pharocks-Cryptobot-Core';
+				package: 'Pharocks-Cryptobot-Binance' ].
 	spec
 		baseline: 'OpenSSL'
 		with: [ spec
