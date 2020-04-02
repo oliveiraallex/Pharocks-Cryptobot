@@ -1,12 +1,16 @@
 # Pharocks Cryptobot
 
-Pharocks Cryptobot is a robot app for buying and selling cryptocurrency pairs, based on a loss / gain percentage strategy.
+Pharocks Cryptobot is a robot app built in Pharo, for buying and selling cryptocurrency pairs, based on a loss / gain percentage strategy.
 
-Different cryptocurrency pairs can be traded, such as Bitcoin / Tether (BTCUSDT), Bitcoin / Ethereum (BTCETH) or Binancecoin / Litecoin (BNBLTC).
+Different cryptocurrency pairs can be traded, such as Bitcoin / Tether (BTCUSDT), Ethereum / Bitcoin (ETHBTC) or Litecoin / Binancecoin (LTCBNB) for example.
 
 To buy and sell, you need an account in an cryptocurrency exchange, for Pharocks to create buy and sell orders according to the configured strategy.
 
-For now, it is possible to use only with Binance's cryptocurrency exchange https://www.binance.com/, so an account there is mandatory.
+For now, it is possible to use only with Binance's cryptocurrency exchange, so an account there is mandatory. [Create your Binance account now!](https://www.binance.com/en/register?ref=35954516)
+
+## Watch a short demonstration of Pharocks working
+
+[![Alt text](https://img.youtube.com/vi/v5ylcKQT5Mk/0.jpg)](https://www.youtube.com/watch?v=v5ylcKQT5Mk)
 
 ## Market operation principle
 
@@ -46,6 +50,16 @@ The question you must answer for yourself: Is it better to have several small pr
 
 You just need to be lucky to set the time to buy. But even if you don't get it right, your loss will be controlled.
 
+## Binance OCO Orders (One Cancels the Other)
+
+An OCO, or “One Cancels the Other” order allows you to place two orders at the same time. It combines a limit order, with a stop-limit order, but only one of the two can be executed. In other words, as soon as one of the orders get partially or fully filled, the remaining one will be canceled automatically.
+
+When Pharocks creates a sales order, it creates an OCO order. This means that it can set the selling price in profit or loss. And the Binance exchange executes the order automatically.
+
+Watch this video to understand better about OCO Orders. 
+
+[![Alt text](https://img.youtube.com/vi/5YtlwWlwE5o/0.jpg)](https://www.youtube.com/watch?v=5YtlwWlwE5o)
+
 ## Pharocks operation principle
 
 With Pharocks, you can buy and sell any amount in any cryptocurrency available on the exchange you are operating on and set any percentage of sale in profit and loss.
@@ -60,11 +74,22 @@ It works like you have a wallet. You define how many parts it will be divided in
 
 In the strategy file, you define how many parts your wallet will be divided into and how many parts will be used. In this example, we divided the total portfolio value of $1,000.00 into 10 equal parts. And we will only work with 4 parties, leaving 60% of our capital secure.
 
-![image](https://user-images.githubusercontent.com/39618015/77704479-71fb0600-6fbd-11ea-8af4-f3dcb8ad403c.png)
+![image](https://user-images.githubusercontent.com/39618015/78240657-95eba980-74df-11ea-8d97-b1ee01580aa7.png)
 
 Every asset has the currency parity in which it is being traded, the quantity, purchase price and the sale price that will be inserted when the asset is sold. Profit and loss selling prices are also contained in each asset, as well as the percentage.
 
-![image](https://user-images.githubusercontent.com/39618015/77704355-2f392e00-6fbd-11ea-8b41-258294edd4d6.png)
+![image](https://user-images.githubusercontent.com/39618015/78240821-ccc1bf80-74df-11ea-8669-721a7b026b6f.png)
+
+## Installing Pharocks
+
+[Download Pharo Laucher](http://pharo.org/download), create a new Pharo 8 image and start it. Then open the playground and run this script:
+
+```
+Metacello new
+  baseline: 'Pharocks';
+  repository: 'github://oliveiraallex/Pharocks-Cryptobot';
+  load
+```
 
 ## Starting Pharocks
 
@@ -86,16 +111,25 @@ Appyling the strategy:
 cryptoRobot setStrategy: PharocksStrategy simpleWinLossPercentage.
 ```
 
-Syncing the wallet with the exchange and creating the assets in your wallet localy:
+Syncing the wallet with the exchange and creating the assets in your wallet localy. This assests will be created again when you start Pharocks, so this is just to you check if the values and crypto pairs are according your strategy.
 
 ```
 cryptoRobot walletSync.
 cryptoRobot createAssets. 
 ```
 
+Start Pharocks and create the buy and sell OCO orders:
+
+```
+cryptoRobot executeStrategyOnExchange. 
+```
+
+
 ## Under construction
 
-This project is under construction and is not yet functional. The next steps are effective communication with the exchange and the price monitoring system to buy and sell the assets.
+This project is under construction. The next steps are the price monitoring system to buy the assets using indicators (Stochastic, RSI, Bollinger Bands etc) of [Trading View](https://www.tradingview.com/chart/?symbol=BINANCE%3ABNBUSDT)
+
+![image](https://user-images.githubusercontent.com/39618015/78253056-16b4a080-74f4-11ea-95b0-be3c6bbc4e0a.png)
 
 ## Disclamer
 There is no guarantee of profit or that this application will work without fail. Only you are responsible for using this program. Any loss generated by any application failure is your sole responsibility.
