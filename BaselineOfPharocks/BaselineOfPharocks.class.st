@@ -15,7 +15,13 @@ BaselineOfPharocks >> baseline: spec [
 	spec
 		baseline: 'OpenSSL'
 		with: [ spec
-				repository: 'github://PierceNg/OpenSSL-Pharo/blob/master/src-st' ]
+				repository: 'github://PierceNg/OpenSSL-Pharo/src-st' ].
+			spec
+		baseline: 'NeoJSON'
+		with: [ spec
+				repository: 'github://svenvc/NeoJSON/repository' ]
+			
+		
 ]
 
 { #category : #baselines }
