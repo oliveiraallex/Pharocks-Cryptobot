@@ -9,9 +9,9 @@ BaselineOfPharocks >> baseline: spec [
 	<baseline>
 	spec for: #common do: [  ].
 	spec
-		baseline: 'OpenSSL-Pharo'
+		baseline: 'OpenSSL'
 		with: [ spec
-				repository: 'github:///PierceNg/OpenSSL-Pharo/blob/master/src-st' ]
+				repository: 'github://PierceNg/OpenSSL-Pharo/blob/master/src-st' ]
 ]
 
 { #category : #baselines }
