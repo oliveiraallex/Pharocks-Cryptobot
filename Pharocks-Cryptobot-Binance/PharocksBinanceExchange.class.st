@@ -47,6 +47,21 @@ PharocksBinanceExchange >> configuration [
 ]
 
 { #category : #accessing }
+PharocksBinanceExchange >> deletePrivate: path parameters: aDictionary [
+	| webClient queryString signature answer|
+	aDictionary at: 'timestamp' put: self timestamp.
+	queryString := self getQueryAsString: aDictionary.
+	signature := self signQuery: queryString.
+	webClient := ZnClient new
+		url: path;
+		headerAddAll: {('X-MBX-APIKEY' -> apiKey)} asDictionary;
+		queryAddAll: aDictionary;
+		queryAddAll: {(#signature -> signature)} asDictionary.
+	answer := NeoJSONReader fromString: webClient delete.
+	^ answer
+]
+
+{ #category : #accessing }
 PharocksBinanceExchange >> get: path [
 	^ self get: path parameters: {} asDictionary
 ]

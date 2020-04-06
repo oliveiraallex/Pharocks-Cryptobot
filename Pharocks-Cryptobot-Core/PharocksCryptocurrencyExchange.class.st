@@ -57,8 +57,17 @@ PharocksCryptocurrencyExchange >> orderBook: aString lastOrders: aNumber [
 ]
 
 { #category : #operation }
-PharocksCryptocurrencyExchange >> ordersCancelAll [ 
-	^ exchangePlugin ordersCancelAll
+PharocksCryptocurrencyExchange >> orderCancel: aString orderId: aString2 [
+	
+	^ exchangePlugin orderCancel: aString orderId: aString2
+	
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> orderCancelOCO: aString orderListId: aString2 [
+	
+	^ exchangePlugin orderCancelOCO: aString orderListId: aString2
+	
 ]
 
 { #category : #controlling }
@@ -96,9 +105,79 @@ PharocksCryptocurrencyExchange >> privateOrderOCOCreateSell: aString1 quantity: 
 	^ self privateOrderOCOCreate: aString1 side: 'SELL' quantity: aNumber1 atPrice: aNumber2 stopPrice: aNumber3 stopLimitPrice: aNumber4
 ]
 
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> privateOrderOpenGet: aString1 [ 
+	^ exchangePlugin privateOrderOpenGet: aString1 
+]
+
 { #category : #controling }
 PharocksCryptocurrencyExchange >> privateOrders: aString last: anInteger [ 
 	^ exchangePlugin privateOrders: aString last: anInteger 
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> privateOrdersCancelAll [
+	| result |
+	result := OrderedCollection new.
+	result add: self privateOrdersCancelLimitAll.
+	result add: self privateOrdersCancelOCOAll.
+	^ result
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> privateOrdersCancelLimitAll [
+	| allOrders result |
+	result := OrderedCollection new.
+	allOrders := self privateOrderOpenGet: ''.
+	allOrders
+		do: [ :order | 
+			(order at: 'orderListId') = -1
+				ifTrue: [ result
+						add:
+							(self 
+								orderCancel: (order at: 'symbol') 
+								orderId: (order at: 'orderId')) ] ].
+	^ result
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> privateOrdersCancelOCOAll [
+	| allOrders result |
+	result := OrderedCollection new.
+	allOrders := self privateOrderOpenGet: ''.
+	allOrders
+		do: [ :order | 
+			(order at: 'orderListId') ~= -1
+				ifTrue: [ result
+						add:
+							(self
+								orderCancelOCO: (order at: 'symbol')
+								orderListId: (order at: 'orderListId')) ] ].
+	^ result
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> privatePanicButton [
+	| return |
+	return := OrderedCollection new.
+	return add: self privateOrdersCancelAll.
+	return add: self privateSellEverything.
+	^ return
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> privateSellEverything [
+	| symbolsAmountFree return |
+	return := OrderedCollection new.
+	symbolsAmountFree := self symbolsAmountFree.
+	symbolsAmountFree keys
+		do: [ :a |
+			a = 'USDT'
+				ifFalse: [ return add:( self
+						privateOrderCreateSell: a, 'USDT'
+						quantity: ((symbolsAmountFree at: a) asNumber roundDownTo: 0.01) 
+						atPrice: ((self symbolPriceSell: a , 'USDT' lastOrders: 5) round: 4) )] ].
+	^ return
 ]
 
 { #category : #operation }
@@ -180,7 +259,9 @@ PharocksCryptocurrencyExchange >> symbolsAmount: aString [
 	accountSymbols := self symbolsInAccount.
 	symbolsAmount := Dictionary new.
 	accountSymbols
-		do: [ :i | symbolsAmount at: (i at: 'asset') put: (i at: aString) ].
+		do: [ :i | 
+			(((i at: 'asset') = 'JEX') | ((i at: 'asset') = 'BCHSV'))
+				ifFalse: [ symbolsAmount at: (i at: 'asset') put: (i at: aString) ] ].
 	^ symbolsAmount
 ]
 
@@ -199,7 +280,9 @@ PharocksCryptocurrencyExchange >> symbolsAmountTotal [
 	| symbolsAmount accountSymbols |
 	accountSymbols := self symbolsInAccount.
 	symbolsAmount := Dictionary new. 
-	accountSymbols do: [ :i | symbolsAmount at:  (i at: 'asset' ) put: ((i at: 'free' )asNumber + (i at: 'locked' )asNumber round:8) ].
+	accountSymbols do: [ :i | 
+		(((i at: 'asset') = 'JEX') | ((i at: 'asset') = 'BCHSV'))
+		ifFalse: [symbolsAmount at:  (i at: 'asset' ) put: ((i at: 'free' )asNumber + (i at: 'locked' )asNumber round:8) ]].
 	^ symbolsAmount.
 ]
 
@@ -214,7 +297,12 @@ PharocksCryptocurrencyExchange >> symbolsAmountTotalInUSD [
 				at: i
 				put: ((symbols at: i) * (self symbolGetPriceUSD: i) round: 8) ].
 	symbols do: [ :value | total := total + value ].
-	^ total
+	^ total round:2
+]
+
+{ #category : #accessing }
+PharocksCryptocurrencyExchange >> symbolsAmountTotalInUSDFree [
+	^ (self symbolsAmountFree at: 'USDT') asNumber round: 2
 ]
 
 { #category : #accessing }

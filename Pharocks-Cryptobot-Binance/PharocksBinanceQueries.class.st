@@ -42,6 +42,24 @@ PharocksBinanceQueries >> queryOrderBook: aString lastOrders: aNumber [
 ]
 
 { #category : #controling }
+PharocksBinanceQueries >> queryOrderCancel: aString orderId: aString2 [
+	^ self
+		deletePrivate: self apiUrl , '/api/v3/order'
+		parameters:
+			{('symbol' -> aString asString).
+			('orderId' -> aString2 asString)} asDictionary
+]
+
+{ #category : #controling }
+PharocksBinanceQueries >> queryOrderCancelOCO: aString orderListId: aString2 [
+	^ self
+		deletePrivate: self apiUrl , '/api/v3/orderList'
+		parameters:
+			{('symbol' -> aString asString).
+			('orderListId' -> aString2 asString)} asDictionary
+]
+
+{ #category : #controling }
 PharocksBinanceQueries >> queryPrivateAccountInformation [
 	^ self getPrivate: self apiUrl , '/api/v3/account'
 ]
@@ -74,12 +92,28 @@ PharocksBinanceQueries >> queryPrivateOrderOCOCreate: aString1 side: aString2 qu
 ]
 
 { #category : #controling }
+PharocksBinanceQueries >> queryPrivateOrderOpenGet: aString1 [ 
+	^ self
+		getPrivate: self apiUrl , '/api/v3/openOrders'
+		parameters:
+			{('symbol' -> aString1 asString)} asDictionary
+]
+
+{ #category : #controling }
 PharocksBinanceQueries >> queryPrivateOrders: aString last: aNumber [
 	^ self
 		getPrivate: self apiUrl , '/api/v3/allOrders'
 		parameters:
 			{('symbol' -> aString asString).
 			('limit' -> aNumber asString)} asDictionary
+]
+
+{ #category : #controling }
+PharocksBinanceQueries >> queryPrivateOrdersOpenGet [ 
+	^ self
+		getPrivate: self apiUrl , '/api/v3/openOrders'
+		parameters:
+			{} asDictionary
 ]
 
 { #category : #controling }

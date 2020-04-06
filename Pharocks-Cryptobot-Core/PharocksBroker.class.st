@@ -89,7 +89,7 @@ PharocksBroker >> executeStrategyOnExchange [
 	result := OrderedCollection new.
 	self walletSync.
 	self createAssets.
-	self assetsBuy.
+	"self assetsBuy."
 	10 seconds wait.
 	self assetsSellOCO. 	
 ]

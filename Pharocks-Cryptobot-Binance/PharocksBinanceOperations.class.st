@@ -50,17 +50,22 @@ PharocksBinanceOperations >> orderBook: aString lastOrders: aNumber [
 ]
 
 { #category : #initialization }
+PharocksBinanceOperations >> orderCancel: aString orderId: aString2 [
+	^ self queryOrderCancel: aString orderId: aString2
+]
+
+{ #category : #initialization }
+PharocksBinanceOperations >> orderCancelOCO: aString orderListId: aString2 [
+	^ self queryOrderCancelOCO: aString orderListId: aString2
+]
+
+{ #category : #initialization }
 PharocksBinanceOperations >> orderCreateBuy: aString atPrice: aNumber [
 	^ true "hardcoded"
 ]
 
 { #category : #initialization }
 PharocksBinanceOperations >> orderCreateSell: aString atPrice: aNumber [
-	^ true "hardcoded"
-]
-
-{ #category : #initialization }
-PharocksBinanceOperations >> ordersCancelAll [
 	^ true "hardcoded"
 ]
 
@@ -77,6 +82,13 @@ PharocksBinanceOperations >> privateOrderCreate: aString1 side: aString2 quantit
 { #category : #initialization }
 PharocksBinanceOperations >> privateOrderOCOCreate: aString1 side: aString2 quantity: aNumber1 atPrice: aNumber2 stopPrice: aNumber3 stopLimitPrice: aNumber4 [
 	^ self queryPrivateOrderOCOCreate: aString1 side: aString2 quantity: aNumber1 atPrice: aNumber2 stopPrice: aNumber3 stopLimitPrice: aNumber4
+]
+
+{ #category : #initialization }
+PharocksBinanceOperations >> privateOrderOpenGet: aString1 [
+	aString1 = ''
+		ifTrue: [ ^ self queryPrivateOrdersOpenGet ]
+		ifFalse: [ ^ self queryPrivateOrderOpenGet: aString1 ]
 ]
 
 { #category : #operating }
