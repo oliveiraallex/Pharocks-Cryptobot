@@ -1,9 +1,6 @@
 Class {
 	#name : #PharocksBinanceQueries,
 	#superclass : #PharocksBinanceExchange,
-	#instVars : [
-		'query'
-	],
 	#category : #'Pharocks-Cryptobot-Binance'
 }
 

@@ -5,7 +5,6 @@ Class {
 		'wallet',
 		'strategy',
 		'exchange',
-		'processMonitor',
 		'result'
 	],
 	#category : #'Pharocks-Cryptobot-Core'
@@ -145,34 +144,9 @@ PharocksBroker >> setStrategy [
 	"wallet createAssets"
 ]
 
-{ #category : #accessing }
-PharocksBroker >> startMonitor [
-	self halt.
-	processMonitor := [ [ wallet assets
-		do: [ :asset |
-			asset
-				ifNotNil: [ asset status = 'WAITING_TO_BUY'
-						ifTrue: [ exchange
-								privateOrderCreateBuy: asset cryptoPair
-								quantity: asset quantity
-								atPrice: asset buyPrice ].
-					asset status = 'WAITING_TO_SELL'
-						ifTrue: [ (self
-								checkPriceToSell: asset crytpoPair
-								priceProfit: asset sellPriceProfit
-								priceLoss: asset sellPriceLoss) = 'sell'
-								ifTrue: [ exchange
-										privateOrderCreateSell: asset crytpoPair
-										quantity: asset quantity
-										atPrice: (exchange symbolBestPriceSell: asset cryptoPair) ] ].
-					 ] ].
-	(Delay forSeconds: 300000) wait ] repeat ]
-		forkNamed: 'Pharocks processMonitor'
-]
-
-{ #category : #accessing }
-PharocksBroker >> stopMonitor [
-	processMonitor terminate
+{ #category : #control }
+PharocksBroker >> setStrategy: anObject [ 
+	strategy := anObject
 ]
 
 { #category : #accessing }

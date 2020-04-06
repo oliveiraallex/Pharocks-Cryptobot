@@ -56,52 +56,41 @@ broker strategy: PharocksStrategy simpleWinLossPercentage.
 "
 Class {
 	#name : #PharocksOperator,
-	#superclass : #Object,
+	#superclass : #PharocksBroker,
 	#instVars : [
-		'broker'
+		'processMonitor',
+		'indicators'
 	],
 	#category : #'Pharocks-Cryptobot-Core'
 }
 
 { #category : #accessing }
-PharocksOperator class >> setExchange: anObject [
-	| broker |
-	broker := PharocksBroker new.
-	broker setExchange: anObject.
-	^ self new broker: broker
+PharocksOperator class >> setExchange: anObject setStrategy: anObject2 [
+	| operator |
+	operator := self new.
+	operator setExchange: anObject.
+	operator wallet: PharocksWallet new.
+	operator setStrategy: anObject2.
+	^ operator
 ]
 
 { #category : #accessing }
-PharocksOperator >> broker [
-	^ broker
+PharocksOperator >> down20 [
+	exchange privateOrdersCancelAll.
+	exchange privateSellEverything
 ]
 
 { #category : #accessing }
-PharocksOperator >> broker: anObject [
-	broker := anObject
-]
-
-{ #category : #accessing }
-PharocksOperator >> createAssets [
-	broker createAssets
-]
-
-{ #category : #accessing }
-PharocksOperator >> executeStrategyOnExchange [
-	broker executeStrategyOnExchange
+PharocksOperator >> down80 [
+	exchange privateOrdersCancelAll.
+	exchange privateSellEverything
 ]
 
 { #category : #accessing }
 PharocksOperator >> initialize [
 	
 	
-]
-
-{ #category : #accessing }
-PharocksOperator >> setStrategy:  anObject [  
-	broker strategy: anObject.
-	"broker setStrategy"
-
+	
 ]
 
 { #category : #accessing }
@@ -114,10 +103,38 @@ PharocksOperator >> start [
 
 { #category : #accessing }
 PharocksOperator >> startMonitor [
-	broker startMonitor
+	self halt. 
+	processMonitor := [ [ 
+			(indicators at: 'stochRSI' = '20up') ifTrue:[ self up20 ].
+			
+			(indicators at: 'stochRSI' = '80up') ifTrue:[ self up80 ].
+			
+			(indicators at: 'stochRSI' = '80down') ifTrue:[ self down80].
+			
+			(indicators at: 'stochRSI') = '20down' ifTrue:[ self down20].
+			
+					 
+	(Delay forSeconds: 300000) wait ] repeat ]
+		forkNamed: 'Pharocks processMonitor'
 ]
 
 { #category : #accessing }
-PharocksOperator >> walletSync [
-	broker walletSync
+PharocksOperator >> stopMonitor [
+	processMonitor terminate
+]
+
+{ #category : #accessing }
+PharocksOperator >> up20 [
+	exchange privateOrdersCancelAll.
+	self createAssets.
+	self assetsBuy.
+	10 seconds wait.
+	self assetsSellOCO. 
+]
+
+{ #category : #accessing }
+PharocksOperator >> up80 [
+	exchange privateOrdersCancelAll.
+	self createAssets.
+	self assetsSellOCO. 
 ]
