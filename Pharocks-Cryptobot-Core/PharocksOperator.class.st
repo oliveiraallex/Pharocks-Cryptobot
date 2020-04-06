@@ -4,7 +4,8 @@ Binance API documentation: https://github.com/binance-exchange/binance-official-
 How to use:
 binance := PharocksBinance new apiKey: 'abc123'; apiSecretKey: 'abc123'.
 exchange := PharocksCryptocurrencyExchange exchangePlugin: binance.
-cryptoRobot := PharocksOperator setExchange: exchange.
+strategy := PharocksStrategy simpleWinLossPercentage.
+cryptoRobot := PharocksOperator setExchange: exchange setStrategy: strategy. 
 cryptoRobot executeStrategyOnExchange. 
 
 After run executeStrategyOnExchange, the Pharocks will buy the numbers of assets configured in strategy method and create the sell orders OCO (One-Cancels-the-Other) Orders with the price setted in strategy method. 
@@ -96,14 +97,13 @@ PharocksOperator >> initialize [
 { #category : #accessing }
 PharocksOperator >> start [ 
 
-	"exchange ifNil: [ (Object new) error: 'Set the Exchange before start the aplication' ]"
+	
 	
 
 ]
 
 { #category : #accessing }
 PharocksOperator >> startMonitor [
-	self halt. 
 	processMonitor := [ [ 
 			(indicators at: 'stochRSI' = '20up') ifTrue:[ self up20 ].
 			

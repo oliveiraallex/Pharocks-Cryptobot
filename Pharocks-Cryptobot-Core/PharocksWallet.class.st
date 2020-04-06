@@ -4,6 +4,7 @@ Class {
 	#instVars : [
 		'assets',
 		'amountTotalUSD',
+		'amountTotalUSDFree',
 		'market'
 	],
 	#category : #'Pharocks-Cryptobot-Core'
@@ -17,6 +18,16 @@ PharocksWallet >> amountTotalUSD [
 { #category : #accessing }
 PharocksWallet >> amountTotalUSD: anObject [
 	amountTotalUSD := anObject
+]
+
+{ #category : #accessing }
+PharocksWallet >> amountTotalUSDFree [
+	^ amountTotalUSDFree
+]
+
+{ #category : #accessing }
+PharocksWallet >> amountTotalUSDFree: anObject [
+	amountTotalUSDFree := anObject
 ]
 
 { #category : #accessing }

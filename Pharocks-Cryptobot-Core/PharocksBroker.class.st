@@ -78,7 +78,7 @@ PharocksBroker >> createAssets [
 				(PharocksAssets
 					cryptoPair: symbol
 					buyPrice: (lastPrice round:4)
-					quantity: (wallet amountTotalUSD / numberOfAssets / lastPrice )
+					quantity: (wallet amountTotalUSDFree / numberOfAssets / lastPrice )
 					profitPercentage: ((assetsPercentages at: i) at: 'profitPercentage')
 					lossPercentage: ((assetsPercentages at: i) at: 'lossPercentage')) ]
 ]
@@ -170,11 +170,11 @@ PharocksBroker >> wallet: anObject [
 ]
 
 { #category : #control }
-PharocksBroker >> walletSync [
+PharocksBroker >> walletSync [ .
 	"setting the cypto pair defined in the strategy"
 	wallet market: strategy market.
 	"check in Binance the amount of the USDT wallet"
 	wallet amountTotalUSD: exchange symbolsAmountTotalInUSD.
 	"check in Binance the price of the pairCurrency"
-	"wallet currencyPriceNow: (exchange symbolLatestPrice: 'BNBUSDT')"
+	wallet amountTotalUSDFree: exchange symbolsAmountTotalInUSDFree.
 ]

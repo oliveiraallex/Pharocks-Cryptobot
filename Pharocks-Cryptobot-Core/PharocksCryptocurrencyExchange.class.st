@@ -302,7 +302,7 @@ PharocksCryptocurrencyExchange >> symbolsAmountTotalInUSD [
 
 { #category : #accessing }
 PharocksCryptocurrencyExchange >> symbolsAmountTotalInUSDFree [
-	^ (self symbolsAmountFree at: 'USDT') asNumber round: 2
+	^ ((self symbolsAmountFree at: 'USDT') asNumber roundDownTo: 0.01) round: 2
 ]
 
 { #category : #accessing }
