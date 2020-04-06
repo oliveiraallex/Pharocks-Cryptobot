@@ -70,7 +70,7 @@ PharocksBroker >> createAssets [
 	wallet assets: (Array new: numberOfAssets).
 	assetsPercentages := strategy assetsPercentage.
 	1 to: assetsPercentages size do: [ :i | 
-		symbol := (assetsPercentages at: i) cryptoPair.
+		symbol := (assetsPercentages at: i) at: 'cryptoPair'.
 		lastPrice := exchange symbolPriceSell: symbol lastOrders: 5.
 		"lastPrice := (lastPrice * 0.1/100) +  lastPrice asFloat round:4. ""hard coded"
 		wallet assets
@@ -80,8 +80,8 @@ PharocksBroker >> createAssets [
 					cryptoPair: symbol
 					buyPrice: (lastPrice round:4)
 					quantity: (wallet amountTotalUSD / numberOfAssets / lastPrice )
-					profitPercentage: (assetsPercentages at: i) profitPercentage
-					lossPercentage: (assetsPercentages at: i) lossPercentage) ]
+					profitPercentage: ((assetsPercentages at: i) at: 'profitPercentage')
+					lossPercentage: ((assetsPercentages at: i) at: 'lossPercentage')) ]
 ]
 
 { #category : #accessing }
@@ -89,7 +89,7 @@ PharocksBroker >> executeStrategyOnExchange [
 	result := OrderedCollection new.
 	self walletSync.
 	self createAssets.
-	"self assetsBuy."
+	self assetsBuy.
 	10 seconds wait.
 	self assetsSellOCO. 	
 ]
