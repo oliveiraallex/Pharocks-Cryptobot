@@ -59,20 +59,46 @@ Class {
 	#name : #PharocksOperator,
 	#superclass : #PharocksBroker,
 	#instVars : [
-		'processMonitor',
-		'indicators'
+		'processMonitor'
+	],
+	#classVars : [
+		'Indicators'
 	],
 	#category : #'Pharocks-Cryptobot-Core'
 }
 
 { #category : #accessing }
+PharocksOperator class >> indicators [
+	^ Indicators
+]
+
+{ #category : #accessing }
+PharocksOperator class >> indicators: anObject [
+	Indicators := anObject
+]
+
+{ #category : #accessing }
+PharocksOperator class >> initialize [
+	Indicators := Dictionary new
+]
+
+{ #category : #accessing }
 PharocksOperator class >> setExchange: anObject setStrategy: anObject2 [
 	| operator |
+	self initialize .
 	operator := self new.
 	operator setExchange: anObject.
 	operator wallet: PharocksWallet new.
 	operator setStrategy: anObject2.
 	^ operator
+]
+
+{ #category : #accessing }
+PharocksOperator class >> setIndicator: aString value: aString2 [
+	| indicator |
+	indicator := self indicators.
+	indicator at: aString put: aString2.
+	self indicators: indicator
 ]
 
 { #category : #accessing }
@@ -105,13 +131,13 @@ PharocksOperator >> start [
 { #category : #accessing }
 PharocksOperator >> startMonitor [
 	processMonitor := [ [ 
-			(indicators at: 'stochRSI' = '20up') ifTrue:[ self up20 ].
+			((Indicators at: 'stochRSI') = 'up20') ifTrue:[ self up20 ].
 			
-			(indicators at: 'stochRSI' = '80up') ifTrue:[ self up80 ].
+			((Indicators at: 'stochRSI') = 'up80') ifTrue:[ self up80 ].
 			
-			(indicators at: 'stochRSI' = '80down') ifTrue:[ self down80].
+			((Indicators at: 'stochRSI') = 'down80') ifTrue:[ self down80].
 			
-			(indicators at: 'stochRSI') = '20down' ifTrue:[ self down20].
+			((Indicators at: 'stochRSI') = 'down20') ifTrue:[ self down20].
 			
 					 
 	(Delay forSeconds: 300000) wait ] repeat ]
