@@ -26,6 +26,23 @@ PharocksStrategy class >> simpleWinLossPercentage [
 	^ strategy
 ]
 
+{ #category : #'as yet unclassified' }
+PharocksStrategy class >> simpleWinLossPercentage80 [
+	"This strategy will create sales orders according to the configured loss / gain percentages. 
+	Maximum 5 sell strategies / For now only use crypto pairs from USDT marketing (some hardcode yet) 
+	To see the pairs go to FIAT Markets USDT: https://www.binance.com/en/markets"
+	| strategy  |
+	strategy := self new.
+	strategy numberOfAssets: 5.
+	strategy market: 'USDT'.	
+	strategy assetsPercentage add: {('cryptoPair' -> 'BNBUSDT').('profitPercentage' -> 1.5).('lossPercentage' -> 0.5).} asDictionary.
+	strategy assetsPercentage add: {('cryptoPair' -> 'BNBUSDT').('profitPercentage' -> 1.8).('lossPercentage' -> 0.5).} asDictionary.
+	strategy assetsPercentage add: {('cryptoPair' -> 'BNBUSDT').('profitPercentage' -> 2.1).('lossPercentage' -> 0.5).} asDictionary.
+	strategy assetsPercentage add: {('cryptoPair' -> 'BNBUSDT').('profitPercentage' -> 2.4).('lossPercentage' -> 0.5).} asDictionary.
+	strategy assetsPercentage add: {('cryptoPair' -> 'BNBUSDT').('profitPercentage' -> 3).('lossPercentage' -> 0.5).} asDictionary.
+	^ strategy
+]
+
 { #category : #accessing }
 PharocksStrategy >> assetsPercentage [
 	^ assetsPercentage

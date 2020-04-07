@@ -130,7 +130,7 @@ PharocksOperator >> startMonitor [
 	(Indicators at: 'stochRSI') = 'up80'	ifTrue: [ self up80 ].
 	(Indicators at: 'stochRSI') = 'down80' ifTrue: [ self down80 ].
 	(Indicators at: 'stochRSI') = 'down20' ifTrue: [ self down20 ].
-	(Delay forSeconds: 300000) wait ] repeat ]
+	(Delay forSeconds: 30) wait ] repeat ]
 		forkNamed: 'Pharocks processMonitor'
 ]
 
@@ -142,6 +142,8 @@ PharocksOperator >> stopMonitor [
 { #category : #accessing }
 PharocksOperator >> up20 [
 	exchange privateOrdersCancelAll.
+	strategy := PharocksStrategy simpleWinLossPercentage.
+	self walletSync.
 	self createAssets.
 	self assetsBuy.
 	10 seconds wait.
@@ -151,6 +153,8 @@ PharocksOperator >> up20 [
 { #category : #accessing }
 PharocksOperator >> up80 [
 	exchange privateOrdersCancelAll.
+	strategy := PharocksStrategy simpleWinLossPercentage80.
+	self walletSync.
 	self createAssets.
 	self assetsSellOCO. 
 ]
