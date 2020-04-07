@@ -176,7 +176,7 @@ PharocksCryptocurrencyExchange >> privateSellEverything [
 				ifFalse: [ return add:( self
 						privateOrderCreateSell: a, 'USDT'
 						quantity: ((symbolsAmountFree at: a) asNumber roundDownTo: 0.01) 
-						atPrice: ((self symbolPriceSell: a , 'USDT' lastOrders: 5) round: 4) )] ].
+						atPrice: ((self symbolPriceBuy: a , 'USDT' lastOrders: 5) round: 4) )] ].
 	^ return
 ]
 

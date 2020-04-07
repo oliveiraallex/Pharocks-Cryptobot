@@ -41,6 +41,30 @@ PharocksAssets class >> cryptoPair: aString buyPrice: aNumberBuy quantity: aNumb
 	
 ]
 
+{ #category : #'as yet unclassified' }
+PharocksAssets class >> cryptoPair: aString newPrice: aNumberBuy2 buyPrice: aNumberBuy  quantity: aNumber1 profitPercentage: aNumberProfit lossPercentage: aNumberLoss [
+
+	| assert sellPriceProfit sellPriceLoss sellPriceLossLimit| 
+	sellPriceProfit := (aNumberBuy2 * aNumberProfit/100) +  aNumberBuy2 asFloat.
+	sellPriceLoss :=  aNumberBuy2 - (aNumberBuy2 * aNumberLoss/100) asFloat.
+	sellPriceLossLimit := sellPriceLoss - (sellPriceLoss * 0.1/100) asFloat.  "hard coded"
+	assert := self new.
+	assert cryptoPair: aString;
+	buyPrice: aNumberBuy asFloat;
+	quantity: (aNumber1 asFloat round:2);
+	profitPercentage: aNumberProfit asFloat;
+	lossPercentage: aNumberLoss asFloat;
+	sellPriceProfit: (sellPriceProfit round:2);
+	sellPriceLoss: (sellPriceLoss round:2);
+	sellPriceLossLimit: (sellPriceLossLimit round:2);
+	status: 'WAITING_TO_BUY'.
+	
+	
+	^ assert
+	
+	
+]
+
 { #category : #accessing }
 PharocksAssets >> buyPrice [
 	^ buyPrice

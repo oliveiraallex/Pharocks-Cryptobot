@@ -177,15 +177,18 @@ PharocksBroker >> strategy: anObject [
 
 { #category : #accessing }
 PharocksBroker >> updateAssets [
-	| assetsPercentages |
+	| assetsPercentages lastPrice symbol|
 	"need refactory"
 	assetsPercentages := strategy assetsPercentage.
 	1 to: assetsPercentages size do: [ :i | 
+		symbol := ((wallet assets at: i) cryptoPair).
+		lastPrice := exchange symbolPriceSell: symbol lastOrders: 5.
 		wallet assets
 			at: i
 			put:
 				(PharocksAssets
 					cryptoPair: ((wallet assets at: i) cryptoPair)
+					newPrice: (lastPrice round: 4)
 					buyPrice: ((wallet assets at: i) buyPrice)
 					quantity:  ((wallet assets at: i) quantity)
 					profitPercentage: ((assetsPercentages at: i) at: 'profitPercentage')
