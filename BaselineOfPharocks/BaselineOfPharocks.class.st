@@ -11,17 +11,14 @@ BaselineOfPharocks >> baseline: spec [
 		for: #common
 		do: [ spec
 				package: 'Pharocks-Cryptobot-Core';
-				package: 'Pharocks-Cryptobot-Binance' ].
+				package: 'Pharocks-Cryptobot-Binance';
+				package: 'Pharocks-Cryptobot-Server' ].
 	spec
 		baseline: 'OpenSSL'
-		with: [ spec
-				repository: 'github://PierceNg/OpenSSL-Pharo/src-st' ].
-			spec
+		with: [ spec repository: 'github://PierceNg/OpenSSL-Pharo/src-st' ].
+	spec
 		baseline: 'NeoJSON'
-		with: [ spec
-				repository: 'github://svenvc/NeoJSON/repository' ]
-			
-		
+		with: [ spec repository: 'github://svenvc/NeoJSON/repository' ]
 ]
 
 { #category : #baselines }
