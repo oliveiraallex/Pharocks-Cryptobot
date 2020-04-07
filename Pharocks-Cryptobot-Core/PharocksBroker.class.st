@@ -34,7 +34,6 @@ PharocksBroker >> assetsBuy [
 PharocksBroker >> assetsSellOCO [
 	| resultSell |
 	resultSell := OrderedCollection new.
-	result := OrderedCollection new.
 	wallet assets
 		do: [ :asset | 
 			asset
@@ -108,11 +107,7 @@ PharocksBroker >> executeStrategyOnExchange [
 PharocksBroker >> initialize [
 
 	wallet := PharocksWallet new.
-	"check the amount of USDT in Binance and set it in" "amountTotal := walletSync"
-	"amountTotal := wallet walletSync."
-	
-	
-	""
+	result := OrderedCollection new
 ]
 
 { #category : #control }
@@ -178,6 +173,23 @@ PharocksBroker >> strategy [
 { #category : #accessing }
 PharocksBroker >> strategy: anObject [
 	strategy := anObject 
+]
+
+{ #category : #accessing }
+PharocksBroker >> updateAssets [
+	| assetsPercentages |
+	"need refactory"
+	assetsPercentages := strategy assetsPercentage.
+	1 to: assetsPercentages size do: [ :i | 
+		wallet assets
+			at: i
+			put:
+				(PharocksAssets
+					cryptoPair: ((wallet assets at: i) cryptoPair)
+					buyPrice: ((wallet assets at: i) buyPrice)
+					quantity:  ((wallet assets at: i) quantity)
+					profitPercentage: ((assetsPercentages at: i) at: 'profitPercentage')
+					lossPercentage: ((assetsPercentages at: i) at: 'lossPercentage')) ]
 ]
 
 { #category : #accessing }

@@ -133,7 +133,7 @@ PharocksOperator >> startMonitor [
 	((rsi = 'up80') & run) ifTrue: [ self up80 ].
 	((rsi = 'down80') & run) ifTrue: [ self down80 ].
 	((rsi = 'down20') & run)  ifTrue: [ self down20 ].
-	(Delay forSeconds: 2) wait ] repeat ]
+	(Delay forSeconds: 30) wait ] repeat ]
 		forkNamed: 'Pharocks processMonitor'
 ]
 
@@ -157,6 +157,6 @@ PharocksOperator >> up80 [
 	exchange privateOrdersCancelAll.
 	strategy := PharocksStrategy simpleWinLossPercentage80.
 	self walletSync.
-	self createAssets.
+	self updateAssets.
 	self assetsSellOCO. 
 ]
