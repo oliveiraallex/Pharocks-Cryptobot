@@ -34,6 +34,7 @@ PharocksBroker >> assetsBuy [
 PharocksBroker >> assetsSellOCO [
 	| resultSell |
 	resultSell := OrderedCollection new.
+	result := OrderedCollection new.
 	wallet assets
 		do: [ :asset | 
 			asset

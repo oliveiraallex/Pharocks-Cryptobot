@@ -116,21 +116,24 @@ PharocksOperator >> down80 [
 { #category : #accessing }
 PharocksOperator >> initialize [
 	
+	PharocksOperator setIndicator: 'stochRSI' value: 'up20'
 	
 	
 ]
 
 { #category : #accessing }
 PharocksOperator >> startMonitor [
-	| server |
+	| server rsi run|
+	rsi := (Indicators at: 'stochRSI').	
 	server := PharocksServer new.
 	server start.
 	processMonitor := [ [ 
-	(Indicators at: 'stochRSI') = 'up20'	ifTrue: [ self up20 ].
-	(Indicators at: 'stochRSI') = 'up80'	ifTrue: [ self up80 ].
-	(Indicators at: 'stochRSI') = 'down80' ifTrue: [ self down80 ].
-	(Indicators at: 'stochRSI') = 'down20' ifTrue: [ self down20 ].
-	(Delay forSeconds: 30) wait ] repeat ]
+	rsi = (Indicators at: 'stochRSI') ifTrue: [ run := false ] ifFalse: [ rsi := (Indicators at: 'stochRSI'). run := true ].	
+	((rsi = 'up20') & run) ifTrue: [ self up20 ].
+	((rsi = 'up80') & run) ifTrue: [ self up80 ].
+	((rsi = 'down80') & run) ifTrue: [ self down80 ].
+	((rsi = 'down20') & run)  ifTrue: [ self down20 ].
+	(Delay forSeconds: 2) wait ] repeat ]
 		forkNamed: 'Pharocks processMonitor'
 ]
 
@@ -146,7 +149,6 @@ PharocksOperator >> up20 [
 	self walletSync.
 	self createAssets.
 	self assetsBuy.
-	10 seconds wait.
 	self assetsSellOCO. 
 ]
 
