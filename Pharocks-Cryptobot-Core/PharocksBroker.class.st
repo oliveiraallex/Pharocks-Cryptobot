@@ -5,7 +5,8 @@ Class {
 		'wallet',
 		'strategy',
 		'exchange',
-		'result'
+		'result',
+		'orderFilled'
 	],
 	#category : #'Pharocks-Cryptobot-Core'
 }
@@ -14,6 +15,7 @@ Class {
 PharocksBroker >> assetsBuy [
 	| resultBuy |
 	resultBuy := OrderedCollection new.
+	orderFilled := false.
 	wallet assets
 		do: [ :asset | 
 			asset
@@ -24,6 +26,7 @@ PharocksBroker >> assetsBuy [
 										privateOrderCreateBuy: asset cryptoPair
 										quantity: asset quantity
 										atPrice: asset buyPrice) ] ] ].
+	[ orderFilled ] whileFalse: [ self checkOrderFilled ].	"waiting the buy orders be fill. Can freeze the app. Need refactoring"
 	result add: resultBuy
 ]
 
@@ -45,6 +48,14 @@ PharocksBroker >> assetsSellOCO [
 										stopLimitPrice: asset sellPriceLossLimit).
 							asset status: 'WAITING_TO_SELL' ] ] ].
 	result add: resultSell
+]
+
+{ #category : #accessing }
+PharocksBroker >> checkOrderFilled [
+	|ordersBuy|
+	orderFilled := true.
+	ordersBuy := exchange privateOrderOpenGet: ''. 
+	ordersBuy do: [ :order | (((order at: 'side') = 'BUY') & ((order at: 'status') = 'NEW')) ifTrue: [ ^ orderFilled := false ] ]
 ]
 
 { #category : #accessing }
@@ -89,7 +100,6 @@ PharocksBroker >> executeStrategyOnExchange [
 	self walletSync.
 	self createAssets.
 	self assetsBuy.
-	10 seconds wait.
 	self assetsSellOCO. 	
 ]
 
@@ -117,6 +127,16 @@ PharocksBroker >> orderCreateOCOSell: aString atPrice: aNumber [
 { #category : #control }
 PharocksBroker >> orderCreateSell: aString atPrice: aNumber [
 	exchange orderCreateSell: aString atPrice: aNumber
+]
+
+{ #category : #accessing }
+PharocksBroker >> orderFilled [
+	^ orderFilled
+]
+
+{ #category : #accessing }
+PharocksBroker >> orderFilled: anObject [
+	orderFilled := anObject
 ]
 
 { #category : #accessing }

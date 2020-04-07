@@ -121,25 +121,15 @@ PharocksOperator >> initialize [
 ]
 
 { #category : #accessing }
-PharocksOperator >> start [ 
-
-	
-	
-
-]
-
-{ #category : #accessing }
 PharocksOperator >> startMonitor [
+	| server |
+	server := PharocksServer new.
+	server start.
 	processMonitor := [ [ 
-			((Indicators at: 'stochRSI') = 'up20') ifTrue:[ self up20 ].
-			
-			((Indicators at: 'stochRSI') = 'up80') ifTrue:[ self up80 ].
-			
-			((Indicators at: 'stochRSI') = 'down80') ifTrue:[ self down80].
-			
-			((Indicators at: 'stochRSI') = 'down20') ifTrue:[ self down20].
-			
-					 
+	(Indicators at: 'stochRSI') = 'up20'	ifTrue: [ self up20 ].
+	(Indicators at: 'stochRSI') = 'up80'	ifTrue: [ self up80 ].
+	(Indicators at: 'stochRSI') = 'down80' ifTrue: [ self down80 ].
+	(Indicators at: 'stochRSI') = 'down20' ifTrue: [ self down20 ].
 	(Delay forSeconds: 300000) wait ] repeat ]
 		forkNamed: 'Pharocks processMonitor'
 ]
