@@ -116,7 +116,9 @@ PharocksOperator >> down80 [
 { #category : #accessing }
 PharocksOperator >> initialize [
 	
-	PharocksOperator setIndicator: 'stochRSI' value: 'up20'
+	PharocksOperator setIndicator: 'stochRSI' value: 'up20'.
+	result := OrderedCollection new
+	
 	
 	
 ]
@@ -125,9 +127,9 @@ PharocksOperator >> initialize [
 PharocksOperator >> startMonitor [
 	| server rsi run|
 	rsi := (Indicators at: 'stochRSI').	
+	processMonitor := [ [ 
 	server := PharocksServer new.
 	server start.
-	processMonitor := [ [ 
 	rsi = (Indicators at: 'stochRSI') ifTrue: [ run := false ] ifFalse: [ rsi := (Indicators at: 'stochRSI'). run := true ].	
 	((rsi = 'up20') & run) ifTrue: [ self up20 ].
 	((rsi = 'up80') & run) ifTrue: [ self up80 ].
@@ -158,5 +160,8 @@ PharocksOperator >> up80 [
 	strategy := PharocksStrategy simpleWinLossPercentage80.
 	self walletSync.
 	self updateAssets.
+	"If it's true, have money in the wallet, it's because is coming from  top 'down80' and it sold all assets before. Now looks like is going to increase again ,in the top, so buy assets using strategy 80 (short loss percentage).
+	If is false, there is no free money, it's because is coming from bottom 'up20' " 
+	wallet amountTotalUSD - wallet amountTotalUSDFree < (wallet amountTotalUSD * 0.1 ) ifTrue: [self createAssets. self assetsBuy]. 
 	self assetsSellOCO. 
 ]
