@@ -89,7 +89,7 @@ PharocksBroker >> createAssets [
 				(PharocksAssets
 					cryptoPair: symbol
 					buyPrice: (lastPrice round:4)
-					quantity: (wallet amountTotalUSDFree / numberOfAssets / lastPrice )
+					quantity: ((wallet amountTotalUSDFree - (wallet amountTotalUSDFree * 3/100)) / numberOfAssets / lastPrice )
 					profitPercentage: ((assetsPercentages at: i) at: 'profitPercentage')
 					lossPercentage: ((assetsPercentages at: i) at: 'lossPercentage')) ]
 ]
@@ -180,6 +180,7 @@ PharocksBroker >> updateAssets [
 	| assetsPercentages lastPrice symbol|
 	"need refactory"
 	assetsPercentages := strategy assetsPercentage.
+	(wallet assets) ifNil: [ self createAssets ].
 	1 to: assetsPercentages size do: [ :i | 
 		symbol := ((wallet assets at: i) cryptoPair).
 		lastPrice := exchange symbolPriceSell: symbol lastOrders: 5.

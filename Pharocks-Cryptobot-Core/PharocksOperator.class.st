@@ -102,6 +102,26 @@ PharocksOperator class >> setIndicator: aString value: aString2 [
 ]
 
 { #category : #accessing }
+PharocksOperator class >> start [
+	| operator |
+	PharocksOperator allInstances
+		ifEmpty: [ Transcript show: 'Start Pharocks with API Keys before'.
+			^ 0 ]
+		ifNotEmpty: [ operator := self allInstances at: 1.
+			operator stopMonitor.
+			operator startMonitor.
+			^ Indicators ]
+]
+
+{ #category : #accessing }
+PharocksOperator class >> stop [
+	| operator | 
+	operator := self allInstances at: 1.
+	operator stopMonitor.
+	^  Indicators 
+]
+
+{ #category : #accessing }
 PharocksOperator >> down20 [
 	exchange privateOrdersCancelAll.
 	exchange privateSellEverything
@@ -115,12 +135,8 @@ PharocksOperator >> down80 [
 
 { #category : #accessing }
 PharocksOperator >> initialize [
-	
-	PharocksOperator setIndicator: 'stochRSI' value: 'up20'.
+	Indicators ifEmpty: [ PharocksOperator setIndicator: 'stochRSI' value: 'up20' ].
 	result := OrderedCollection new
-	
-	
-	
 ]
 
 { #category : #accessing }

@@ -25,7 +25,7 @@ PharocksServer >> initialize [
 	| delegate |
 	delegate := PharocksDelegate new.
 	delegate pharocks: PharocksOperator. 
-	znServer := ZnSingleThreadedServer defaultOn: 8080.
+	znServer := ZnSingleThreadedServer defaultOn: 80.
 	znServer delegate: delegate.
 	
 ]
