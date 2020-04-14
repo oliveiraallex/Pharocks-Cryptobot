@@ -5,7 +5,8 @@ Class {
 		'apiKey',
 		'apiSecretKey',
 		'website',
-		'apiUrl'
+		'apiUrl',
+		'result'
 	],
 	#category : #'Pharocks-Cryptobot-Binance'
 }
@@ -48,7 +49,7 @@ PharocksBinanceExchange >> configuration [
 
 { #category : #accessing }
 PharocksBinanceExchange >> deletePrivate: path parameters: aDictionary [
-	| webClient queryString signature answer|
+	| webClient queryString signature answer| 
 	aDictionary at: 'timestamp' put: self timestamp.
 	queryString := self getQueryAsString: aDictionary.
 	signature := self signQuery: queryString.
@@ -57,7 +58,9 @@ PharocksBinanceExchange >> deletePrivate: path parameters: aDictionary [
 		headerAddAll: {('X-MBX-APIKEY' -> apiKey)} asDictionary;
 		queryAddAll: aDictionary;
 		queryAddAll: {(#signature -> signature)} asDictionary.
+	result at: Time current put: 'DELETE ',path,queryString.
 	answer := NeoJSONReader fromString: webClient delete.
+	result at: Time current put: answer.
 	^ answer
 ]
 
@@ -91,7 +94,9 @@ PharocksBinanceExchange >> getPrivate: path parameters: aDictionary [
 		headerAddAll: {('X-MBX-APIKEY' -> apiKey)} asDictionary;
 		queryAddAll: aDictionary;
 		queryAddAll: {(#signature -> signature)} asDictionary.
+	result at: Time current put: 'GET ',path,queryString.
 	answer := NeoJSONReader fromString: webClient get.
+	result at: Time current put: answer.
 	^ answer
 ]
 
@@ -107,13 +112,13 @@ PharocksBinanceExchange >> getQueryAsString: aDictionary [
 { #category : #initialization }
 PharocksBinanceExchange >> initialize [
 	self configuration .
-	
+	result := Dictionary new.
 	"runQuery := PharocksBinanceOperations new."
 ]
 
 { #category : #accessing }
 PharocksBinanceExchange >> postPrivate: path parameters: aDictionary [
-	| webClient queryString signature answer|
+	| webClient queryString signature answer| 
 	aDictionary at: 'timestamp' put: self timestamp.
 	queryString := self getQueryAsString: aDictionary.
 	signature := self signQuery: queryString.
@@ -122,7 +127,9 @@ PharocksBinanceExchange >> postPrivate: path parameters: aDictionary [
 		headerAddAll: {('X-MBX-APIKEY' -> apiKey)} asDictionary;
 		queryAddAll: aDictionary;
 		queryAddAll: {(#signature -> signature)} asDictionary.
+	result at: Time current put: 'POST ',path,queryString.
 	answer := NeoJSONReader fromString: webClient post.
+	result at: Time current put: answer.
 	^ answer
 ]
 

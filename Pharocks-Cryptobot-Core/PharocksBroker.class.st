@@ -42,7 +42,7 @@ PharocksBroker >> assetsSellOCO [
 								add:
 									(exchange
 										privateOrderOCOCreateSell: asset cryptoPair
-										quantity: (asset quantity - (asset quantity * 0.2 / 100) round: 2)
+										quantity: (asset quantity - (asset quantity * 1 / 100) round: 2)
 										atPrice: asset sellPriceProfit
 										stopPrice: asset sellPriceLoss
 										stopLimitPrice: asset sellPriceLossLimit).
@@ -55,7 +55,8 @@ PharocksBroker >> checkOrderFilled [
 	|ordersBuy|
 	orderFilled := true.
 	ordersBuy := exchange privateOrderOpenGet: ''. 
-	ordersBuy do: [ :order | (((order at: 'side') = 'BUY') & ((order at: 'status') = 'NEW')) ifTrue: [ ^ orderFilled := false ] ]
+	ordersBuy do: [ :order | (((order at: 'side') = 'BUY') & ((order at: 'status') = 'NEW')) ifTrue: [ ^ orderFilled := false ] ].
+	1 seconds wait
 ]
 
 { #category : #accessing }

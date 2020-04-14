@@ -108,8 +108,10 @@ PharocksOperator class >> start [
 		ifEmpty: [ Transcript show: 'Start Pharocks with API Keys before'.
 			^ 0 ]
 		ifNotEmpty: [ operator := self allInstances at: 1.
-			operator stopMonitor.
+
 			operator startMonitor.
+			Transcript show: 'Pharocks started. Indicators: '.
+			Transcript show: Indicators asString;cr.
 			^ Indicators ]
 ]
 
@@ -123,14 +125,14 @@ PharocksOperator class >> stop [
 
 { #category : #accessing }
 PharocksOperator >> down20 [
-	exchange privateOrdersCancelAll.
-	exchange privateSellEverything
+	"exchange privateOrdersCancelAll.
+	exchange privateSellEverything"
 ]
 
 { #category : #accessing }
 PharocksOperator >> down80 [
-	exchange privateOrdersCancelAll.
-	exchange privateSellEverything
+	"exchange privateOrdersCancelAll.
+	exchange privateSellEverything"
 ]
 
 { #category : #accessing }
@@ -162,7 +164,7 @@ PharocksOperator >> stopMonitor [
 
 { #category : #accessing }
 PharocksOperator >> up20 [
-	exchange privateOrdersCancelAll.
+	"exchange privateOrdersCancelAll."
 	strategy := PharocksStrategy simpleWinLossPercentage.
 	self walletSync.
 	self createAssets.
@@ -172,12 +174,10 @@ PharocksOperator >> up20 [
 
 { #category : #accessing }
 PharocksOperator >> up80 [
-	exchange privateOrdersCancelAll.
-	strategy := PharocksStrategy simpleWinLossPercentage80.
+	"exchange privateOrdersCancelAll."
+	strategy := PharocksStrategy simpleWinLossPercentage.
 	self walletSync.
-	self updateAssets.
-	"If it's true, have money in the wallet, it's because is coming from  top 'down80' and it sold all assets before. Now looks like is going to increase again ,in the top, so buy assets using strategy 80 (short loss percentage).
-	If is false, there is no free money, it's because is coming from bottom 'up20' " 
-	wallet amountTotalUSD - wallet amountTotalUSDFree < (wallet amountTotalUSD * 0.1 ) ifTrue: [self createAssets. self assetsBuy]. 
+	self createAssets.
+	self assetsBuy.
 	self assetsSellOCO. 
 ]
