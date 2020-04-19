@@ -164,20 +164,22 @@ PharocksOperator >> stopMonitor [
 
 { #category : #accessing }
 PharocksOperator >> up20 [
-	"exchange privateOrdersCancelAll."
 	strategy := PharocksStrategy simpleWinLossPercentage.
+	orderFilled := false.
 	self walletSync.
 	self createAssets.
-	self assetsBuy.
-	self assetsSellOCO. 
+	wallet amountTotalUSDFree > (wallet amountTotalUSD * 0.1)
+		ifTrue: [ self assetsBuy ifFalse: [ self assetsBuy  ] ].
+	self assetsSellOCO
 ]
 
 { #category : #accessing }
 PharocksOperator >> up80 [
-	"exchange privateOrdersCancelAll."
 	strategy := PharocksStrategy simpleWinLossPercentage.
+	orderFilled := false.
 	self walletSync.
 	self createAssets.
-	self assetsBuy.
-	self assetsSellOCO. 
+	wallet amountTotalUSDFree > (wallet amountTotalUSD * 0.1)
+		ifTrue: [ self assetsBuy ifFalse: [ self assetsBuy  ] ].
+	self assetsSellOCO
 ]

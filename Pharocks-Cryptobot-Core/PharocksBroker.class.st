@@ -13,9 +13,9 @@ Class {
 
 { #category : #accessing }
 PharocksBroker >> assetsBuy [
-	| resultBuy |
+	| resultBuy i |
+	i := 1.
 	resultBuy := OrderedCollection new.
-	orderFilled := false.
 	wallet assets
 		do: [ :asset | 
 			asset
@@ -26,28 +26,34 @@ PharocksBroker >> assetsBuy [
 										privateOrderCreateBuy: asset cryptoPair
 										quantity: asset quantity
 										atPrice: asset buyPrice) ] ] ].
-	[ orderFilled ] whileFalse: [ self checkOrderFilled ].	"waiting the buy orders be fill. Can freeze the app. Need refactoring"
-	result add: resultBuy
+	[ orderFilled ]
+		whileFalse: [ 5 seconds wait. 
+			self checkOrderFilled.
+			i := i + 1.
+			i = 5
+				ifTrue: [  orderFilled := true.
+					exchange privateOrdersCancelAll.
+					^ false ] ].
+	^ true
 ]
 
 { #category : #accessing }
 PharocksBroker >> assetsSellOCO [
-	| resultSell |
+	| resultSell bnb |
 	resultSell := OrderedCollection new.
 	wallet assets
 		do: [ :asset | 
 			asset
 				ifNotNil: [ asset status = 'WAITING_TO_BUY'
-						ifTrue: [ resultSell
-								add:
-									(exchange
+						ifTrue: [bnb := (exchange symbolsAmountFree at: 'BNB') asNumber. 
+							resultSell add:
+									( exchange
 										privateOrderOCOCreateSell: asset cryptoPair
-										quantity: (asset quantity - (asset quantity * 1 / 100) round: 2)
+										quantity: ((bnb - (bnb * 1 / 100)  roundDownTo: 0.01) round:2)
 										atPrice: asset sellPriceProfit
 										stopPrice: asset sellPriceLoss
 										stopLimitPrice: asset sellPriceLossLimit).
-							asset status: 'WAITING_TO_SELL' ] ] ].
-	result add: resultSell
+							asset status: 'WAITING_TO_SELL' ] ] ]
 ]
 
 { #category : #accessing }
@@ -55,8 +61,9 @@ PharocksBroker >> checkOrderFilled [
 	|ordersBuy|
 	orderFilled := true.
 	ordersBuy := exchange privateOrderOpenGet: ''. 
-	ordersBuy do: [ :order | (((order at: 'side') = 'BUY') & ((order at: 'status') = 'NEW')) ifTrue: [ ^ orderFilled := false ] ].
-	1 seconds wait
+	ordersBuy do: [ :order | (((order at: 'side') = 'BUY') & ((order at: 'status') = 'NEW')) ifTrue: [ ^ orderFilled := false ] ]
+	
+"change name to orderWaiting"
 ]
 
 { #category : #accessing }
@@ -90,7 +97,7 @@ PharocksBroker >> createAssets [
 				(PharocksAssets
 					cryptoPair: symbol
 					buyPrice: (lastPrice round:4)
-					quantity: ((wallet amountTotalUSDFree - (wallet amountTotalUSDFree * 3/100)) / numberOfAssets / lastPrice )
+					quantity: (wallet amountTotalUSDFree  / numberOfAssets / lastPrice )
 					profitPercentage: ((assetsPercentages at: i) at: 'profitPercentage')
 					lossPercentage: ((assetsPercentages at: i) at: 'lossPercentage')) ]
 ]
