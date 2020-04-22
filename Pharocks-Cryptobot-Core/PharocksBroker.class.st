@@ -6,7 +6,8 @@ Class {
 		'strategy',
 		'exchange',
 		'result',
-		'orderFilled'
+		'orderFilled',
+		'orderWaiting'
 	],
 	#category : #'Pharocks-Cryptobot-Core'
 }
@@ -16,6 +17,7 @@ PharocksBroker >> assetsBuy [
 	| resultBuy i |
 	i := 1.
 	resultBuy := OrderedCollection new.
+	orderFilled := false.
 	wallet assets
 		do: [ :asset | 
 			asset
@@ -27,13 +29,11 @@ PharocksBroker >> assetsBuy [
 										quantity: asset quantity
 										atPrice: asset buyPrice) ] ] ].
 	[ orderFilled ]
-		whileFalse: [ 5 seconds wait. 
+		whileFalse: [ 
+			5 seconds wait.
 			self checkOrderFilled.
 			i := i + 1.
-			i = 5
-				ifTrue: [  orderFilled := true.
-					exchange privateOrdersCancelAll.
-					^ false ] ].
+			i = 5 ifTrue: [ ^ false ] ].
 	^ true
 ]
 
@@ -59,11 +59,13 @@ PharocksBroker >> assetsSellOCO [
 { #category : #accessing }
 PharocksBroker >> checkOrderFilled [
 	|ordersBuy|
-	orderFilled := true.
 	ordersBuy := exchange privateOrderOpenGet: ''. 
-	ordersBuy do: [ :order | (((order at: 'side') = 'BUY') & ((order at: 'status') = 'NEW')) ifTrue: [ ^ orderFilled := false ] ]
-	
-"change name to orderWaiting"
+	(ordersBuy isEmpty) 
+		ifTrue: [ ^ true ]
+		ifFalse: [ordersBuy do: [ :order | 
+			(((order at: 'side') = 'BUY') & (((order at: 'status') = 'PARTIALLY_FILLED' | 'NEW'))) ifTrue: [ ^ orderFilled := false ].
+			(((order at: 'side') = 'BUY') & (((order at: 'status') = 'FILLED'))) ifTrue: [ ^ orderFilled := true ].
+			 ]] 
 ]
 
 { #category : #accessing }
