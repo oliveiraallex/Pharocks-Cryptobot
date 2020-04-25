@@ -167,8 +167,14 @@ PharocksOperator >> up20 [
 	strategy := PharocksStrategy simpleWinLossPercentage.
 	self walletSync.
 	self createAssets.
-	wallet amountTotalUSDFree > (wallet amountTotalUSD * 0.1)
-		ifTrue: [ orderWaiting := self assetsBuy. [orderWaiting] whileFalse: [exchange privateOrdersCancelAll. self createAssets. orderWaiting := self assetsBuy  ] ].
+	(exchange symbolsAmountTotal at: 'USDT') > (wallet amountTotalUSD * 0.1)
+		ifTrue: [ orderWaiting := self assetsBuy.
+			[ orderWaiting ]
+				whileFalse: [ exchange privateOrdersCancelAll.
+					self walletSync.
+					self createAssets.
+					orderWaiting := self assetsBuy.
+					((exchange symbolsAmountTotal at: 'USDT') > (wallet amountTotalUSD * 0.1)) ifFalse: [orderWaiting := true] ] ].
 	self assetsSellOCO
 ]
 
@@ -177,7 +183,13 @@ PharocksOperator >> up80 [
 	strategy := PharocksStrategy simpleWinLossPercentage.
 	self walletSync.
 	self createAssets.
-	wallet amountTotalUSDFree > (wallet amountTotalUSD * 0.1)
-		ifTrue: [ orderWaiting := self assetsBuy. [orderWaiting] whileFalse: [exchange privateOrdersCancelAll. self createAssets. orderWaiting := self assetsBuy  ] ].
+	(exchange symbolsAmountTotal at: 'USDT') > (wallet amountTotalUSD * 0.1)
+		ifTrue: [ orderWaiting := self assetsBuy.
+			[ orderWaiting ]
+				whileFalse: [ exchange privateOrdersCancelAll.
+					self walletSync.
+					self createAssets.
+					orderWaiting := self assetsBuy.
+					((exchange symbolsAmountTotal at: 'USDT') > (wallet amountTotalUSD * 0.1)) ifFalse: [orderWaiting := true] ] ].
 	self assetsSellOCO
 ]
