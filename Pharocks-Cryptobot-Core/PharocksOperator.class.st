@@ -139,7 +139,7 @@ PharocksOperator >> down80 [
 
 { #category : #accessing }
 PharocksOperator >> initialize [
-	Indicators ifEmpty: [ PharocksOperator setIndicator: 'stochRSI' value: 'up20' ].
+	Indicators ifEmpty: [ self setIndicator: 'stochRSI' value: 'up20' ].
 	result := OrderedCollection new
 ]
 

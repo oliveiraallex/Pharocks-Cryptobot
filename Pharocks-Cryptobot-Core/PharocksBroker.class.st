@@ -31,7 +31,8 @@ PharocksBroker >> assetsBuy [
 										privateOrderCreateBuy: asset cryptoPair
 										quantity: asset quantity
 										atPrice: asset buyPrice). 
-										PharocksLog logAdd: resultBuy. ] ] ].
+										
+										PharocksLog logAdd: 'REPLY ',resultBuy ] ] ].
 	
 	[ orderFilled ]
 		whileFalse: [ 
@@ -61,7 +62,7 @@ PharocksBroker >> assetsSellOCO [
 										stopPrice: asset sellPriceLoss
 										stopLimitPrice: asset sellPriceLossLimit).
 							asset status: 'WAITING_TO_SELL' .
-							PharocksLog logAdd: resultSell ] ] ].
+							PharocksLog logAdd: 'REPLY ',resultSell ] ] ].
 				
 ]
 
@@ -82,34 +83,40 @@ PharocksBroker >> checkOrderFilled [
 
 { #category : #accessing }
 PharocksBroker >> checkOrderFilledOCO [
-	|ordersOCO currentPrice limiteMakerPrice resultSell| 
+	|ordersOCO currentPrice limitMakerPrice resultSell stopPrice stopLimit | 
 	resultSell := OrderedCollection new.
 	"PharocksLog logAdd: '---Starting checkOrderFilledOCO'."
 	ordersOCO := exchange privateOrderOpenGet: ''. 
 	"PharocksLog logAdd: 'Checking if OCO order is empty.'."
 	(ordersOCO isEmpty) 
 		ifTrue: [ PharocksLog logAdd: 'OCO orders is empty. Nothing to do.'. ^ orderFilledOCO := nil  ]
-		ifFalse: [PharocksLog logAdd: 'Is not empty'. 
-			ordersOCO do: [ :order | PharocksLog logAdd: 'order at: type ',(order at: 'type') .
+		ifFalse: ["PharocksLog logAdd: 'Is not empty'. "
+			ordersOCO do: [ :order | "PharocksLog logAdd: 'order at: type ',(order at: 'type') ."
+			((order at: 'side') = 'SELL') & ((order at: 'type') = 'STOP_LOSS_LIMIT') 
+			ifTrue: [ 
+				stopPrice := (order at: 'stopPrice') asNumber round:4.
+				stopLimit := (order at: 'price') asNumber round:4.
+				].
 			((order at: 'side') = 'SELL') & ((order at: 'type') = 'LIMIT_MAKER') 
 			ifTrue: [ 
-				limiteMakerPrice := (order at: 'price') asNumber.
+				limitMakerPrice := (order at: 'price') asNumber round:4 , ', stopPrice: ',stopPrice asString,', stopLimit: ', stopLimit asString.
 				currentPrice:= (exchange symbolLatestPrice: 'BNBUSDT').
-				PharocksLog logAdd: 'Limit maker OCO order open true. limiteMakerPrice: ',limiteMakerPrice asString. 
-				PharocksLog logAdd: 'Current price of coin on exchange: ',currentPrice asString. 
-				PharocksLog logAdd: currentPrice asString,' > ' ,(limiteMakerPrice * 0.9995) asString,' = ',  (currentPrice > (limiteMakerPrice * 0.9995)) asString.
-				(currentPrice > (limiteMakerPrice * 0.9995)) ifTrue: [ 
-					PharocksLog logAdd: 'currentPrice bigger than limiteMakerPrice -0.05%. Going to cancel and create new OCO orders'. 
+				PharocksLog logAdd: 'NOW limitMaker: ',limitMakerPrice asString. 
+				
+				PharocksLog logAdd: 'NEW limitMaker: ',((limitMakerPrice * 1.003) round:4) asString,', stopPrice: ' ,((limitMakerPrice * 0.9975 ) round:4) asString,', stopLimit: ',  ((limitMakerPrice * 0.997 ) round:4) asString.
+				PharocksLog logAdd: 'Current price of coin on exchange: ',currentPrice asString,' > ' ,((limitMakerPrice * 0.999)round:4) asString,' = ',  (currentPrice > (limitMakerPrice * 0.999)) asString. 
+				(currentPrice > (limitMakerPrice * 0.999)) ifTrue: [ 
+					PharocksLog logAdd: 'currentPrice bigger than limiteMakerPrice -0.1%. Going to cancel and create new OCO orders'. 
 					exchange privateOrdersCancelAll.
 				resultSell add:(	
 					exchange
 						privateOrderOCOCreateSell: (order at: 'symbol')
 						quantity: (order at: 'origQty')
-						atPrice: ((limiteMakerPrice * 1.002) round:4)
-						stopPrice: ((limiteMakerPrice * 0.999 ) round:4)
-						stopLimitPrice: ((limiteMakerPrice * 0.9991 ) round:4)).
+						atPrice: ((limitMakerPrice * 1.003) round:4)
+						stopPrice: ((limitMakerPrice * 0.9975 ) round:4)
+						stopLimitPrice: ((limitMakerPrice * 0.997 ) round:4)).
 			
-				PharocksLog logAdd: resultSell
+				PharocksLog logAdd: 'REPLY ',resultSell
 					 ].
 				
 				 ]. 
