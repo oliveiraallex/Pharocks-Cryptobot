@@ -18,7 +18,7 @@ PharocksStrategy class >> simpleWinLossPercentage [
 	strategy := self new.
 	strategy numberOfAssets: 1.
 	strategy market: 'USDT'.	
-	strategy assetsPercentage add: {('cryptoPair' -> 'BNBUSDT').('profitPercentage' -> 1).('lossPercentage' -> 0.5).} asDictionary.
+	strategy assetsPercentage add: {('cryptoPair' -> 'BNBUSDT').('profitPercentage' -> 0.5).('lossPercentage' -> 0.5).} asDictionary.
 	^ strategy
 ]
 

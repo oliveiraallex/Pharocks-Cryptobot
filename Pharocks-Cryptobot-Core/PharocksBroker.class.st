@@ -7,7 +7,8 @@ Class {
 		'exchange',
 		'result',
 		'orderFilled',
-		'orderWaiting'
+		'orderWaiting',
+		'orderFilledOCO'
 	],
 	#category : #'Pharocks-Cryptobot-Core'
 }
@@ -24,13 +25,12 @@ PharocksBroker >> assetsBuy [
 			asset
 				ifNotNil: [ asset status = 'WAITING_TO_BUY'
 						ifTrue: [PharocksLog logAdd: 'Creating buy order in exchange'.
-							 "resultBuy
+							 resultBuy
 								add:
 									(exchange
 										privateOrderCreateBuy: asset cryptoPair
 										quantity: asset quantity
-										atPrice: asset buyPrice). "
-										
+										atPrice: asset buyPrice). 
 										PharocksLog logAdd: resultBuy. ] ] ].
 	
 	[ orderFilled ]
@@ -52,15 +52,17 @@ PharocksBroker >> assetsSellOCO [
 		do: [ :asset | 
 			asset
 				ifNotNil: [ asset status = 'WAITING_TO_BUY'
-						ifTrue: ["bnb := (exchange symbolsAmountFree at: 'BNB') asNumber. "
-							"resultSell add:
+						ifTrue: [bnb := (exchange symbolsAmountFree at: 'BNB') asNumber. 
+							resultSell add:
 									( exchange
 										privateOrderOCOCreateSell: asset cryptoPair
 										quantity: ((bnb   roundDownTo: 0.01) round:2)
 										atPrice: asset sellPriceProfit
 										stopPrice: asset sellPriceLoss
-										stopLimitPrice: asset sellPriceLossLimit)."
-							asset status: 'WAITING_TO_SELL' ] ] ]
+										stopLimitPrice: asset sellPriceLossLimit).
+							asset status: 'WAITING_TO_SELL' .
+							PharocksLog logAdd: resultSell ] ] ].
+				
 ]
 
 { #category : #accessing }
@@ -73,8 +75,44 @@ PharocksBroker >> checkOrderFilled [
 		ifTrue: [ PharocksLog logAdd: 'Is empty'. ^ orderFilled := true  ]
 		ifFalse: [PharocksLog logAdd: 'Is not empty'. 
 			ordersBuy do: [ :order | PharocksLog logAdd: 'order at: status: ',(order at: 'status') .
-			(((order at: 'side') = 'BUY') & ((order at: 'status') = 'PARTIALLY_FILLED' | (order at: 'status') = 'NEW'))  ifTrue: [ PharocksLog logAdd: 'PARTIALLY_FILLED or NEW true'. ^ orderFilled := false ].
+			(((order at: 'side') = 'BUY') & (((order at: 'status') = 'PARTIALLY_FILLED') | ((order at: 'status') = 'NEW')))  ifTrue: [ PharocksLog logAdd: 'PARTIALLY_FILLED or NEW true'. ^ orderFilled := false ].
 			(((order at: 'side') = 'BUY') & (((order at: 'status') = 'FILLED'))) ifTrue: [ PharocksLog logAdd: 'FILLED true'.  ^ orderFilled := true ].
+			 ]] 
+]
+
+{ #category : #accessing }
+PharocksBroker >> checkOrderFilledOCO [
+	|ordersOCO currentPrice limiteMakerPrice resultSell| 
+	resultSell := OrderedCollection new.
+	"PharocksLog logAdd: '---Starting checkOrderFilledOCO'."
+	ordersOCO := exchange privateOrderOpenGet: ''. 
+	"PharocksLog logAdd: 'Checking if OCO order is empty.'."
+	(ordersOCO isEmpty) 
+		ifTrue: [ PharocksLog logAdd: 'OCO orders is empty. Nothing to do.'. ^ orderFilledOCO := nil  ]
+		ifFalse: [PharocksLog logAdd: 'Is not empty'. 
+			ordersOCO do: [ :order | PharocksLog logAdd: 'order at: type ',(order at: 'type') .
+			((order at: 'side') = 'SELL') & ((order at: 'type') = 'LIMIT_MAKER') 
+			ifTrue: [ 
+				limiteMakerPrice := (order at: 'price') asNumber.
+				currentPrice:= (exchange symbolLatestPrice: 'BNBUSDT').
+				PharocksLog logAdd: 'Limit maker OCO order open true. limiteMakerPrice: ',limiteMakerPrice asString. 
+				PharocksLog logAdd: 'Current price of coin on exchange: ',currentPrice asString. 
+				PharocksLog logAdd: currentPrice asString,' > ' ,(limiteMakerPrice * 0.9995) asString,' = ',  (currentPrice > (limiteMakerPrice * 0.9995)) asString.
+				(currentPrice > (limiteMakerPrice * 0.9995)) ifTrue: [ 
+					PharocksLog logAdd: 'currentPrice bigger than limiteMakerPrice -0.05%. Going to cancel and create new OCO orders'. 
+					exchange privateOrdersCancelAll.
+				resultSell add:(	
+					exchange
+						privateOrderOCOCreateSell: (order at: 'symbol')
+						quantity: (order at: 'origQty')
+						atPrice: ((limiteMakerPrice * 1.002) round:4)
+						stopPrice: ((limiteMakerPrice * 0.999 ) round:4)
+						stopLimitPrice: ((limiteMakerPrice * 0.9991 ) round:4)).
+			
+				PharocksLog logAdd: resultSell
+					 ].
+				
+				 ]. 
 			 ]] 
 ]
 
@@ -193,6 +231,26 @@ PharocksBroker >> strategy [
 { #category : #accessing }
 PharocksBroker >> strategy: anObject [
 	strategy := anObject 
+]
+
+{ #category : #accessing }
+PharocksBroker >> trailingStop [
+	| limiteMakerPrice ordersOCO|
+	
+limiteMakerPrice := self checkOrderFilledOCO asNumber.
+limiteMakerPrice ifNotNil: [ 
+	 ((exchange symbolLatestPrice: 'BNBUSDT') > limiteMakerPrice * 0.999) ifTrue: [ 
+		ordersOCO := exchange privateOrderOpenGet: ''. 
+		ordersOCO do: [ :order | 
+			PharocksLog logAdd: 'Limit maker order open true. Returning price: ',(order at: 'price')asString. 
+	"	exchange
+			privateOrderOCOCreateSell: asset cryptoPair
+			quantity: ((bnb   roundDownTo: 0.01) round:2)
+			atPrice: asset sellPriceProfit
+			stopPrice: asset sellPriceLoss
+			stopLimitPrice: asset sellPriceLossLimit"
+		 ]
+	 ] ]
 ]
 
 { #category : #accessing }
