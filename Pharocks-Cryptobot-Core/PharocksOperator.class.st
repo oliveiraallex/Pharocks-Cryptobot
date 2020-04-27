@@ -125,12 +125,14 @@ PharocksOperator class >> stop [
 
 { #category : #accessing }
 PharocksOperator >> down20 [
+	PharocksLog logAdd: '----------Starting down20'.
 	"exchange privateOrdersCancelAll.
 	exchange privateSellEverything"
 ]
 
 { #category : #accessing }
 PharocksOperator >> down80 [
+	PharocksLog logAdd: '----------Starting down80'.
 	"exchange privateOrdersCancelAll.
 	exchange privateSellEverything"
 ]
@@ -164,18 +166,26 @@ PharocksOperator >> stopMonitor [
 
 { #category : #accessing }
 PharocksOperator >> up20 [
+	|bnb| 
+	PharocksLog logAdd: '----------Starting up20'.
 	strategy := PharocksStrategy simpleWinLossPercentage.
 	self walletSync.
 	self createAssets.
+	PharocksLog logAdd: 'Total of money in the wallet: Total USDT: ',(exchange symbolsAmountTotal at: 'USDT') asString,'. Total BNB Free: ',(exchange symbolsAmountFree at: 'BNB') asString, '. Total in USD: ',wallet amountTotalUSD asString.
 	(exchange symbolsAmountTotal at: 'USDT') > (wallet amountTotalUSD * 0.1)
-		ifTrue: [ orderWaiting := self assetsBuy.
+		ifTrue: [PharocksLog logAdd: 'There is money in wallet. Lets buy BNB. Lets cancel all buy and sell orders, to release the money'. orderWaiting := self assetsBuy.
 			[ orderWaiting ]
-				whileFalse: [ exchange privateOrdersCancelAll.
+				whileFalse: [ PharocksLog logAdd: 'orderWaiting is false. Lets cancel all orders, syncronize, create new numbers and buy it again'. "exchange privateOrdersCancelAll."
 					self walletSync.
 					self createAssets.
 					orderWaiting := self assetsBuy.
-					((exchange symbolsAmountTotal at: 'USDT') > (wallet amountTotalUSD * 0.1)) ifFalse: [orderWaiting := true] ] ].
-	self assetsSellOCO
+					PharocksLog logAdd: 'The new order is ', orderWaiting asString.
+					((exchange symbolsAmountTotal at: 'USDT') > (wallet amountTotalUSD * 0.1)) ifFalse: [ PharocksLog logAdd: 'Money USDT in wallet after 2 times trying buy:  ',(exchange symbolsAmountTotal at: 'USDT')asString, '. Returning true in orderWaiting to get out of loop'. orderWaiting := true] ] ].
+	PharocksLog logAdd: 'Going to create the OCO sell orders'.
+	
+	bnb := (exchange symbolsAmountFree at: 'BNB') asNumber. 
+	PharocksLog logAdd: 'BNB free to create sell order: ',bnb asString.
+	bnb > 1 ifTrue: [self assetsSellOCO ]
 ]
 
 { #category : #accessing }

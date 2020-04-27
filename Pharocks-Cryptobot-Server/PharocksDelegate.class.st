@@ -9,6 +9,7 @@ Class {
 
 { #category : #'as yet unclassified' }
 PharocksDelegate >> handleRequest: aRequest [
+	PharocksLog logAdd: 'SIGNAL RECEIVED: ',aRequest asString.
 	self perform: aRequest uri lastPathSegment asSymbol.
 	^ ZnResponse ok: aRequest uri
 ]

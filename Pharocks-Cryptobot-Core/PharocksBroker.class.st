@@ -15,6 +15,7 @@ Class {
 { #category : #accessing }
 PharocksBroker >> assetsBuy [
 	| resultBuy i |
+	PharocksLog logAdd: '-----Starting assetsBuy'.
 	i := 1.
 	resultBuy := OrderedCollection new.
 	orderFilled := false.
@@ -22,49 +23,58 @@ PharocksBroker >> assetsBuy [
 		do: [ :asset | 
 			asset
 				ifNotNil: [ asset status = 'WAITING_TO_BUY'
-						ifTrue: [ resultBuy
+						ifTrue: [PharocksLog logAdd: 'Creating buy order in exchange'.
+							 "resultBuy
 								add:
 									(exchange
 										privateOrderCreateBuy: asset cryptoPair
 										quantity: asset quantity
-										atPrice: asset buyPrice) ] ] ].
+										atPrice: asset buyPrice). "
+										
+										PharocksLog logAdd: resultBuy. ] ] ].
+	
 	[ orderFilled ]
 		whileFalse: [ 
+			PharocksLog logAdd: 'Checking if buy order is filled. orderFilled = ', orderFilled asString, '. Waiting 5 seconds'.
 			5 seconds wait.
 			self checkOrderFilled.
 			i := i + 1.
-			i = 5 ifTrue: [ ^ false ] ].
+			i = 5 ifTrue: [PharocksLog logAdd: 'Order not filled'. ^ false ] ].
 	^ true
 ]
 
 { #category : #accessing }
 PharocksBroker >> assetsSellOCO [
 	| resultSell bnb |
+	PharocksLog logAdd: '-----Starting assetsSellOCO'.
 	resultSell := OrderedCollection new.
 	wallet assets
 		do: [ :asset | 
 			asset
 				ifNotNil: [ asset status = 'WAITING_TO_BUY'
-						ifTrue: [bnb := (exchange symbolsAmountFree at: 'BNB') asNumber. 
-							resultSell add:
+						ifTrue: ["bnb := (exchange symbolsAmountFree at: 'BNB') asNumber. "
+							"resultSell add:
 									( exchange
 										privateOrderOCOCreateSell: asset cryptoPair
-										quantity: ((bnb - (bnb * 1 / 100)  roundDownTo: 0.01) round:2)
+										quantity: ((bnb   roundDownTo: 0.01) round:2)
 										atPrice: asset sellPriceProfit
 										stopPrice: asset sellPriceLoss
-										stopLimitPrice: asset sellPriceLossLimit).
+										stopLimitPrice: asset sellPriceLossLimit)."
 							asset status: 'WAITING_TO_SELL' ] ] ]
 ]
 
 { #category : #accessing }
 PharocksBroker >> checkOrderFilled [
 	|ordersBuy|
+	PharocksLog logAdd: '---Starting checkOrderFilled'.
 	ordersBuy := exchange privateOrderOpenGet: ''. 
+	PharocksLog logAdd: 'Checking if buy order is empty. ordersBuy = ', ordersBuy asString.
 	(ordersBuy isEmpty) 
-		ifTrue: [ ^ true ]
-		ifFalse: [ordersBuy do: [ :order | 
-			(((order at: 'side') = 'BUY') & (((order at: 'status') = 'PARTIALLY_FILLED' | 'NEW'))) ifTrue: [ ^ orderFilled := false ].
-			(((order at: 'side') = 'BUY') & (((order at: 'status') = 'FILLED'))) ifTrue: [ ^ orderFilled := true ].
+		ifTrue: [ PharocksLog logAdd: 'Is empty'. ^ orderFilled := true  ]
+		ifFalse: [PharocksLog logAdd: 'Is not empty'. 
+			ordersBuy do: [ :order | PharocksLog logAdd: 'order at: status: ',(order at: 'status') .
+			(((order at: 'side') = 'BUY') & ((order at: 'status') = 'PARTIALLY_FILLED' | (order at: 'status') = 'NEW'))  ifTrue: [ PharocksLog logAdd: 'PARTIALLY_FILLED or NEW true'. ^ orderFilled := false ].
+			(((order at: 'side') = 'BUY') & (((order at: 'status') = 'FILLED'))) ifTrue: [ PharocksLog logAdd: 'FILLED true'.  ^ orderFilled := true ].
 			 ]] 
 ]
 

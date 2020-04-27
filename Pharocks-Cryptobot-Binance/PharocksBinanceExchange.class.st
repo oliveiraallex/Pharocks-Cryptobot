@@ -58,7 +58,7 @@ PharocksBinanceExchange >> deletePrivate: path parameters: aDictionary [
 		headerAddAll: {('X-MBX-APIKEY' -> apiKey)} asDictionary;
 		queryAddAll: aDictionary;
 		queryAddAll: {(#signature -> signature)} asDictionary.
-	result at: Time current put: 'DELETE ',path,queryString.
+	PharocksLog logAdd: 'DELETE ',path,queryString.
 	answer := NeoJSONReader fromString: webClient delete.
 	result at: Time current put: answer.
 	^ answer
@@ -94,7 +94,7 @@ PharocksBinanceExchange >> getPrivate: path parameters: aDictionary [
 		headerAddAll: {('X-MBX-APIKEY' -> apiKey)} asDictionary;
 		queryAddAll: aDictionary;
 		queryAddAll: {(#signature -> signature)} asDictionary.
-	result at: Time current put: 'GET ',path,queryString.
+	PharocksLog logAdd: 'GET ',path,queryString.
 	answer := NeoJSONReader fromString: webClient get.
 	result at: Time current put: answer.
 	^ answer
@@ -127,7 +127,7 @@ PharocksBinanceExchange >> postPrivate: path parameters: aDictionary [
 		headerAddAll: {('X-MBX-APIKEY' -> apiKey)} asDictionary;
 		queryAddAll: aDictionary;
 		queryAddAll: {(#signature -> signature)} asDictionary.
-	result at: Time current put: 'POST ',path,queryString.
+	PharocksLog logAdd: 'POST ',path,queryString.
 	answer := NeoJSONReader fromString: webClient post.
 	result at: Time current put: answer.
 	^ answer
