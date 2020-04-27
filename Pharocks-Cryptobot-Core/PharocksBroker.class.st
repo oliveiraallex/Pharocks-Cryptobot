@@ -99,9 +99,9 @@ PharocksBroker >> checkOrderFilledOCO [
 				].
 			((order at: 'side') = 'SELL') & ((order at: 'type') = 'LIMIT_MAKER') 
 			ifTrue: [ 
-				limitMakerPrice := (order at: 'price') asNumber round:4 , ', stopPrice: ',stopPrice asString,', stopLimit: ', stopLimit asString.
+				limitMakerPrice := (order at: 'price') asNumber round:4 .
 				currentPrice:= (exchange symbolLatestPrice: 'BNBUSDT').
-				PharocksLog logAdd: 'NOW limitMaker: ',limitMakerPrice asString. 
+				PharocksLog logAdd: 'NOW limitMaker: ',limitMakerPrice asString, ', stopPrice: ',stopPrice asString,', stopLimit: ', stopLimit asString.
 				
 				PharocksLog logAdd: 'NEW limitMaker: ',((limitMakerPrice * 1.003) round:4) asString,', stopPrice: ' ,((limitMakerPrice * 0.9975 ) round:4) asString,', stopLimit: ',  ((limitMakerPrice * 0.997 ) round:4) asString.
 				PharocksLog logAdd: 'Current price of coin on exchange: ',currentPrice asString,' > ' ,((limitMakerPrice * 0.999)round:4) asString,' = ',  (currentPrice > (limitMakerPrice * 0.999)) asString. 

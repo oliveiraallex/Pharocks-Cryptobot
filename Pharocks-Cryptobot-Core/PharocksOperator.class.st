@@ -139,7 +139,7 @@ PharocksOperator >> down80 [
 
 { #category : #accessing }
 PharocksOperator >> initialize [
-	Indicators ifEmpty: [ self setIndicator: 'stochRSI' value: 'up20' ].
+	Indicators ifEmpty: [ PharocksOperator  setIndicator: 'stochRSI' value: 'up20' ].
 	result := OrderedCollection new
 ]
 
@@ -156,7 +156,7 @@ PharocksOperator >> startMonitor [
 	((rsi = 'down80') & run) ifTrue: [ self down80 ].
 	((rsi = 'down20') & run)  ifTrue: [ self down20 ].
 	self checkOrderFilledOCO.
-	(Delay forSeconds: 30) wait ] repeat ]
+	(Delay forSeconds: 10) wait ] repeat ]
 		forkNamed: 'Pharocks processMonitor'
 ]
 
