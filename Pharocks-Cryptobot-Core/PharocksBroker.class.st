@@ -32,7 +32,7 @@ PharocksBroker >> assetsBuy [
 										quantity: asset quantity
 										atPrice: asset buyPrice). 
 										
-										PharocksLog logAdd: 'REPLY ',resultBuy ] ] ].
+										PharocksLog logAdd: 'REPLY ',resultBuy asString ] ] ].
 	
 	[ orderFilled ]
 		whileFalse: [ 
@@ -62,7 +62,7 @@ PharocksBroker >> assetsSellOCO [
 										stopPrice: asset sellPriceLoss
 										stopLimitPrice: asset sellPriceLossLimit).
 							asset status: 'WAITING_TO_SELL' .
-							PharocksLog logAdd: 'REPLY ',resultSell ] ] ].
+							PharocksLog logAdd: 'REPLY ',resultSell asString] ] ].
 				
 ]
 
@@ -116,7 +116,7 @@ PharocksBroker >> checkOrderFilledOCO [
 						stopPrice: ((limitMakerPrice * 0.9975 ) round:4)
 						stopLimitPrice: ((limitMakerPrice * 0.997 ) round:4)).
 			
-				PharocksLog logAdd: 'REPLY ',resultSell
+				PharocksLog logAdd: 'REPLY ',resultSell asString
 					 ].
 				
 				 ]. 
