@@ -177,7 +177,8 @@ PharocksOperator >> up20 [
 	(exchange symbolsAmountTotal at: 'USDT') > (wallet amountTotalUSD * 0.1)
 		ifTrue: [PharocksLog logAdd: 'There is money in wallet. Lets buy BNB. Lets cancel all buy and sell orders, to release the money'. orderWaiting := self assetsBuy.
 			[ orderWaiting ]
-				whileFalse: [ PharocksLog logAdd: 'orderWaiting is false. Lets cancel all orders, syncronize, create new numbers and buy it again'. exchange privateOrdersCancelAll.
+				whileFalse: [ PharocksLog logAdd: 'orderWaiting is false. Lets cancel all orders, syncronize, create new numbers and buy it again'. 
+					exchange privateOrdersCancelAll.
 					self walletSync.
 					self createAssets.
 					orderWaiting := self assetsBuy.
@@ -187,7 +188,8 @@ PharocksOperator >> up20 [
 	
 	bnb := (exchange symbolsAmountFree at: 'BNB') asNumber. 
 	PharocksLog logAdd: 'BNB free to create sell order: ',bnb asString.
-	bnb > 1 ifTrue: [self assetsSellOCO ]
+	bnb > 1 ifTrue: [self assetsSellOCO ].
+	PharocksLog logAdd: '----------Finished up20'
 ]
 
 { #category : #accessing }
@@ -201,7 +203,8 @@ PharocksOperator >> up80 [
 	(exchange symbolsAmountTotal at: 'USDT') > (wallet amountTotalUSD * 0.1)
 		ifTrue: [PharocksLog logAdd: 'There is money in wallet. Lets buy BNB. Lets cancel all buy and sell orders, to release the money'. orderWaiting := self assetsBuy.
 			[ orderWaiting ]
-				whileFalse: [ PharocksLog logAdd: 'orderWaiting is false. Lets cancel all orders, syncronize, create new numbers and buy it again'. exchange privateOrdersCancelAll.
+				whileFalse: [ PharocksLog logAdd: 'orderWaiting is false. Lets cancel all orders, syncronize, create new numbers and buy it again'. 
+					exchange privateOrdersCancelAll.
 					self walletSync.
 					self createAssets.
 					orderWaiting := self assetsBuy.
@@ -211,5 +214,6 @@ PharocksOperator >> up80 [
 	
 	bnb := (exchange symbolsAmountFree at: 'BNB') asNumber. 
 	PharocksLog logAdd: 'BNB free to create sell order: ',bnb asString.
-	bnb > 1 ifTrue: [self assetsSellOCO ]
+	bnb > 1 ifTrue: [self assetsSellOCO ].
+	PharocksLog logAdd: '----------Finished up80'
 ]

@@ -26,13 +26,13 @@ PharocksAssets class >> cryptoPair: aString buyPrice: aNumberBuy quantity: aNumb
 	sellPriceLossLimit := sellPriceLoss - (sellPriceLoss * 0.1/100) asFloat.  "hard coded"
 	assert := self new.
 	assert cryptoPair: aString;
-	buyPrice: ((aNumberBuy asFloat roundDownTo: 0.01)round:2);
-	quantity: ((aNumber1 asFloat roundDownTo: 0.01)round:2) ;
+	buyPrice: ((aNumberBuy asFloat roundDownTo: 0.01)round:4);
+	quantity: ((aNumber1 asFloat roundDownTo: 0.01)round:4) ;
 	profitPercentage: aNumberProfit asFloat;
 	lossPercentage: aNumberLoss asFloat;
-	sellPriceProfit: (sellPriceProfit round:2);
-	sellPriceLoss: (sellPriceLoss round:2);
-	sellPriceLossLimit: (sellPriceLossLimit round:2);
+	sellPriceProfit: (sellPriceProfit round:4);
+	sellPriceLoss: (sellPriceLoss round:4);
+	sellPriceLossLimit: (sellPriceLossLimit round:4);
 	status: 'WAITING_TO_BUY'.
 	
 	

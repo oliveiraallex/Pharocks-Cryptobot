@@ -153,7 +153,7 @@ PharocksBroker >> createAssets [
 			put:
 				(PharocksAssets
 					cryptoPair: symbol
-					buyPrice: (lastPrice round:4)
+					buyPrice: (lastPrice)
 					quantity: (wallet amountTotalUSDFree  / numberOfAssets / lastPrice )
 					profitPercentage: ((assetsPercentages at: i) at: 'profitPercentage')
 					lossPercentage: ((assetsPercentages at: i) at: 'lossPercentage')) ]
