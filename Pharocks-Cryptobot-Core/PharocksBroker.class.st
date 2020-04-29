@@ -53,11 +53,11 @@ PharocksBroker >> assetsSellOCO [
 		do: [ :asset | 
 			asset
 				ifNotNil: [ asset status = 'WAITING_TO_BUY'
-						ifTrue: [bnb := (exchange symbolsAmountFree at: 'BNB') asNumber. 
+						ifTrue: [bnb := (exchange symbolsAmountFree at: 'XRP') asNumber. 
 							resultSell add:
 									( exchange
 										privateOrderOCOCreateSell: asset cryptoPair
-										quantity: ((bnb   roundDownTo: 0.01) round:2)
+										quantity: ((bnb   roundDownTo: 0.1 ) round: 1)
 										atPrice: asset sellPriceProfit
 										stopPrice: asset sellPriceLoss
 										stopLimitPrice: asset sellPriceLossLimit).
@@ -94,27 +94,27 @@ PharocksBroker >> checkOrderFilledOCO [
 			ordersOCO do: [ :order | "PharocksLog logAdd: 'order at: type ',(order at: 'type') ."
 			((order at: 'side') = 'SELL') & ((order at: 'type') = 'STOP_LOSS_LIMIT') 
 			ifTrue: [ 
-				stopPrice := (order at: 'stopPrice') asNumber round:4.
-				stopLimit := (order at: 'price') asNumber round:4.
+				stopPrice := (order at: 'stopPrice') asNumber round:5.
+				stopLimit := (order at: 'price') asNumber round:5.
 				].
 			((order at: 'side') = 'SELL') & ((order at: 'type') = 'LIMIT_MAKER') 
 			ifTrue: [ 
-				limitMakerPrice := (order at: 'price') asNumber round:4 .
-				currentPrice:= (exchange symbolLatestPrice: 'BNBUSDT').
+				limitMakerPrice := (order at: 'price') asNumber round:5 .
+				currentPrice:= (exchange symbolLatestPrice: 'XRPUSDT').
 				PharocksLog logAdd: 'NOW limitMaker: ',limitMakerPrice asString, ', stopPrice: ',stopPrice asString,', stopLimit: ', stopLimit asString.
 				
-				PharocksLog logAdd: 'NEW limitMaker: ',((limitMakerPrice * 1.003) round:4) asString,', stopPrice: ' ,((limitMakerPrice * 0.9975 ) round:4) asString,', stopLimit: ',  ((limitMakerPrice * 0.997 ) round:4) asString.
-				PharocksLog logAdd: 'Current price of coin on exchange: ',currentPrice asString,' > ' ,((limitMakerPrice * 0.999)round:4) asString,' = ',  (currentPrice > (limitMakerPrice * 0.999)) asString. 
-				(currentPrice > (limitMakerPrice * 0.999)) ifTrue: [ 
-					PharocksLog logAdd: 'currentPrice bigger than limiteMakerPrice -0.1%. Going to cancel and create new OCO orders'. 
+				PharocksLog logAdd: 'NEW limitMaker: ',((limitMakerPrice * 1.005) round:5) asString,', stopPrice: ' ,((limitMakerPrice * 0.994 ) round:5) asString,', stopLimit: ',  ((limitMakerPrice * 0.993 ) round:5) asString.
+				PharocksLog logAdd: 'Current price of coin on exchange: ',currentPrice asString,' > ' ,((limitMakerPrice * 0.998)round:5) asString,' = ',  (currentPrice > (limitMakerPrice * 0.998)) asString. 
+				(currentPrice > (limitMakerPrice * 0.998)) ifTrue: [ 
+					PharocksLog logAdd: 'currentPrice bigger than limiteMakerPrice -0.2%. Going to cancel and create new OCO orders'. 
 					exchange privateOrdersCancelAll.
 				resultSell add:(	
 					exchange
 						privateOrderOCOCreateSell: (order at: 'symbol')
 						quantity: (order at: 'origQty')
-						atPrice: ((limitMakerPrice * 1.003) round:4)
-						stopPrice: ((limitMakerPrice * 0.9975 ) round:4)
-						stopLimitPrice: ((limitMakerPrice * 0.997 ) round:4)).
+						atPrice: ((limitMakerPrice * 1.005) round:5)
+						stopPrice: ((limitMakerPrice * 0.994 ) round:5)
+						stopLimitPrice: ((limitMakerPrice * 0.993 ) round:5)).
 			
 				PharocksLog logAdd: 'REPLY ',resultSell asString
 					 ].

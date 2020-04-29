@@ -173,9 +173,9 @@ PharocksOperator >> up20 [
 	strategy := PharocksStrategy simpleWinLossPercentage.
 	self walletSync.
 	self createAssets.
-	PharocksLog logAdd: 'Total of money in the wallet: Total USDT: ',(exchange symbolsAmountTotal at: 'USDT') asString,'. Total BNB Free: ',(exchange symbolsAmountFree at: 'BNB') asString, '. Total in USD: ',wallet amountTotalUSD asString.
+	PharocksLog logAdd: 'Total of money in the wallet: Total USDT: ',(exchange symbolsAmountTotal at: 'USDT') asString,'. Total XRP Free: ',(exchange symbolsAmountFree at: 'XRP') asString, '. Total in USD: ',wallet amountTotalUSD asString.
 	(exchange symbolsAmountTotal at: 'USDT') > (wallet amountTotalUSD * 0.1)
-		ifTrue: [PharocksLog logAdd: 'There is money in wallet. Lets buy BNB. Lets cancel all buy and sell orders, to release the money'. orderWaiting := self assetsBuy.
+		ifTrue: [PharocksLog logAdd: 'There is money in wallet. Lets buy XRP. Lets cancel all buy and sell orders, to release the money'. orderWaiting := self assetsBuy.
 			[ orderWaiting ]
 				whileFalse: [ PharocksLog logAdd: 'orderWaiting is false. Lets cancel all orders, syncronize, create new numbers and buy it again'. 
 					exchange privateOrdersCancelAll.
@@ -186,8 +186,8 @@ PharocksOperator >> up20 [
 					((exchange symbolsAmountTotal at: 'USDT') > (wallet amountTotalUSD * 0.1)) ifFalse: [ PharocksLog logAdd: 'Money USDT in wallet after 2 times trying buy:  ',(exchange symbolsAmountTotal at: 'USDT')asString, '. Returning true in orderWaiting to get out of loop'. orderWaiting := true] ] ].
 	PharocksLog logAdd: 'Going to create the OCO sell orders'.
 	
-	bnb := (exchange symbolsAmountFree at: 'BNB') asNumber. 
-	PharocksLog logAdd: 'BNB free to create sell order: ',bnb asString.
+	bnb := (exchange symbolsAmountFree at: 'XRP') asNumber. 
+	PharocksLog logAdd: 'XRP free to create sell order: ',bnb asString.
 	bnb > 1 ifTrue: [self assetsSellOCO ].
 	PharocksLog logAdd: '----------Finished up20'
 ]
@@ -199,9 +199,9 @@ PharocksOperator >> up80 [
 	strategy := PharocksStrategy simpleWinLossPercentage.
 	self walletSync.
 	self createAssets.
-	PharocksLog logAdd: 'Total of money in the wallet: Total USDT: ',(exchange symbolsAmountTotal at: 'USDT') asString,'. Total BNB Free: ',(exchange symbolsAmountFree at: 'BNB') asString, '. Total in USD: ',wallet amountTotalUSD asString.
+	PharocksLog logAdd: 'Total of money in the wallet: Total USDT: ',(exchange symbolsAmountTotal at: 'USDT') asString,'. Total XRP Free: ',(exchange symbolsAmountFree at: 'XRP') asString, '. Total in USD: ',wallet amountTotalUSD asString.
 	(exchange symbolsAmountTotal at: 'USDT') > (wallet amountTotalUSD * 0.1)
-		ifTrue: [PharocksLog logAdd: 'There is money in wallet. Lets buy BNB. Lets cancel all buy and sell orders, to release the money'. orderWaiting := self assetsBuy.
+		ifTrue: [PharocksLog logAdd: 'There is money in wallet. Lets buy XRP. Lets cancel all buy and sell orders, to release the money'. orderWaiting := self assetsBuy.
 			[ orderWaiting ]
 				whileFalse: [ PharocksLog logAdd: 'orderWaiting is false. Lets cancel all orders, syncronize, create new numbers and buy it again'. 
 					exchange privateOrdersCancelAll.
@@ -212,8 +212,8 @@ PharocksOperator >> up80 [
 					((exchange symbolsAmountTotal at: 'USDT') > (wallet amountTotalUSD * 0.1)) ifFalse: [ PharocksLog logAdd: 'Money USDT in wallet after 2 times trying buy:  ',(exchange symbolsAmountTotal at: 'USDT')asString, '. Returning true in orderWaiting to get out of loop'. orderWaiting := true] ] ].
 	PharocksLog logAdd: 'Going to create the OCO sell orders'.
 	
-	bnb := (exchange symbolsAmountFree at: 'BNB') asNumber. 
-	PharocksLog logAdd: 'BNB free to create sell order: ',bnb asString.
+	bnb := (exchange symbolsAmountFree at: 'XRP') asNumber. 
+	PharocksLog logAdd: 'XRP free to create sell order: ',bnb asString.
 	bnb > 1 ifTrue: [self assetsSellOCO ].
 	PharocksLog logAdd: '----------Finished up80'
 ]

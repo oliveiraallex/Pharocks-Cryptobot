@@ -212,9 +212,11 @@ PharocksCryptocurrencyExchange >> symbolBestPriceSell: aString [
 PharocksCryptocurrencyExchange >> symbolGetPriceUSD: aString [
 	aString = 'JEX' | (aString = 'BCHSV')
 		ifTrue: [ ^ 0 ]
-		ifFalse: [ aString = 'USDT'
+		ifFalse: [ aString = 'STEEM'
+				ifTrue: [ ^ self symbolLatestPrice: aString , 'BNB'	"bnb market hardcoded" ].
+					aString = 'USDT'
 				ifTrue: [ ^ 1 ]
-				ifFalse: [ ^ self symbolLatestPrice: aString , 'USDT'	"usdt market hardcoded" ] ]
+				ifFalse: [ ^ self symbolLatestPrice: aString , 'USDT'	"usdt market hardcoded" ] ] 
 ]
 
 { #category : #operation }
