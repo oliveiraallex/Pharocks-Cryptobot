@@ -1,36 +1,36 @@
 Class {
-	#name : #PharocksBinanceQueries,
-	#superclass : #PharocksBinanceExchange,
-	#category : #'Pharocks-Cryptobot-Binance'
+	#name : #PharocksQueriesBinance,
+	#superclass : #PharocksExchange,
+	#category : #'Pharocks-Cryptobot-Exchanges'
 }
 
 { #category : #controling }
-PharocksBinanceQueries >> exchangeTime [
+PharocksQueriesBinance >> exchangeTime [
 	self subclassResponsibility 
 ]
 
 { #category : #controling }
-PharocksBinanceQueries >> initialize [
+PharocksQueriesBinance >> initialize [
 	super initialize.
 ]
 
 { #category : #controling }
-PharocksBinanceQueries >> queryExchangeInfo [
+PharocksQueriesBinance >> queryExchangeInfo [
 	^ self get: self apiUrl,'/api/v3/exchangeInfo'
 ]
 
 { #category : #controling }
-PharocksBinanceQueries >> queryExchangePing [
+PharocksQueriesBinance >> queryExchangePing [
 	^ self get: self apiUrl,'/api/v3/ping'
 ]
 
 { #category : #controling }
-PharocksBinanceQueries >> queryExchangeTime [
+PharocksQueriesBinance >> queryExchangeTime [
 	^ self get: self apiUrl,'/api/v3/time'
 ]
 
 { #category : #controling }
-PharocksBinanceQueries >> queryOrderBook: aString lastOrders: aNumber [
+PharocksQueriesBinance >> queryOrderBook: aString lastOrders: aNumber [
 	^ self
 		get: self apiUrl , '/api/v3/depth'
 		parameters:
@@ -39,7 +39,7 @@ PharocksBinanceQueries >> queryOrderBook: aString lastOrders: aNumber [
 ]
 
 { #category : #controling }
-PharocksBinanceQueries >> queryOrderCancel: aString orderId: aString2 [
+PharocksQueriesBinance >> queryOrderCancel: aString orderId: aString2 [
 	^ self
 		deletePrivate: self apiUrl , '/api/v3/order'
 		parameters:
@@ -48,7 +48,7 @@ PharocksBinanceQueries >> queryOrderCancel: aString orderId: aString2 [
 ]
 
 { #category : #controling }
-PharocksBinanceQueries >> queryOrderCancelOCO: aString orderListId: aString2 [
+PharocksQueriesBinance >> queryOrderCancelOCO: aString orderListId: aString2 [
 	^ self
 		deletePrivate: self apiUrl , '/api/v3/orderList'
 		parameters:
@@ -57,12 +57,12 @@ PharocksBinanceQueries >> queryOrderCancelOCO: aString orderListId: aString2 [
 ]
 
 { #category : #controling }
-PharocksBinanceQueries >> queryPrivateAccountInformation [
+PharocksQueriesBinance >> queryPrivateAccountInformation [
 	^ self getPrivate: self apiUrl , '/api/v3/account'
 ]
 
 { #category : #controling }
-PharocksBinanceQueries >> queryPrivateOrderCreate: aString1 side: aString2 quantity: aNumber1 atPrice: aNumber2 [
+PharocksQueriesBinance >> queryPrivateOrderCreate: aString1 side: aString2 quantity: aNumber1 atPrice: aNumber2 [
 	^ self
 		postPrivate: self apiUrl , '/api/v3/order'
 		parameters:
@@ -75,7 +75,7 @@ PharocksBinanceQueries >> queryPrivateOrderCreate: aString1 side: aString2 quant
 ]
 
 { #category : #controling }
-PharocksBinanceQueries >> queryPrivateOrderOCOCreate: aString1 side: aString2 quantity: aNumber1 atPrice: aNumber2 stopPrice: aNumber3 stopLimitPrice: aNumber4 [
+PharocksQueriesBinance >> queryPrivateOrderOCOCreate: aString1 side: aString2 quantity: aNumber1 atPrice: aNumber2 stopPrice: aNumber3 stopLimitPrice: aNumber4 [
 	^ self
 		postPrivate: self apiUrl , '/api/v3/order/oco'
 		parameters:
@@ -89,7 +89,7 @@ PharocksBinanceQueries >> queryPrivateOrderOCOCreate: aString1 side: aString2 qu
 ]
 
 { #category : #controling }
-PharocksBinanceQueries >> queryPrivateOrderOpenGet: aString1 [ 
+PharocksQueriesBinance >> queryPrivateOrderOpenGet: aString1 [ 
 	^ self
 		getPrivate: self apiUrl , '/api/v3/openOrders'
 		parameters:
@@ -97,7 +97,7 @@ PharocksBinanceQueries >> queryPrivateOrderOpenGet: aString1 [
 ]
 
 { #category : #controling }
-PharocksBinanceQueries >> queryPrivateOrders: aString last: aNumber [
+PharocksQueriesBinance >> queryPrivateOrders: aString last: aNumber [
 	^ self
 		getPrivate: self apiUrl , '/api/v3/allOrders'
 		parameters:
@@ -106,7 +106,7 @@ PharocksBinanceQueries >> queryPrivateOrders: aString last: aNumber [
 ]
 
 { #category : #controling }
-PharocksBinanceQueries >> queryPrivateOrdersOpenGet [ 
+PharocksQueriesBinance >> queryPrivateOrdersOpenGet [ 
 	^ self
 		getPrivate: self apiUrl , '/api/v3/openOrders'
 		parameters:
@@ -114,7 +114,7 @@ PharocksBinanceQueries >> queryPrivateOrdersOpenGet [
 ]
 
 { #category : #controling }
-PharocksBinanceQueries >> querySymbolAveragePrice: aString [ 
+PharocksQueriesBinance >> querySymbolAveragePrice: aString [ 
 	^ self
 		get: self apiUrl , '/api/v3/avgPrice'
 		parameters:
@@ -122,7 +122,7 @@ PharocksBinanceQueries >> querySymbolAveragePrice: aString [
 ]
 
 { #category : #controling }
-PharocksBinanceQueries >> querySymbolBestPrice: aString [ 
+PharocksQueriesBinance >> querySymbolBestPrice: aString [ 
 	^ self
 		get: self apiUrl , '/api/v3/ticker/bookTicker'
 		parameters:
@@ -130,7 +130,7 @@ PharocksBinanceQueries >> querySymbolBestPrice: aString [
 ]
 
 { #category : #controling }
-PharocksBinanceQueries >> querySymbolLatestPrice: aString [ 
+PharocksQueriesBinance >> querySymbolLatestPrice: aString [ 
 	^ self
 		get: self apiUrl , '/api/v3/ticker/price'
 		parameters:
@@ -138,12 +138,12 @@ PharocksBinanceQueries >> querySymbolLatestPrice: aString [
 ]
 
 { #category : #controling }
-PharocksBinanceQueries >> querySystemStatus [
+PharocksQueriesBinance >> querySystemStatus [
 	^ self get: self website,'/wapi/v3/systemStatus.html'
 ]
 
 { #category : #controling }
-PharocksBinanceQueries >> queryTrades: aString lastTrades: aNumber [
+PharocksQueriesBinance >> queryTrades: aString lastTrades: aNumber [
 	^ self
 		get: self apiUrl , '/api/v3/trades'
 		parameters:
@@ -153,7 +153,7 @@ PharocksBinanceQueries >> queryTrades: aString lastTrades: aNumber [
 ]
 
 { #category : #controling }
-PharocksBinanceQueries >> timestamp [
+PharocksQueriesBinance >> timestamp [
 	| timestamp | 
 	^ timestamp := self exchangeTime asString.
 	

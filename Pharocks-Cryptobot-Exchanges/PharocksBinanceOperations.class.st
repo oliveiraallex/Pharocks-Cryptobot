@@ -1,7 +1,7 @@
 Class {
 	#name : #PharocksBinanceOperations,
-	#superclass : #PharocksBinanceQueries,
-	#category : #'Pharocks-Cryptobot-Binance'
+	#superclass : #PharocksQueriesBinance,
+	#category : #'Pharocks-Cryptobot-Exchanges'
 }
 
 { #category : #initialization }

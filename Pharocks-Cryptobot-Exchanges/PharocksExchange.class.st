@@ -1,5 +1,5 @@
 Class {
-	#name : #PharocksBinanceExchange,
+	#name : #PharocksExchange,
 	#superclass : #Object,
 	#instVars : [
 		'apiKey',
@@ -8,47 +8,47 @@ Class {
 		'apiUrl',
 		'result'
 	],
-	#category : #'Pharocks-Cryptobot-Binance'
+	#category : #'Pharocks-Cryptobot-Exchanges'
 }
 
 { #category : #accessing }
-PharocksBinanceExchange >> apiKey [
+PharocksExchange >> apiKey [
 	^ apiKey
 ]
 
 { #category : #accessing }
-PharocksBinanceExchange >> apiKey: aString [
+PharocksExchange >> apiKey: aString [
 	apiKey := aString
 ]
 
 { #category : #accessing }
-PharocksBinanceExchange >> apiSecretKey [
+PharocksExchange >> apiSecretKey [
 	^ apiSecretKey
 ]
 
 { #category : #accessing }
-PharocksBinanceExchange >> apiSecretKey: aString [
+PharocksExchange >> apiSecretKey: aString [
 	apiSecretKey := aString
 ]
 
 { #category : #accessing }
-PharocksBinanceExchange >> apiUrl [
+PharocksExchange >> apiUrl [
 	^ apiUrl
 ]
 
 { #category : #accessing }
-PharocksBinanceExchange >> apiUrl: anObject [
+PharocksExchange >> apiUrl: anObject [
 	apiUrl := anObject
 ]
 
 { #category : #accessing }
-PharocksBinanceExchange >> configuration [
+PharocksExchange >> configuration [
 	website := 'https://www.binance.com'.
 	apiUrl := 'https://api.binance.com'
 ]
 
 { #category : #accessing }
-PharocksBinanceExchange >> deletePrivate: path parameters: aDictionary [
+PharocksExchange >> deletePrivate: path parameters: aDictionary [
 	| webClient queryString signature answer| 
 	aDictionary at: 'timestamp' put: self timestamp.
 	queryString := self getQueryAsString: aDictionary.
@@ -65,26 +65,26 @@ PharocksBinanceExchange >> deletePrivate: path parameters: aDictionary [
 ]
 
 { #category : #accessing }
-PharocksBinanceExchange >> get: path [
+PharocksExchange >> get: path [
 	^ self get: path parameters: {} asDictionary
 ]
 
 { #category : #accessing }
-PharocksBinanceExchange >> get: path parameters: aDictionary [
+PharocksExchange >> get: path parameters: aDictionary [
 	| webClient | 
 	webClient := ZnClient new. 
 	webClient url: path.
 	webClient queryAddAll: aDictionary.
-	^ NeoJSONReader fromString: webClient get. 
+	^ NeoJSONReader fromString: webClient get asString. 
 ]
 
 { #category : #accessing }
-PharocksBinanceExchange >> getPrivate: path [
+PharocksExchange >> getPrivate: path [
 	^ self getPrivate: path parameters: {} asDictionary
 ]
 
 { #category : #accessing }
-PharocksBinanceExchange >> getPrivate: path parameters: aDictionary [
+PharocksExchange >> getPrivate: path parameters: aDictionary [
 	| webClient queryString signature answer|
 	aDictionary at: 'timestamp' put: self timestamp.
 	queryString := self getQueryAsString: aDictionary.
@@ -101,7 +101,7 @@ PharocksBinanceExchange >> getPrivate: path parameters: aDictionary [
 ]
 
 { #category : #accessing }
-PharocksBinanceExchange >> getQueryAsString: aDictionary [ 
+PharocksExchange >> getQueryAsString: aDictionary [ 
 	| webClient requestLine |
 	webClient := ZnClient new queryAddAll: aDictionary.
 	requestLine := webClient request requestLine uri asString .
@@ -110,14 +110,14 @@ PharocksBinanceExchange >> getQueryAsString: aDictionary [
 ]
 
 { #category : #initialization }
-PharocksBinanceExchange >> initialize [
+PharocksExchange >> initialize [
 	self configuration .
 	result := Dictionary new.
 	"runQuery := PharocksBinanceOperations new."
 ]
 
 { #category : #accessing }
-PharocksBinanceExchange >> postPrivate: path parameters: aDictionary [
+PharocksExchange >> postPrivate: path parameters: aDictionary [
 	| webClient queryString signature answer| 
 	aDictionary at: 'timestamp' put: self timestamp.
 	queryString := self getQueryAsString: aDictionary.
@@ -134,7 +134,7 @@ PharocksBinanceExchange >> postPrivate: path parameters: aDictionary [
 ]
 
 { #category : #accessing }
-PharocksBinanceExchange >> signQuery: aString [
+PharocksExchange >> signQuery: aString [
 	| signature |
 	signature := (HMAC on: SHA256)
 		key: apiSecretKey asByteArray;
@@ -143,16 +143,16 @@ PharocksBinanceExchange >> signQuery: aString [
 ]
 
 { #category : #accessing }
-PharocksBinanceExchange >> timestamp [
+PharocksExchange >> timestamp [
 	^ self subclassResponsibility 
 ]
 
 { #category : #accessing }
-PharocksBinanceExchange >> website [
+PharocksExchange >> website [
 	^ website
 ]
 
 { #category : #accessing }
-PharocksBinanceExchange >> website: anObject [
+PharocksExchange >> website: anObject [
 	website := anObject
 ]

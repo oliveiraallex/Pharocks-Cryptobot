@@ -1,5 +1,5 @@
 Class {
 	#name : #PharocksBinance,
 	#superclass : #PharocksBinanceOperations,
-	#category : #'Pharocks-Cryptobot-Binance'
+	#category : #'Pharocks-Cryptobot-Exchanges'
 }
