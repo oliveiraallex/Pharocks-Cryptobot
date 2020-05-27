@@ -1,5 +1,8 @@
 # Pharocks Cryptobot
 
+[![Build Status](https://travis-ci.org/oliveiraallex/Pharocks-Cryptobot.svg?branch=master)](https://travis-ci.org/oliveiraallex/Pharocks-Cryptobot)
+
+
 Pharocks Cryptobot is a robot app built in Pharo, for buying and selling cryptocurrency pairs, based on a loss / gain percentage strategy.
 
 Different cryptocurrency pairs can be traded, such as Bitcoin / Tether (BTCUSDT), Ethereum / Bitcoin (ETHBTC) or Litecoin / Binancecoin (LTCBNB) for example.
