@@ -1,11 +1,11 @@
 language: c
 install:
   - git clone https://github.com/oliveiraallex/PharoImageCreatorForGithubCi.git
- script:
+script:
   - ./PharoImageCreatorForGithubCi/imageCreate.sh
- after_success:
+after_success:
   - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
   - bash upload.sh PharoImageCreatorForGithubCi/result/*
- branches:
+branches:
   except:
   - /^(?i:continuous)$/
