@@ -11,7 +11,7 @@ BaselineOfPharocks >> baseline: spec [
 		for: #common
 		do: [ spec
 				package: 'Pharocks-Cryptobot-Core';
-				package: 'Pharocks-Cryptobot-Binance';
+				package: 'Pharocks-Cryptobot-Exchanges';
 				package: 'Pharocks-Cryptobot-Server' ].
 	spec
 		baseline: 'OpenSSL'
