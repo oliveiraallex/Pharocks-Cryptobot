@@ -16,7 +16,5 @@ Metacello new
   baseline: 'Pharocks';
   repository: 'github://oliveiraallex/Pharocks-Cryptobot';
   load.
-
-Smalltalk saveSession.
-
-Iceberg enableMetacelloIntegration: true."
+Iceberg enableMetacelloIntegration: true.
+Smalltalk saveSession."
