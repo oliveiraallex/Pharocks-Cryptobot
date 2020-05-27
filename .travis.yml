@@ -8,4 +8,4 @@ install:
   - bash upload.sh PharoImageCreatorForGithubCi/result/*
  branches:
   except:
-    - /^(?i:continuous)$/
+  - /^(?i:continuous)$/
