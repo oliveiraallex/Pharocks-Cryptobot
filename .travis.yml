@@ -3,7 +3,7 @@ jobs:
     - language: smalltalk
       sudo: false
       os: linux
-      env:
+      smalltalk:
         - Pharo-6.1
         - Pharo-7.0
         - Pharo64-7.0
