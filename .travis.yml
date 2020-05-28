@@ -4,7 +4,7 @@ jobs:
       sudo: false
       os:
         - linux
-      smalltalk:
+    - smalltalk:
       - Pharo-6.1
       - Pharo-7.0
       - Pharo64-7.0
