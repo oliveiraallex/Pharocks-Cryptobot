@@ -1,10 +1,10 @@
 jobs:
   include:
     - language: smalltalk
-      sudo: false
       os: linux
-      - smalltalk: Pharo-6.1
-      - smalltalk: Pharo-7.0
+      sudo: false
+      smalltalk: Pharo-6.1
+      smalltalk: Pharo-7.0
     - language: c
       addons:
         apt:
