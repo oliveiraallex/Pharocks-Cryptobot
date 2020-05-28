@@ -3,14 +3,8 @@ jobs:
     - language: smalltalk
       sudo: false
       os: linux
-      rvm:
-      - Pharo-6.1
-      - Pharo-7.0
-      - Pharo64-7.0
-      - Pharo32-8.0
-      - Pharo64-8.0
-      - Pharo32-9.0
-      - Pharo64-9.0
+      - smalltalk: Pharo-6.1
+      - smalltalk: Pharo-7.0
     - language: c
       addons:
         apt:
