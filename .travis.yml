@@ -1,21 +1,23 @@
 jobs:
   include:
     - language: smalltalk
-      os: linux
       sudo: false
-      smalltalk: Pharo-6.1
-      smalltalk: Pharo-7.0
+      os:
+        - linux
+      smalltalk:
+        - Pharo-6.1
+        - Pharo-7.0
+        - Pharo64-7.0
+        - Pharo32-8.0
+        - Pharo64-8.0
+        - Pharo32-9.0
+        - Pharo64-9.0
     - language: c
       addons:
         apt:
           packages:
           - git
-          - libasound2:i386
-          - libcairo2:i386
-          - libz1:i386
-          - libbz2-1.0:i386
           - libssl1.0.0:i386
-          - libfreetype6:i386
       install:
         - git clone https://github.com/oliveiraallex/PharoImageCreatorForGithubCi.git
       script:
