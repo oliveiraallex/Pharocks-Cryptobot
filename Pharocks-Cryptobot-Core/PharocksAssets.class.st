@@ -12,7 +12,9 @@ Class {
 		'sellPriceLossLimit',
 		'profitPercentage',
 		'lossPercentage',
-		'soldPercentage'
+		'soldPercentage',
+		'amountDecimals',
+		'priceDecimals'
 	],
 	#category : #'Pharocks-Cryptobot-Core'
 }
@@ -20,19 +22,24 @@ Class {
 { #category : #'as yet unclassified' }
 PharocksAssets class >> cryptoPair: aString buyPrice: aNumberBuy quantity: aNumber1 profitPercentage: aNumberProfit lossPercentage: aNumberLoss [
 
-	| assert sellPriceProfit sellPriceLoss sellPriceLossLimit| 
+	| assert sellPriceProfit sellPriceLoss sellPriceLossLimit amountDecimals priceDecimals coinRules| 
 	sellPriceProfit := (aNumberBuy * aNumberProfit/100) +  aNumberBuy asFloat.
 	sellPriceLoss :=  aNumberBuy - (aNumberBuy * aNumberLoss/100) asFloat.
 	sellPriceLossLimit := sellPriceLoss - (sellPriceLoss * 0.1/100) asFloat.  "hard coded"
+	coinRules := (PharocksCoins rules: aString).
+	amountDecimals :=  coinRules at: 'amountDecimals'.
+	priceDecimals := coinRules at: 'priceDecimals'.
 	assert := self new.
+	assert amountDecimals: amountDecimals.
+	assert priceDecimals: priceDecimals.
 	assert cryptoPair: aString;
-	buyPrice: ((aNumberBuy asFloat roundDownTo: 0.00001 ) round: 5);
-	quantity: ((aNumber1 asFloat roundDownTo: 0.1 ) round: 1) ;
+	buyPrice: ((aNumberBuy asFloat roundDownTo: (coinRules at: 'minPrice') ) round: priceDecimals);
+	quantity: ((aNumber1 asFloat roundDownTo: (coinRules at: 'minAmount') ) round: amountDecimals) ;
 	profitPercentage: aNumberProfit asFloat;
 	lossPercentage: aNumberLoss asFloat;
-	sellPriceProfit: (sellPriceProfit round:5);
-	sellPriceLoss: (sellPriceLoss round:5);
-	sellPriceLossLimit: (sellPriceLossLimit round:5);
+	sellPriceProfit: (sellPriceProfit round: priceDecimals);
+	sellPriceLoss: (sellPriceLoss round: priceDecimals);
+	sellPriceLossLimit: (sellPriceLossLimit round: priceDecimals);
 	status: 'WAITING_TO_BUY'.
 	
 	
@@ -63,6 +70,16 @@ PharocksAssets class >> cryptoPair: aString newPrice: aNumberBuy2 buyPrice: aNum
 	^ assert
 	
 	
+]
+
+{ #category : #accessing }
+PharocksAssets >> amountDecimals [
+	^ amountDecimals
+]
+
+{ #category : #accessing }
+PharocksAssets >> amountDecimals: anObject [
+	amountDecimals := anObject
 ]
 
 { #category : #accessing }
@@ -98,6 +115,16 @@ PharocksAssets >> lossPercentage [
 { #category : #accessing }
 PharocksAssets >> lossPercentage: anObject [
 	lossPercentage := anObject
+]
+
+{ #category : #accessing }
+PharocksAssets >> priceDecimals [
+	^ priceDecimals
+]
+
+{ #category : #accessing }
+PharocksAssets >> priceDecimals: anObject [
+	priceDecimals := anObject
 ]
 
 { #category : #accessing }

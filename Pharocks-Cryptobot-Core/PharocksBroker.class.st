@@ -140,14 +140,14 @@ PharocksBroker >> configuration [
 { #category : #accessing }
 PharocksBroker >> createAssets [
 	| numberOfAssets assetsPercentages symbol lastPrice |
-	"need refactory"
+	"need refactory" 
 	numberOfAssets := strategy numberOfAssets.
 	wallet assets: (Array new: numberOfAssets).
 	assetsPercentages := strategy assetsPercentage.
 	1 to: assetsPercentages size do: [ :i | 
-		symbol := (assetsPercentages at: i) at: 'cryptoPair'.
-		lastPrice := exchange symbolPriceSell: symbol lastOrders: 5.
-		"lastPrice := (lastPrice * 0.1/100) +  lastPrice asFloat round:4. ""hard coded"
+		symbol :=  ((assetsPercentages at: i) at: 'cryptoPair') asString , strategy market.
+		"lastPrice := (lastPrice * 0.1/100) +  lastPrice asFloat round:4. ""hard coded" 
+		lastPrice := exchange symbolLatestPrice: symbol. "format the price" 
 		wallet assets
 			at: i
 			put:
@@ -292,7 +292,7 @@ PharocksBroker >> wallet: anObject [
 ]
 
 { #category : #control }
-PharocksBroker >> walletSync [ .
+PharocksBroker >> walletSync [ 
 	"setting the cypto pair defined in the strategy"
 	wallet market: strategy market.
 	"check in Binance the amount of the USDT wallet"
