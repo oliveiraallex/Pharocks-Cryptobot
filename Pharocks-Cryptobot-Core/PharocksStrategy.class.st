@@ -16,7 +16,7 @@ PharocksStrategy class >> simpleWinLossPercentage [
 	To see the pairs go to FIAT Markets USDT: https://www.binance.com/en/markets"
 	| strategy  |
 	strategy := self new.
-	strategy numberOfAssets: 5.
+	strategy numberOfAssets: 10.
 	strategy market: 'USDT'.	
 	strategy assetsPercentage add: {('cryptoPair' -> 'BTC').('profitPercentage' -> 1).('lossPercentage' -> 0.5).} asDictionary.
 	strategy assetsPercentage add: {('cryptoPair' -> 'BNB').('profitPercentage' -> 2).('lossPercentage' -> 0.6).} asDictionary.
