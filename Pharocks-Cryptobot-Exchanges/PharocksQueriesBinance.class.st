@@ -30,6 +30,34 @@ PharocksQueriesBinance >> queryExchangeTime [
 ]
 
 { #category : #controling }
+PharocksQueriesBinance >> queryFuturesBalance [
+	^ self
+		getPrivate: self apiUrlSecondary , '/fapi/v2/balance'
+]
+
+{ #category : #controling }
+PharocksQueriesBinance >> queryFuturesPrivateOrderCreate: aString1 side: aString2 type: aString3 quantity: aNumber1 atPrice: aNumber2 stopPrice: aNumber3 [ 
+	^ self
+		postPrivate: self apiUrlSecondary , '/fapi/v1/order'
+		parameters:
+			{('symbol' -> aString1 asString).
+			('side' -> aString2 asString).
+			('type' -> aString3 asString).
+			('quantity' -> aNumber1).
+			"('price' -> aNumber2)."
+			"('stopPrice' -> aNumber3)."
+			('stopLimitTimeInForce' -> 'GTC')} asDictionary
+]
+
+{ #category : #controling }
+PharocksQueriesBinance >> queryFuturesSymbolLatestPrice: aString [ 
+	^ self
+		get: self apiUrlSecondary , '/fapi/v1/ticker/price'
+		parameters:
+			{('symbol' -> aString asString)} asDictionary
+]
+
+{ #category : #controling }
 PharocksQueriesBinance >> queryOrderBook: aString lastOrders: aNumber [
 	^ self
 		get: self apiUrl , '/api/v3/depth'

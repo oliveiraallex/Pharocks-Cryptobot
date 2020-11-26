@@ -6,6 +6,7 @@ Class {
 		'apiSecretKey',
 		'website',
 		'apiUrl',
+		'apiUrlSecondary',
 		'result'
 	],
 	#category : #'Pharocks-Cryptobot-Exchanges'
@@ -39,6 +40,18 @@ PharocksExchange >> apiUrl [
 { #category : #accessing }
 PharocksExchange >> apiUrl: anObject [
 	apiUrl := anObject
+]
+
+{ #category : #accessing }
+PharocksExchange >> apiUrlSecondary [
+
+	^ apiUrlSecondary
+]
+
+{ #category : #accessing }
+PharocksExchange >> apiUrlSecondary: anObject [
+
+	apiUrlSecondary := anObject
 ]
 
 { #category : #accessing }
