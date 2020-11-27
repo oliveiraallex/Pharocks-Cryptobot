@@ -55,12 +55,6 @@ PharocksExchange >> apiUrlSecondary: anObject [
 ]
 
 { #category : #accessing }
-PharocksExchange >> configuration [
-	website := 'https://www.binance.com'.
-	apiUrl := 'https://api.binance.com'
-]
-
-{ #category : #accessing }
 PharocksExchange >> deletePrivate: path parameters: aDictionary [
 	| webClient queryString signature answer| 
 	aDictionary at: 'timestamp' put: self timestamp.
@@ -124,7 +118,7 @@ PharocksExchange >> getQueryAsString: aDictionary [
 
 { #category : #initialization }
 PharocksExchange >> initialize [
-	self configuration .
+	"self configuration."
 	result := Dictionary new.
 	"runQuery := PharocksBinanceOperations new."
 ]

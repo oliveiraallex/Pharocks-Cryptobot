@@ -4,6 +4,13 @@ Class {
 	#category : #'Pharocks-Cryptobot-Exchanges'
 }
 
+{ #category : #accessing }
+PharocksQueriesBinance >> configuration [
+	website := 'https://www.binance.com'.
+	apiUrl := 'https://api.binance.com'.
+	apiUrlSecondary := 'https://fapi.binance.com'
+]
+
 { #category : #controling }
 PharocksQueriesBinance >> exchangeTime [
 	self subclassResponsibility 
@@ -12,6 +19,7 @@ PharocksQueriesBinance >> exchangeTime [
 { #category : #controling }
 PharocksQueriesBinance >> initialize [
 	super initialize.
+	self configuration. 
 ]
 
 { #category : #controling }
@@ -30,9 +38,45 @@ PharocksQueriesBinance >> queryExchangeTime [
 ]
 
 { #category : #controling }
+PharocksQueriesBinance >> queryFutures: aString1 leverage: aInteger [
+	^ self
+		postPrivate: self apiUrlSecondary , '/fapi/v1/leverage'
+		parameters:
+			{('symbol' -> aString1 asString).
+			('leverage' -> aInteger).
+			('stopLimitTimeInForce' -> 'GTC')} asDictionary
+]
+
+{ #category : #controling }
 PharocksQueriesBinance >> queryFuturesBalance [
 	^ self
 		getPrivate: self apiUrlSecondary , '/fapi/v2/balance'
+]
+
+{ #category : #controling }
+PharocksQueriesBinance >> queryFuturesOrderCancelAll: aString [ 
+	^ self
+		deletePrivate: self apiUrlSecondary , '/fapi/v1/allOpenOrders'
+		parameters:
+			{('symbol' -> aString asString)} asDictionary
+]
+
+{ #category : #controling }
+PharocksQueriesBinance >> queryFuturesPositions [
+	^ self
+		getPrivate: self apiUrlSecondary , '/fapi/v2/positionRisk'
+]
+
+{ #category : #controling }
+PharocksQueriesBinance >> queryFuturesPrivateOrderCreate: aString1 side: aString2 type: aString3 quantity: aNumber1 [
+	^ self
+		postPrivate: self apiUrlSecondary , '/fapi/v1/order'
+		parameters:
+			{('symbol' -> aString1 asString).
+			('side' -> aString2 asString).
+			('type' -> aString3 asString).
+			('quantity' -> aNumber1).
+			('stopLimitTimeInForce' -> 'GTC')} asDictionary
 ]
 
 { #category : #controling }
@@ -44,8 +88,21 @@ PharocksQueriesBinance >> queryFuturesPrivateOrderCreate: aString1 side: aString
 			('side' -> aString2 asString).
 			('type' -> aString3 asString).
 			('quantity' -> aNumber1).
-			"('price' -> aNumber2)."
-			"('stopPrice' -> aNumber3)."
+			('price' -> aNumber2).
+			('stopPrice' -> aNumber3).
+			('stopLimitTimeInForce' -> 'GTC')} asDictionary
+]
+
+{ #category : #controling }
+PharocksQueriesBinance >> queryFuturesPrivateOrderCreate: aString1 side: aString2 type: aString3 quantity: aNumber1 stopPrice: aNumber3 [ 
+	^ self
+		postPrivate: self apiUrlSecondary , '/fapi/v1/order'
+		parameters:
+			{('symbol' -> aString1 asString).
+			('side' -> aString2 asString).
+			('type' -> aString3 asString).
+			('quantity' -> aNumber1).
+			('stopPrice' -> aNumber3).
 			('stopLimitTimeInForce' -> 'GTC')} asDictionary
 ]
 

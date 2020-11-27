@@ -45,8 +45,52 @@ PharocksCryptocurrencyExchange >> exchangeTime [
 	^ exchangePlugin exchangeTime
 ]
 
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> futures: aString1 leverage: aInteger [
+
+	^ exchangePlugin futures: aString1 leverage: aInteger
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> futuresBalance [
+
+	^ exchangePlugin futuresBalance
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> futuresOrderCancelAll: sString [
+
+	^ exchangePlugin futuresOrderCancelAll: sString
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> futuresPositions [
+
+	^ exchangePlugin futuresPositions
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> futuresPrivateOrderCreateBuy: aString1 type: aString3 quantity: aNumber1 atPrice: aNumber2 stopPrice: aNumber3 [ 
+
+	^ exchangePlugin futuresPrivateOrderCreate: aString1 side: 'BUY' type: aString3 quantity: aNumber1 atPrice: aNumber2 stopPrice: aNumber3
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> futuresPrivateOrderCreateSell: aString1 type: aString3 quantity: aNumber1 atPrice: aNumber2 stopPrice: aNumber3 [ 
+
+	^ exchangePlugin futuresPrivateOrderCreate: aString1 side: 'SELL' type: aString3 quantity: aNumber1 atPrice: aNumber2 stopPrice: aNumber3
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> futuresSymbolLatestPrice: sString [
+
+	^ exchangePlugin futuresSymbolLatestPrice: sString
+]
+
 { #category : #initialization }
-PharocksCryptocurrencyExchange >> initialize [ 
+PharocksCryptocurrencyExchange >> initialize [
+
+	super initialize
 ]
 
 { #category : #operation }

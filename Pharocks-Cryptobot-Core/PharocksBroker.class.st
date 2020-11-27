@@ -222,7 +222,7 @@ PharocksBroker >> runRoundMaxTime: aNumberOfMinutes [
 
 { #category : #accessing }
 PharocksBroker >> setExchange: anObject [
-	exchange := anObject
+	exchange := anObject.
 ]
 
 { #category : #control }

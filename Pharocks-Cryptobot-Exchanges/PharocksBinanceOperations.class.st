@@ -40,6 +40,42 @@ PharocksBinanceOperations >> exchangeTime [
 ]
 
 { #category : #initialization }
+PharocksBinanceOperations >> futures: aString1 leverage: aInteger [
+
+	^ self queryFutures: aString1 leverage: aInteger
+]
+
+{ #category : #initialization }
+PharocksBinanceOperations >> futuresBalance [
+
+	^ ((self queryFuturesBalance at: 1) at: 'availableBalance') asNumber.
+]
+
+{ #category : #initialization }
+PharocksBinanceOperations >> futuresOrderCancelAll: aString [
+
+	^ self queryFuturesOrderCancelAll: aString
+]
+
+{ #category : #initialization }
+PharocksBinanceOperations >> futuresPositions [
+
+	^ self queryFuturesPositions
+]
+
+{ #category : #initialization }
+PharocksBinanceOperations >> futuresPrivateOrderCreate: aString1 side: aString2 type: aString3 quantity: aNumber1 atPrice: aNumber2 stopPrice: aNumber3 [
+	aNumber3 ifNotNil: [ ^ self queryFuturesPrivateOrderCreate: aString1 side: aString2 type: aString3 quantity: aNumber1 stopPrice: aNumber3 ]
+	ifNil: [ ^ self queryFuturesPrivateOrderCreate: aString1 side: aString2 type: aString3 quantity: aNumber1 ]
+]
+
+{ #category : #initialization }
+PharocksBinanceOperations >> futuresSymbolLatestPrice: aString [
+
+	^ ((self queryFuturesSymbolLatestPrice: aString) at: 'price') asNumber
+]
+
+{ #category : #initialization }
 PharocksBinanceOperations >> orderBook: aString lastOrders: aNumber [
 	| answer result msg |
 	answer := self queryOrderBook: aString lastOrders: aNumber.
