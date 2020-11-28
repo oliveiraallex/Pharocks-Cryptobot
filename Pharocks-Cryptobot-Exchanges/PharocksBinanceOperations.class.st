@@ -65,8 +65,12 @@ PharocksBinanceOperations >> futuresPositions [
 
 { #category : #initialization }
 PharocksBinanceOperations >> futuresPrivateOrderCreate: aString1 side: aString2 type: aString3 quantity: aNumber1 atPrice: aNumber2 stopPrice: aNumber3 [
-	aNumber3 ifNotNil: [ ^ self queryFuturesPrivateOrderCreate: aString1 side: aString2 type: aString3 quantity: aNumber1 stopPrice: aNumber3 ]
-	ifNil: [ ^ self queryFuturesPrivateOrderCreate: aString1 side: aString2 type: aString3 quantity: aNumber1 ]
+	aNumber2 
+		ifNil: [  
+			aNumber3	ifNotNil: [ ^ self queryFuturesPrivateOrderCreate: aString1 side: aString2 type: aString3 quantity: aNumber1 stopPrice: aNumber3 ]
+						ifNil: [ ^ self queryFuturesPrivateOrderCreate: aString1 side: aString2 type: aString3 quantity: aNumber1 ] ] 
+		ifNotNil: [ ^self queryFuturesPrivateOrderCreate: aString1 side: aString2 type: aString3 quantity: aNumber1 atPrice: aNumber2 stopPrice: aNumber3  ]
+	
 ]
 
 { #category : #initialization }

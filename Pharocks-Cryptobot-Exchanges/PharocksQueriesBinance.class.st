@@ -89,8 +89,8 @@ PharocksQueriesBinance >> queryFuturesPrivateOrderCreate: aString1 side: aString
 			('type' -> aString3 asString).
 			('quantity' -> aNumber1).
 			('price' -> aNumber2).
-			('stopPrice' -> aNumber3).
-			('stopLimitTimeInForce' -> 'GTC')} asDictionary
+			"('stopPrice' -> aNumber3)".
+			('timeInForce' -> 'GTC')} asDictionary
 ]
 
 { #category : #controling }
