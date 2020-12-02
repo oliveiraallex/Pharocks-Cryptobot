@@ -1,3 +1,19 @@
+"
+Open Short and Long positions automaticaly in Futures Market with controled Stop Loss and retarget Stop Loss/Gain orders.
+
+Some parameters can be set in #initialize
+
+binance := PharocksBinance new apiKey: 'text'; apiSecretKey: 'text'.
+exchange := PharocksCryptocurrencyExchange exchangePlugin: binance.
+
+crossRails := PharocksMarketShotStrategy new.
+crossRails setExchange: exchange.
+
+crossRails startMonitor. 
+crossRails stopMonitor.
+
+crossRails cancellAll.
+"
 Class {
 	#name : #PharocksCrossRailsStrategy,
 	#superclass : #PharocksBroker,
@@ -47,6 +63,20 @@ PharocksCrossRailsStrategy >> checkOrdersOpen [
 
 	Transcript show: ((buyOrdersOpen size) - (sellOrdersOpen size) ) asString. 
 	^ (buyOrdersOpen size) - (sellOrdersOpen size) 
+
+]
+
+{ #category : #'as yet unclassified' }
+PharocksCrossRailsStrategy >> checkThereIsOrdersOpen [
+
+	| orders side |
+	buyOrdersOpen := OrderedCollection  new.
+	sellOrdersOpen := OrderedCollection  new.
+	orders := exchange futuresPrivateOrderOpen: market.
+	orders do: [ :i | side := i at: 'side'. (side = 'BUY') ifTrue: [  buyOrdersOpen add: i ] ].
+	orders do: [ :i | side := i at: 'side'. (side = 'SELL') ifTrue: [  sellOrdersOpen add: i ] ].
+	(buyOrdersOpen size = 0 and: [ sellOrdersOpen size = 0 ]) ifTrue: [ ^ 0]. 
+	(buyOrdersOpen size ~= 0 or: [ sellOrdersOpen size ~= 0 ]) ifTrue: [ ^ 1]
 
 ]
 
@@ -179,9 +209,11 @@ PharocksCrossRailsStrategy >> startMonitor [
 	weightBuy := 1. weightSell := 1.
 	processMonitor := [ [ 
 	ordersOpen := self checkOrdersOpen.
-
 	
-	( ordersOpen ~= 0 )ifTrue:  [ self cancellAll.
+	position := (exchange futuresPositions) at:coinIndex.
+	quantity := ((position at: 'positionAmt') asNumber).	
+
+	(( ordersOpen ~= 0 ) or: [( ( self checkThereIsOrdersOpen = 0 )and: [quantity = 0])]) ifTrue:  [ self cancellAll.
 	
 	balance := exchange futuresBalance.
 	PharocksLog logAdd: 'USD: ',  balance asString.
@@ -222,16 +254,16 @@ PharocksCrossRailsStrategy >> startMonitor [
 			]. 
 	
 	 quantity < 0 ifTrue: [ 
-		profit > 0 ifTrue: [ quantity > 0.005 ifTrue: [ 
+		profit > 0 ifTrue: [ quantity <  -0.005 ifTrue: [ 
 			self openLong: 2 weight: weightBuy entryPriceOrCurrentPrice: 'entry' jumps: 1.
 			self openShort: 2 weight: 1 entryPriceOrCurrentPrice: 'entry' jumps: 1.  
 				] ifFalse: [ 		
 					self openShort: 3 weight: weightBuy entryPriceOrCurrentPrice: 'entry' jumps: 1.
 					self openLong: 3 weight: weightSell entryPriceOrCurrentPrice: 'current' jumps: 1.
 					].
-			 	 ] 	ifFalse: [ quantity > 0.005 ifTrue: [ 
-						self openShort: 2 weight: weightSell entryPriceOrCurrentPrice: 'current' jumps: 1.
-						self openLong: 1 weight: weightBuy entryPriceOrCurrentPrice: 'entry' jumps: 1.	 
+			 	 ] 	ifFalse: [ quantity < -0.005 ifTrue: [ 
+						self openShort: 2 weight: weightBuy entryPriceOrCurrentPrice: 'current' jumps: 1.
+						self openLong: 1 weight: weightSell entryPriceOrCurrentPrice: 'entry' jumps: 1.	 
 						self openLong: 1 weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1.
 						] ifFalse: [ 
 							self openLong: 2 weight: weightBuy entryPriceOrCurrentPrice: 'entry' jumps: 1.
@@ -239,7 +271,11 @@ PharocksCrossRailsStrategy >> startMonitor [
 							]. 
 						] .
 					].
-				].
+				
+				quantity = 0 ifTrue: [ 
+					self openLong: 2 weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1.
+					self openShort: 2 weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1.].
+					].
 	
 	(Delay forSeconds: 1) wait ] repeat ] forkNamed: 'Pharocks processMonitor'  
 ]
