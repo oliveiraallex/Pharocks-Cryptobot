@@ -82,6 +82,12 @@ PharocksCryptocurrencyExchange >> futuresPrivateOrderCreateSell: aString1 type: 
 ]
 
 { #category : #operation }
+PharocksCryptocurrencyExchange >> futuresPrivateOrderOpen: sString [
+
+	^ exchangePlugin futuresPrivateOrderOpen: sString 
+]
+
+{ #category : #operation }
 PharocksCryptocurrencyExchange >> futuresSymbolLatestPrice: sString [
 
 	^ exchangePlugin futuresSymbolLatestPrice: sString

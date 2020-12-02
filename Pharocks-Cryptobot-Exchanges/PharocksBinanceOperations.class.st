@@ -74,9 +74,21 @@ PharocksBinanceOperations >> futuresPrivateOrderCreate: aString1 side: aString2 
 ]
 
 { #category : #initialization }
+PharocksBinanceOperations >> futuresPrivateOrderOpen: aString [
+
+	^ self queryFuturesPrivateOrderOpen:  aString
+]
+
+{ #category : #initialization }
 PharocksBinanceOperations >> futuresSymbolLatestPrice: aString [
 
 	^ ((self queryFuturesSymbolLatestPrice: aString) at: 'price') asNumber
+]
+
+{ #category : #initialization }
+PharocksBinanceOperations >> futuresSymbolPrivateOrderOpen: aString [
+
+	^ ((self queryFuturesPrivateOrderOpen:  aString) at: 'price') asNumber
 ]
 
 { #category : #initialization }

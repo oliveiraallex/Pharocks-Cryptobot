@@ -107,6 +107,14 @@ PharocksQueriesBinance >> queryFuturesPrivateOrderCreate: aString1 side: aString
 ]
 
 { #category : #controling }
+PharocksQueriesBinance >> queryFuturesPrivateOrderOpen: aString1 [ 
+	^ self
+		getPrivate: self apiUrlSecondary , '/fapi/v1/openOrders'
+		parameters:
+			{('symbol' -> aString1 asString)} asDictionary
+]
+
+{ #category : #controling }
 PharocksQueriesBinance >> queryFuturesSymbolLatestPrice: aString [ 
 	^ self
 		get: self apiUrlSecondary , '/fapi/v1/ticker/price'
