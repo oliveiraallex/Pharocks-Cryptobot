@@ -52,6 +52,42 @@ PharocksCryptocurrencyExchange >> futures: aString1 leverage: aInteger [
 ]
 
 { #category : #operation }
+PharocksCryptocurrencyExchange >> futuresAccountTransfer: aString1 amount: aInteger type: aString2 [
+
+	^ exchangePlugin futuresAccountTransfer: aString1 amount: aInteger type: aString2
+	
+"type:
+1: transfer from spot account to USDT futures account.
+2: transfer from USDT futures account to spot account.
+3: transfer from spot account to COIN futures account.
+4: transfer from COIN futures account to spot account."
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> futuresAccountTransferFromFuturesToSpot: aString1 amount: aInteger [
+
+	^ exchangePlugin futuresAccountTransfer: aString1 amount: aInteger type: 2
+	
+"type:
+1: transfer from spot account to USDT futures account.
+2: transfer from USDT futures account to spot account.
+3: transfer from spot account to COIN futures account.
+4: transfer from COIN futures account to spot account."
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> futuresAccountTransferFromSpotToFutures: aString1 amount: aInteger [
+
+	^ exchangePlugin futuresAccountTransfer: aString1 amount: aInteger type: 1
+	
+"type:
+1: transfer from spot account to USDT futures account.
+2: transfer from USDT futures account to spot account.
+3: transfer from spot account to COIN futures account.
+4: transfer from COIN futures account to spot account."
+]
+
+{ #category : #operation }
 PharocksCryptocurrencyExchange >> futuresBalance [
 
 	^ exchangePlugin futuresBalance
@@ -369,4 +405,16 @@ PharocksCryptocurrencyExchange >> symbolsInAccount [
 				ifTrue: [ accountSymbols add: (accountInformation at: 'balances' at: j) ].
 			j := j + 1 ].
 	^ accountSymbols
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> universalTransfer: aString1 amount: aInteger fromAccountType: aString2 toAccountType: aString3 [
+
+	^ exchangePlugin universalTransfer: aString1 amount: aInteger fromAccountType: aString2 toAccountType: aString3
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> universalTransferHistory [
+
+	^ exchangePlugin universalTransferHistory
 ]

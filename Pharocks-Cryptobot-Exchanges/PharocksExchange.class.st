@@ -134,7 +134,7 @@ PharocksExchange >> postPrivate: path parameters: aDictionary [
 		headerAddAll: {('X-MBX-APIKEY' -> apiKey)} asDictionary;
 		queryAddAll: aDictionary;
 		queryAddAll: {(#signature -> signature)} asDictionary.
-	PharocksLog logAdd: 'POST ',path,queryString.
+	PharocksLog logAdd: 'POST ',path,queryString. 
 	answer := NeoJSONReader fromString: webClient post.
 	result at: Time current put: answer.
 	^ answer
@@ -151,6 +151,7 @@ PharocksExchange >> signQuery: aString [
 
 { #category : #accessing }
 PharocksExchange >> timestamp [
+	"^ DateAndTime totalSeconds * 1000"
 	^ self subclassResponsibility 
 ]
 

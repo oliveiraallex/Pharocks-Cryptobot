@@ -48,6 +48,28 @@ PharocksQueriesBinance >> queryFutures: aString1 leverage: aInteger [
 ]
 
 { #category : #controling }
+PharocksQueriesBinance >> queryFuturesAccountTransfer: aString1 amount: aInteger type: aString2 [
+	^ self
+		postPrivate: self apiUrl , '/sapi/v1/futures/transfer'
+		parameters:
+			{('asset' -> aString1 asString).
+			('amount' -> aInteger).
+			('type' -> aString2 asString).
+			('recvWindow' -> 50000).
+			} asDictionary
+]
+
+{ #category : #controling }
+PharocksQueriesBinance >> queryFuturesAccountTransfer: aString1 startTime: aDate [
+	^ self
+		postPrivate: self apiUrl , '/sapi/v1/futures/transfer'
+		parameters:
+			{('asset' -> aString1 asString).
+			('startTime' -> aDate).
+			} asDictionary
+]
+
+{ #category : #controling }
 PharocksQueriesBinance >> queryFuturesBalance [
 	^ self
 		getPrivate: self apiUrlSecondary , '/fapi/v2/balance'
@@ -243,6 +265,23 @@ PharocksQueriesBinance >> queryTrades: aString lastTrades: aNumber [
 			{('symbol' -> aString asString).
 			('limit' -> aNumber asString).
 			('timestamp' -> self timeStamp)} asDictionary
+]
+
+{ #category : #controling }
+PharocksQueriesBinance >> queryUniversalTransfer: aString1 amount: aInteger fromAccountType: aString2 toAccountType: aString3 [
+	^ self
+		postPrivate: self apiUrl , '/sapi/v1/sub-account/universalTransfer'
+		parameters:
+			{('asset' -> aString1 asString).
+			('amount' -> aInteger).
+			('fromAccountType' -> aString2 asString).
+			('toAccountType' -> aString3 asString)} asDictionary
+]
+
+{ #category : #controling }
+PharocksQueriesBinance >> queryUniversalTransferHistory [
+	^ self
+		getPrivate: self apiUrl , '/sapi/v1/sub-account/universalTransfer'
 ]
 
 { #category : #controling }

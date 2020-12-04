@@ -46,6 +46,11 @@ PharocksBinanceOperations >> futures: aString1 leverage: aInteger [
 ]
 
 { #category : #initialization }
+PharocksBinanceOperations >> futuresAccountTransfer: aString1 amount: aInteger type: aString2 [
+	^ self queryFuturesAccountTransfer: aString1 amount: aInteger type: aString2
+]
+
+{ #category : #initialization }
 PharocksBinanceOperations >> futuresBalance [
 
 	^ ((self queryFuturesBalance at: 1) at: 'availableBalance') asNumber.
@@ -168,4 +173,15 @@ PharocksBinanceOperations >> symbolLatestPrice: aString [
 	| price | 
 	price := self querySymbolLatestPrice: aString.
 	^ (price at: 'price') asNumber
+]
+
+{ #category : #initialization }
+PharocksBinanceOperations >> universalTransfer: aString1 amount: aInteger fromAccountType: aString2 toAccountType: aString3 [
+
+	^ self queryUniversalTransfer: aString1 amount: aInteger fromAccountType: aString2 toAccountType: aString3
+]
+
+{ #category : #initialization }
+PharocksBinanceOperations >> universalTransferHistory [
+	^ self queryUniversalTransferHistory
 ]
