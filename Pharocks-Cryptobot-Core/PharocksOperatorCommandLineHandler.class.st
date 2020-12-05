@@ -23,5 +23,11 @@ PharocksOperatorCommandLineHandler >> activate [
 		ifTrue: [ PharocksOperator start ].
 			
 	(self hasOption: 'stopPharocks')
+		ifTrue: [ PharocksOperator stop ].
+	
+	(self hasOption: 'startCrossRails')
+		ifTrue: [ PharocksOperator start ].
+			
+	(self hasOption: 'stopCrossRails')
 		ifTrue: [ PharocksOperator stop ]
 ]

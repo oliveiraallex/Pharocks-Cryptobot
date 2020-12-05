@@ -192,7 +192,7 @@ PharocksCrossRailsStrategy >> startMonitor [
 	(( ordersOpen ~= 0 ) or: [( ( self checkThereIsOrdersOpen = 0 )and: [quantity = 0])]) ifTrue:  [ self cancellAll.
 	
 	balance := exchange futuresBalance.
-	"balance > (amountTrading * 1.1) ifTrue: [ exchange futuresAccountTransferFromFuturesToSpot:'USDT' amount: ((balance - amountTrading) round:2) ]."
+	balance > (amountTrading * 1.1) ifTrue: [ exchange futuresAccountTransferFromFuturesToSpot:'USDT' amount: ((balance - amountTrading) round:2) ].
 	PharocksLog logAdd: 'USD: ',  balance asString.
 		
 	position := (exchange futuresPositions) at:coinIndex.
@@ -214,8 +214,8 @@ PharocksCrossRailsStrategy >> startMonitor [
 			
 	quantity > 0 ifTrue: [ 
 		profit > 0 ifTrue: [ quantity > quantityWeightLongNextJump ifTrue: [ 
-			self openLong: 2 weight: weightBuy entryPriceOrCurrentPrice: 'entry' jumps: 1.
-			self openShort: 2 weight: 1 entryPriceOrCurrentPrice: 'entry' jumps: 1.  ] 
+			self openLong: 2 weight: 1 entryPriceOrCurrentPrice: 'entry' jumps: 1.
+			self openShort: 2 weight: weightBuy entryPriceOrCurrentPrice: 'entry' jumps: 1.  ] 
 				ifFalse: [ 
 					self openLong: 2 weight: weightBuy entryPriceOrCurrentPrice: 'entry' jumps: 1.
 					self openShort: 2 weight: weightSell entryPriceOrCurrentPrice: 'entry' jumps: 1. ].
@@ -236,7 +236,7 @@ PharocksCrossRailsStrategy >> startMonitor [
 			self openShort: 2 weight: 1 entryPriceOrCurrentPrice: 'entry' jumps: 1.  
 				] ifFalse: [ 		
 					self openShort: 2 weight: 1 entryPriceOrCurrentPrice: 'entry' jumps: 1.
-					self openLong: 2 weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1.
+					self openLong: 2 weight: 1 entryPriceOrCurrentPrice: 'entry' jumps: 1.
 					].
 			 	 ] 	ifFalse: [ quantity < quantityWeightShortNextJump ifTrue: [ 
 						self openShort: 2 weight: weightBuy entryPriceOrCurrentPrice: 'current' jumps: 1.
