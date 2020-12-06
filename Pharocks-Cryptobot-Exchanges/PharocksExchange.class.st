@@ -66,7 +66,7 @@ PharocksExchange >> deletePrivate: path parameters: aDictionary [
 		queryAddAll: aDictionary;
 		queryAddAll: {(#signature -> signature)} asDictionary.
 	PharocksLog logAdd: 'DELETE ',path,queryString.
-	answer := NeoJSONReader fromString: webClient delete.
+	[answer := NeoJSONReader fromString: webClient delete] ifError: [:ignore |  ] .
 	result at: Time current put: answer.
 	^ answer
 ]
@@ -82,7 +82,7 @@ PharocksExchange >> get: path parameters: aDictionary [
 	webClient := ZnClient new. 
 	webClient url: path.
 	webClient queryAddAll: aDictionary.
-	^ NeoJSONReader fromString: webClient get asString. 
+	^ [NeoJSONReader fromString: webClient get asString] ifError: [:ignore |  ] 
 ]
 
 { #category : #accessing }
@@ -102,7 +102,7 @@ PharocksExchange >> getPrivate: path parameters: aDictionary [
 		queryAddAll: aDictionary;
 		queryAddAll: {(#signature -> signature)} asDictionary.
 	PharocksLog logAdd: 'GET ',path,queryString.
-	answer := NeoJSONReader fromString: webClient get.
+	[answer := NeoJSONReader fromString: webClient get] ifError: [:ignore |  ] .
 	result at: Time current put: answer.
 	^ answer
 ]
@@ -135,7 +135,7 @@ PharocksExchange >> postPrivate: path parameters: aDictionary [
 		queryAddAll: aDictionary;
 		queryAddAll: {(#signature -> signature)} asDictionary.
 	PharocksLog logAdd: 'POST ',path,queryString. 
-	answer := NeoJSONReader fromString: webClient post.
+	[answer := NeoJSONReader fromString: webClient post] ifError: [:ignore |  ] .
 	result at: Time current put: answer.
 	^ answer
 ]
