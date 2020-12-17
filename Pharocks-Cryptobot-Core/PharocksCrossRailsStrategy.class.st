@@ -94,13 +94,13 @@ PharocksCrossRailsStrategy >> initialize [
 	leverage := 25.
 	railsRatio := 0.001.
 	
-	quantityGlobal := 0.02.
+	quantityGlobal := 0.002.
 	
-	amountTrading := 100.
-	quantityWeightShort := -0.04.
-	quantityWeightLong := 0.04.
-	quantityWeightShortNextJump := -0.05.
-	quantityWeightLongNextJump := 0.05.
+	amountTrading := 10.
+	quantityWeightShort := -0.004.
+	quantityWeightLong := 0.004.
+	quantityWeightShortNextJump := -0.005.
+	quantityWeightLongNextJump := 0.005.
 	
 	"leverage := 125.
 	limitRatio := 0.0001.
@@ -192,7 +192,7 @@ PharocksCrossRailsStrategy >> startMonitor [
 	(( ordersOpen ~= 0 ) or: [( ( self checkThereIsOrdersOpen = 0 )and: [quantity = 0])]) ifTrue:  [ self cancellAll.
 	
 	balance := exchange futuresBalance.
-	balance > (amountTrading * 1.05) ifTrue: [ exchange futuresAccountTransferFromFuturesToSpot:'USDT' amount: ((balance - amountTrading) round:2) ].
+	balance > (amountTrading * 10 * 1.05) ifTrue: [ exchange futuresAccountTransferFromFuturesToSpot:'USDT' amount: ((balance - amountTrading) round:2) ].
 	PharocksLog logAdd: 'USD: ',  balance asString.
 		
 	position := (exchange futuresPositions) at:coinIndex.
@@ -234,7 +234,7 @@ PharocksCrossRailsStrategy >> startMonitor [
 		profit > 0 ifTrue: [ quantity <  quantityWeightShortNextJump ifTrue: [ 
 			self openLong: 2 weight: weightBuy entryPriceOrCurrentPrice: 'entry' jumps: 1.
 			self openShort: 2 weight: 1 entryPriceOrCurrentPrice: 'entry' jumps: 1.  
-				] ifFalse: [ 		
+				] ifFalse: [ 
 					self openShort: 2 weight: 1 entryPriceOrCurrentPrice: 'entry' jumps: 1.
 					self openLong: 2 weight: 1 entryPriceOrCurrentPrice: 'entry' jumps: 1.
 					].
@@ -254,7 +254,7 @@ PharocksCrossRailsStrategy >> startMonitor [
 			self openShort: 2 weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1.].
 			].
 	
-	(Delay forSeconds: 1) wait ] repeat ] forkNamed: 'Pharocks processMonitor'  
+	1 second wait ] on: Error do: [:ignore | ] ; repeat  ] forkNamed: 'Pharocks processMonitor'  
 ]
 
 { #category : #accessing }
