@@ -139,7 +139,7 @@ PharocksCrossRailsStrategy >> openLong: anInteger weight: anInteger2 entryPriceO
 		quantity := (((quantityTotal / numberOfOrders) roundDownTo: 0.001) round:3).
 		quantityToStopLimit := (((quantityToStopLimit + quantity) roundDownTo: 0.001)round:3). 
 		priceToStopLimit := (((latestPrice - (latestPrice * railsRatio * (i + 1))) ) roundDownTo: 0.01) round:2. 
-		exchange futuresPrivateOrderCreateBuy: market type: 'LIMIT' quantity: (quantityGlobal * anInteger2) atPrice: orderPrice stopPrice: nil ].
+		exchange futuresPrivateOrderCreateBuy: market type: 'LIMIT' quantity: (((quantityGlobal * anInteger2)roundDownTo: 0.001) round:3) atPrice: orderPrice stopPrice: nil ].
 	
 	"exchange futuresPrivateOrderCreateSell: market type: 'STOP_MARKET' quantity: ((quantityToStopLimit roundDownTo: 0.001)round:3) atPrice: nil stopPrice: priceToStopLimit. "
 ]
@@ -169,7 +169,7 @@ PharocksCrossRailsStrategy >> openShort: anInteger weight: anInteger2 entryPrice
 		quantity := (((quantityTotal / numberOfOrders) roundDownTo: 0.001) round:3).
 		quantityToStopLimit := (((quantityToStopLimit + quantity) roundDownTo: 0.001)round:3). 
 		priceToStopLimit := (((latestPrice + (latestPrice * railsRatio * (i + 1))) ) roundDownTo: 0.01) round:2.
-		exchange futuresPrivateOrderCreateSell: market type: 'LIMIT' quantity: (quantityGlobal * anInteger2) atPrice: orderPrice stopPrice: nil ].
+		exchange futuresPrivateOrderCreateSell: market type: 'LIMIT' quantity: (((quantityGlobal * anInteger2)roundDownTo: 0.001) round:3) atPrice: orderPrice stopPrice: nil ].
 
 	"exchange futuresPrivateOrderCreateBuy: market type: 'STOP_MARKET' quantity: ((quantityToStopLimit roundDownTo: 0.001)round:3) atPrice: nil stopPrice: priceToStopLimit. "
 ]
