@@ -9,7 +9,7 @@ exchange := PharocksCryptocurrencyExchange exchangePlugin: binance.
 crossRails := PharocksCrossRailsStrategy new.
 crossRails setExchange: exchange.
 
-crossRails startMonitor. 
+crossRails startMonitorSingleTrack. 
 crossRails stopMonitor.
 
 crossRails cancellAll.
@@ -39,7 +39,8 @@ Class {
 		'quantityWeightShort',
 		'quantityWeightLong',
 		'quantityWeightShortNextJump',
-		'quantityWeightLongNextJump'
+		'quantityWeightLongNextJump',
+		'coinRules'
 	],
 	#category : #'Pharocks-Cryptobot-Core'
 }
@@ -54,34 +55,49 @@ PharocksCrossRailsStrategy >> cancellAll [
 ]
 
 { #category : #'as yet unclassified' }
+PharocksCrossRailsStrategy >> checkBalance [
+	| balance |
+	balance := exchange futuresBalance.
+	balance > (amountTrading * 10.1)
+		ifTrue: [ 
+			exchange	futuresAccountTransferFromFuturesToSpot: 'USDT' amount: (balance - (amountTrading * 10) round: 2) 
+		].
+	PharocksLog logAdd: 'USD: ' , balance asString
+]
+
+{ #category : #'as yet unclassified' }
 PharocksCrossRailsStrategy >> checkOrdersOpen [
 
-	| orders side |
-	buyOrdersOpen := OrderedCollection  new.
-	sellOrdersOpen := OrderedCollection  new.
-	orders := exchange futuresPrivateOrderOpen: market.
-	orders do: [ :i | side := i at: 'side'. (side = 'BUY') ifTrue: [  buyOrdersOpen add: i ] ].
-	orders do: [ :i | side := i at: 'side'. (side = 'SELL') ifTrue: [  sellOrdersOpen add: i ] ].
-	"((buyOrdersOpen size) = (sellOrdersOpen size) = numberOfOrders) ifTrue: [ ^ 0]. 
-	(buyOrdersOpen size) > (sellOrdersOpen size)  ifTrue: [ ^ 1 ].
-	(buyOrdersOpen size) < (sellOrdersOpen size)  ifTrue: [ ^ 2 ]." 
+	(buyOrdersOpen size = 0 and: [ sellOrdersOpen size = 0 ]) ifTrue: [ ^ 0]. 
+	(buyOrdersOpen size ~= 0 or: [ sellOrdersOpen size ~= 0 ]) ifTrue: [ ^ 1]
 
-	Transcript show: ((buyOrdersOpen size) - (sellOrdersOpen size) ) asString. 
+]
+
+{ #category : #'as yet unclassified' }
+PharocksCrossRailsStrategy >> checkOrdersRatio [
+
 	^ (buyOrdersOpen size) - (sellOrdersOpen size) 
 
 ]
 
 { #category : #'as yet unclassified' }
-PharocksCrossRailsStrategy >> checkThereIsOrdersOpen [
+PharocksCrossRailsStrategy >> checkOrdersToRun [
+	| position quantity |
+	position := exchange futuresPositions at: coinIndex.
+	quantity := (position at: 'positionAmt') asNumber.
+	self getOrders.
+	^ self checkOrdersRatio ~= 0 or: [ self checkOrdersOpen = 0 and: [ quantity = 0 ] ]
+]
+
+{ #category : #'as yet unclassified' }
+PharocksCrossRailsStrategy >> getOrders [
 
 	| orders side |
 	buyOrdersOpen := OrderedCollection  new.
 	sellOrdersOpen := OrderedCollection  new.
 	orders := exchange futuresPrivateOrderOpen: market.
 	orders do: [ :i | side := i at: 'side'. (side = 'BUY') ifTrue: [  buyOrdersOpen add: i ] ].
-	orders do: [ :i | side := i at: 'side'. (side = 'SELL') ifTrue: [  sellOrdersOpen add: i ] ].
-	(buyOrdersOpen size = 0 and: [ sellOrdersOpen size = 0 ]) ifTrue: [ ^ 0]. 
-	(buyOrdersOpen size ~= 0 or: [ sellOrdersOpen size ~= 0 ]) ifTrue: [ ^ 1]
+	orders do: [ :i | side := i at: 'side'. (side = 'SELL') ifTrue: [  sellOrdersOpen add: i ] ]
 
 ]
 
@@ -102,14 +118,7 @@ PharocksCrossRailsStrategy >> initialize [
 	quantityWeightShortNextJump := -0.005.
 	quantityWeightLongNextJump := 0.005.
 	
-	"leverage := 125.
-	limitRatio := 0.0001.
-	stopLossRatio := 0.0005.
-	stopLossMinRatio := 0.001.
-	stopGain1Ratio := 0.0015.
-	stopGain2Ratio := 0.002.
-	stopGain3Ratio := 0.003.
-	stopGain4Ratio := 0.004"
+	coinRules := PharocksCoins rules: 'BTCUSDT'.
 	
 
 ]
@@ -175,86 +184,51 @@ PharocksCrossRailsStrategy >> openShort: anInteger weight: anInteger2 entryPrice
 ]
 
 { #category : #accessing }
-PharocksCrossRailsStrategy >> startMonitor [
-	|  ordersOpen position quantity profit weightBuy weightSell balance |
+PharocksCrossRailsStrategy >> singleTrack [
+	|  position quantity weightLongPosition weightShortPosition isShortPosition isLongPosition isNoPosition |
+	
+	^ [  
 
-	self cancellAll.
-	self openLong: 2 weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1.
-	self openShort: 2 weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1.
-	weightBuy := 1. weightSell := 1.
-	
-	processMonitor := [ [ 
-	ordersOpen := self checkOrdersOpen.
-	
-	position := (exchange futuresPositions) at:coinIndex.
-	quantity := ((position at: 'positionAmt') asNumber).	
-
-	(( ordersOpen ~= 0 ) or: [( ( self checkThereIsOrdersOpen = 0 )and: [quantity = 0])]) ifTrue:  [ self cancellAll.
-	
-	balance := exchange futuresBalance.
-	balance > (amountTrading * 10 * 1.05) ifTrue: [ exchange futuresAccountTransferFromFuturesToSpot:'USDT' amount: ((balance - amountTrading) round:2) ].
-	PharocksLog logAdd: 'USD: ',  balance asString.
+		self checkOrdersToRun ifTrue:  [ 	
 		
-	position := (exchange futuresPositions) at:coinIndex.
-	quantity := ((position at: 'positionAmt') asNumber).	
-	profit := ((position at: 'unRealizedProfit') asNumber).	
+		self cancellAll.
+		self checkBalance.
+		
+		position := (exchange futuresPositions) at:coinIndex.
+		quantity := ((position at: 'positionAmt') asNumber).	
 
-	
-	(quantity between: quantityWeightShort and: quantityWeightLong) ifTrue: [ weightBuy := 1. weightSell := 1 ].
-	
-	quantity > quantityWeightLong ifTrue: [ 
-		 profit < 0 ifTrue: [ weightBuy := ((quantity / quantityGlobal / 2)roundDownTo: 1) round:3. ] 
-			ifFalse: [ weightSell := ((quantity / quantityGlobal / 2)roundDownTo: 1) round:3 ].].
-	
-	quantity < quantityWeightShort ifTrue: [ 
-		profit < 0 ifTrue: [ weightSell := (((quantity * -1) / quantityGlobal / 2)roundDownTo: 1) round:1. ]
-			ifFalse: [ weightBuy := (((quantity * -1) / quantityGlobal / 2)roundDownTo: 1) round:3 ].].
-	
-"	self halt."
+		isLongPosition := quantity > 0.
+		isShortPosition := quantity < 0.
+		isNoPosition := quantity = 0.
+
+		weightLongPosition := ((( quantity / quantityGlobal )roundDownTo: 1) round:3 ).
+		weightShortPosition := ((( quantity / quantityGlobal * -1)roundDownTo: 1) round:3 ).	
+
 			
-	quantity > 0 ifTrue: [ 
-		profit > 0 ifTrue: [ quantity > quantityWeightLongNextJump ifTrue: [ 
-			self openLong: 2 weight: 1 entryPriceOrCurrentPrice: 'entry' jumps: 1.
-			self openShort: 2 weight: weightBuy entryPriceOrCurrentPrice: 'entry' jumps: 1.  ] 
-				ifFalse: [ 
-					self openLong: 2 weight: weightBuy entryPriceOrCurrentPrice: 'entry' jumps: 1.
-					self openShort: 2 weight: weightSell entryPriceOrCurrentPrice: 'entry' jumps: 1. ].
-			 ] 	ifFalse: [ quantity > quantityWeightLongNextJump ifTrue: [ 
-			self openLong: 2 weight: weightSell entryPriceOrCurrentPrice: 'current' jumps: 1.
-			self openShort: 1 weight: weightBuy entryPriceOrCurrentPrice: 'entry' jumps: 1.	 
-			self openShort: 1 weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1.]
-				ifFalse: [ 
-					self openLong: 2 weight: weightBuy entryPriceOrCurrentPrice: 'current' jumps: 1.
-					self openShort: 2 weight: weightSell entryPriceOrCurrentPrice: 'entry' jumps: 1.
-					]
-				]. 
-			]. 
-	
-	 quantity < 0 ifTrue: [ 
-		profit > 0 ifTrue: [ quantity <  quantityWeightShortNextJump ifTrue: [ 
-			self openLong: 2 weight: weightBuy entryPriceOrCurrentPrice: 'entry' jumps: 1.
-			self openShort: 2 weight: 1 entryPriceOrCurrentPrice: 'entry' jumps: 1.  
-				] ifFalse: [ 
-					self openShort: 2 weight: 1 entryPriceOrCurrentPrice: 'entry' jumps: 1.
-					self openLong: 2 weight: 1 entryPriceOrCurrentPrice: 'entry' jumps: 1.
-					].
-			 	 ] 	ifFalse: [ quantity < quantityWeightShortNextJump ifTrue: [ 
-						self openShort: 2 weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1.
-						self openLong: 1 weight: weightSell entryPriceOrCurrentPrice: 'entry' jumps: 1.	 
-						self openLong: 1 weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1.
-						] ifFalse: [ 
-							self openLong: 2 weight: weightBuy entryPriceOrCurrentPrice: 'entry' jumps: 1.
-							self openShort: 2 weight: weightSell entryPriceOrCurrentPrice: 'current' jumps: 1.	 
-							]. 
-						] .
-					].
+		isLongPosition ifTrue: [ 
+			self openLong: 1 weight: (2 * weightLongPosition) entryPriceOrCurrentPrice: 'entry' jumps: 2.
+			self openShort: 1 weight: weightLongPosition entryPriceOrCurrentPrice: 'entry' jumps: 1. 
+		].
+
+		isShortPosition ifTrue: [ 
+			self openShort: 1 weight: (2 * weightShortPosition) entryPriceOrCurrentPrice: 'entry' jumps: 2.
+			self openLong: 1 weight: weightShortPosition entryPriceOrCurrentPrice: 'entry' jumps: 1.
+		] .
 				
-		quantity = 0 ifTrue: [ 
-			self openLong: 2 weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1.
-			self openShort: 2 weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1.].
-			].
+				
+		isNoPosition ifTrue: [ 
+			self openLong: 1 weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1.
+			self openShort: 1 weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1.
+		].
+	].
 	
-	1 second wait ] on: Error do: [:ignore | ] ; repeat  ] forkNamed: 'Pharocks processMonitor'  
+	1 second wait ] on: Error do: [:ignore | ^ nil ] ; repeat 
+]
+
+{ #category : #accessing }
+PharocksCrossRailsStrategy >> startMonitor [
+	
+	processMonitor := [ self singleTrack  ] forkNamed: 'Pharocks processMonitor'  
 ]
 
 { #category : #accessing }
