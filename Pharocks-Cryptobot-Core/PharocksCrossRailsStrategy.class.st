@@ -62,7 +62,6 @@ PharocksCrossRailsStrategy >> checkBalanceToTransfer [
 
 	balance > (amountTrading * 10.1)
 		ifTrue: [ 
-			PharocksLog logAdd: 'USD: ' , balance asString.
 			exchange	futuresAccountTransferFromFuturesToSpot: 'USDT' amount: (balance - (amountTrading * 10) round: 2)
 		]
 ]
@@ -124,7 +123,7 @@ PharocksCrossRailsStrategy >> getOrders [
 { #category : #'as yet unclassified' }
 PharocksCrossRailsStrategy >> getPositions [
 
-	position := (exchange futuresPositions) at:coinIndex.
+	position := [(exchange futuresPositions) at:coinIndex] on: Error do: [:ignore | ^ nil ].
 	quantity := ((position at: 'positionAmt') asNumber).
 	entryPrice := (position at: 'entryPrice') asNumber
 	
@@ -160,7 +159,6 @@ PharocksCrossRailsStrategy >> openLong: anInteger weight: anInteger2 entryPriceO
 	| orderPrice stopLossActivated |
 		
 	numberOfOrders := anInteger.
-	PharocksLog logAdd: 'USD: ',  balance asString.
 	quantityTotal := ((((balance / latestPrice) * leverage)/2) roundDownTo: 0.001) round:3.
 	((aString = 'entry') and: [(entryPrice > 0)]) ifTrue: [ latestPrice := entryPrice ] .
 	anInteger3 > 1 ifTrue: [ latestPrice := (((latestPrice - (latestPrice * railsRatio * anInteger3)) ) roundDownTo: 0.01) round:2 ].
@@ -224,7 +222,6 @@ PharocksCrossRailsStrategy >> openShort: anInteger weight: anInteger2 entryPrice
 	| orderPrice stopLossActivated |
 		
 	numberOfOrders := anInteger.
-	PharocksLog logAdd: 'USD: ',  balance asString.
 	quantityTotal := ((((balance / latestPrice) * leverage)/2) roundDownTo: 0.001) round:3.
 	((aString = 'entry') and: [(entryPrice > 0)]) ifTrue: [ latestPrice := entryPrice ] .
 	anInteger3 > 1 ifTrue: [ latestPrice := (((latestPrice + (latestPrice * railsRatio * anInteger3)) ) roundDownTo: 0.01) round:2 ].

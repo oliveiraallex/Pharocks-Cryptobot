@@ -53,7 +53,7 @@ PharocksBinanceOperations >> futuresAccountTransfer: aString1 amount: aInteger t
 { #category : #initialization }
 PharocksBinanceOperations >> futuresBalance [
 
-	^ ((self queryFuturesBalance at: 1) at: 'availableBalance') asNumber.
+	^ [((self queryFuturesBalance at: 1) at: 'availableBalance') asNumber] on: Error do: [:ignore | ^ 0 ].
 ]
 
 { #category : #initialization }
