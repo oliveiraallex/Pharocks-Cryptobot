@@ -165,6 +165,31 @@ PharocksCrossRailsStrategy >> openLong: anInteger weight: anInteger2 entryPriceO
 	"exchange futuresPrivateOrderCreateSell: market type: 'STOP_MARKET' quantity: ((quantityToStopLimit roundDownTo: 0.001)round:3) atPrice: nil stopPrice: priceToStopLimit. "
 ]
 
+{ #category : #accessing }
+PharocksCrossRailsStrategy >> openOrdersAsLongPosition [
+
+	| weightLongPosition |
+	weightLongPosition := ((( quantity / quantityGlobal )roundDownTo: 1) round:3 ).
+	self openShort: 1 weight: weightLongPosition entryPriceOrCurrentPrice: 'entry' jumps: 1. 
+	self openLong: 1 weight: (2 * weightLongPosition) entryPriceOrCurrentPrice: 'entry' jumps: 2.
+]
+
+{ #category : #accessing }
+PharocksCrossRailsStrategy >> openOrdersAsNoPosition [
+
+	self openLong: 1 weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1.
+	self openShort: 1 weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1.
+]
+
+{ #category : #accessing }
+PharocksCrossRailsStrategy >> openOrdersAsShortPosition [
+
+	| weightShortPosition |
+	weightShortPosition := ((( quantity / quantityGlobal * -1)roundDownTo: 1) round:3 ).
+	self openLong: 1 weight: weightShortPosition entryPriceOrCurrentPrice: 'entry' jumps: 1.
+	self openShort: 1 weight: (2 * weightShortPosition) entryPriceOrCurrentPrice: 'entry' jumps: 2.
+]
+
 { #category : #'as yet unclassified' }
 PharocksCrossRailsStrategy >> openShort: anInteger [
 	self openShort: anInteger weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1
@@ -193,10 +218,9 @@ PharocksCrossRailsStrategy >> openShort: anInteger weight: anInteger2 entryPrice
 
 { #category : #accessing }
 PharocksCrossRailsStrategy >> singleTrack [
-	|  weightLongPosition weightShortPosition isShortPosition isLongPosition isNoPosition |
+	| isShortPosition isLongPosition isNoPosition |
 	
-	^ [  
-		self checkOrdersToRun ifTrue:  [ 	
+	^ [ self checkOrdersToRun ifTrue:  [ 	
 		
 		self cancellAll.
 		self getPositions.
@@ -205,26 +229,11 @@ PharocksCrossRailsStrategy >> singleTrack [
 		isLongPosition := quantity > 0.
 		isShortPosition := quantity < 0.
 		isNoPosition := quantity = 0.
-
-		weightLongPosition := ((( quantity / quantityGlobal )roundDownTo: 1) round:3 ).
-		weightShortPosition := ((( quantity / quantityGlobal * -1)roundDownTo: 1) round:3 ).	
-
 			
-		isLongPosition ifTrue: [ 
-			self openShort: 1 weight: weightLongPosition entryPriceOrCurrentPrice: 'entry' jumps: 1. 
-			self openLong: 1 weight: (2 * weightLongPosition) entryPriceOrCurrentPrice: 'entry' jumps: 2.
-		].
-
-		isShortPosition ifTrue: [ 
-			self openLong: 1 weight: weightShortPosition entryPriceOrCurrentPrice: 'entry' jumps: 1.
-			self openShort: 1 weight: (2 * weightShortPosition) entryPriceOrCurrentPrice: 'entry' jumps: 2.
-		] .
-				
-				
-		isNoPosition ifTrue: [ 
-			self openLong: 1 weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1.
-			self openShort: 1 weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1.
-		].
+		isLongPosition ifTrue: [ self openOrdersAsLongPosition ].
+		isShortPosition ifTrue: [ self openOrdersAsShortPosition ] .
+		isNoPosition ifTrue: [ self openOrdersAsNoPosition ].
+		
 	].
 	
 	1 second wait ] on: Error do: [:ignore | ^ nil ] ; repeat 
