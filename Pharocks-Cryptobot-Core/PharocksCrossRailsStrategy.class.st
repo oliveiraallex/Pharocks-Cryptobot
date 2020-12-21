@@ -88,7 +88,7 @@ PharocksCrossRailsStrategy >> checkOrdersRatio [
 PharocksCrossRailsStrategy >> checkOrdersToRun [
 
 	position := exchange futuresPositions at: coinIndex.
-	quantity := (position at: 'positionAmt') asNumber.
+	[quantity := (position at: 'positionAmt') asNumber] on: Error do: [:ignore | ^ nil ].
 	self getOrders.
 	^ ((self checkOrdersRatio ~= 0 and: [ quantity ~= 0 ]) or: [ self checkOrdersOpen = 0 and: [ quantity = 0 ] ]) or: [ self checkOrdersRatio ~= 0 and: [ quantity = 0 ]]
 ]
@@ -100,8 +100,8 @@ PharocksCrossRailsStrategy >> getOrders [
 	buyOrdersOpen := OrderedCollection  new.
 	sellOrdersOpen := OrderedCollection  new.
 	orders := exchange futuresPrivateOrderOpen: market.
-	orders do: [ :i | side := i at: 'side'. (side = 'BUY') ifTrue: [  buyOrdersOpen add: i ] ].
-	orders do: [ :i | side := i at: 'side'. (side = 'SELL') ifTrue: [  sellOrdersOpen add: i ] ]
+	[orders do: [ :i | side := i at: 'side'. (side = 'BUY') ifTrue: [  buyOrdersOpen add: i ] ]] on: Error do: [:ignore | ^ nil ].
+	[orders do: [ :i | side := i at: 'side'. (side = 'SELL') ifTrue: [  sellOrdersOpen add: i ] ]] on: Error do: [:ignore | ^ nil ]
 
 ]
 
