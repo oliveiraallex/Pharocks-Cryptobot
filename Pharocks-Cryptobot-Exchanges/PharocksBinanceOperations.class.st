@@ -33,7 +33,7 @@ PharocksBinanceOperations >> exchangeStatus [
 PharocksBinanceOperations >> exchangeTime [
 	| answerSystemStatus status |
 	answerSystemStatus := self queryExchangeTime.
-	status := answerSystemStatus isEmpty 
+	status := answerSystemStatus isNil 
 		ifTrue: [ false ]
 		ifFalse: [ answerSystemStatus at: #serverTime ].
 	^ status
