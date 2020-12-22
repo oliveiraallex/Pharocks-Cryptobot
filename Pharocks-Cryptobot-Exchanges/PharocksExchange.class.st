@@ -6,8 +6,7 @@ Class {
 		'apiSecretKey',
 		'website',
 		'apiUrl',
-		'apiUrlSecondary',
-		'result'
+		'apiUrlSecondary'
 	],
 	#category : #'Pharocks-Cryptobot-Exchanges'
 }
@@ -56,7 +55,7 @@ PharocksExchange >> apiUrlSecondary: anObject [
 
 { #category : #accessing }
 PharocksExchange >> deletePrivate: path parameters: aDictionary [
-	| webClient queryString signature answer| 
+	| webClient queryString signature delete | 
 	aDictionary at: 'timestamp' put: self timestamp.
 	queryString := self getQueryAsString: aDictionary.
 	signature := self signQuery: queryString.
@@ -66,9 +65,8 @@ PharocksExchange >> deletePrivate: path parameters: aDictionary [
 		queryAddAll: aDictionary;
 		queryAddAll: {(#signature -> signature)} asDictionary.
 	PharocksLog logAdd: 'DELETE ',path,queryString.
-	[answer := NeoJSONReader fromString: webClient delete] ifError: [:ignore |  ] .
-	result at: Time current put: answer.
-	^ answer
+	delete := [NeoJSONReader fromString: webClient delete] ifError: [ :error | PharocksLog logAdd: 'ERROR ', error asString ].
+	^ delete
 ]
 
 { #category : #accessing }
@@ -78,11 +76,12 @@ PharocksExchange >> get: path [
 
 { #category : #accessing }
 PharocksExchange >> get: path parameters: aDictionary [
-	| webClient | 
+	| webClient get | 
 	webClient := ZnClient new. 
 	webClient url: path.
 	webClient queryAddAll: aDictionary.
-	^ [NeoJSONReader fromString: webClient get asString] ifError: [:ignore |  ] 
+	get := [NeoJSONReader fromString: webClient get asString] ifError: [ :error | PharocksLog logAdd: 'ERROR ', error asString ].
+	^ get
 ]
 
 { #category : #accessing }
@@ -92,7 +91,7 @@ PharocksExchange >> getPrivate: path [
 
 { #category : #accessing }
 PharocksExchange >> getPrivate: path parameters: aDictionary [
-	| webClient queryString signature answer|
+	| webClient queryString signature get |
 	aDictionary at: 'timestamp' put: self timestamp.
 	queryString := self getQueryAsString: aDictionary.
 	signature := self signQuery: queryString.
@@ -102,9 +101,8 @@ PharocksExchange >> getPrivate: path parameters: aDictionary [
 		queryAddAll: aDictionary;
 		queryAddAll: {(#signature -> signature)} asDictionary.
 	PharocksLog logAdd: 'GET ',path,queryString.
-	[answer := NeoJSONReader fromString: webClient get] ifError: [:ignore |  ] .
-	result at: Time current put: answer.
-	^ answer
+	get := [NeoJSONReader fromString: webClient get] ifError: [ :error | PharocksLog logAdd: 'ERROR ', error asString ].
+	^ get
 ]
 
 { #category : #accessing }
@@ -118,14 +116,11 @@ PharocksExchange >> getQueryAsString: aDictionary [
 
 { #category : #initialization }
 PharocksExchange >> initialize [
-	"self configuration."
-	result := Dictionary new.
-	"runQuery := PharocksBinanceOperations new."
 ]
 
 { #category : #accessing }
 PharocksExchange >> postPrivate: path parameters: aDictionary [
-	| webClient queryString signature answer| 
+	| webClient queryString signature post | 
 	aDictionary at: 'timestamp' put: self timestamp.
 	queryString := self getQueryAsString: aDictionary.
 	signature := self signQuery: queryString.
@@ -135,9 +130,8 @@ PharocksExchange >> postPrivate: path parameters: aDictionary [
 		queryAddAll: aDictionary;
 		queryAddAll: {(#signature -> signature)} asDictionary.
 	PharocksLog logAdd: 'POST ',path,queryString. 
-	[answer := NeoJSONReader fromString: webClient post] ifError: [:ignore |  ] .
-	result at: Time current put: answer.
-	^ answer
+	post := [NeoJSONReader fromString: webClient post] ifError: [ :error | PharocksLog logAdd: 'ERROR ', error asString ].
+	^ post
 ]
 
 { #category : #accessing }

@@ -1,12 +1,30 @@
 Class {
 	#name : #PharocksBinanceOperations,
 	#superclass : #PharocksQueriesBinance,
+	#instVars : [
+		'exchangeInfoCache',
+		'futuresBalanceCache',
+		'futuresPositionsCache',
+		'futuresSymbolLatestPriceCache',
+		'futuresSymbolPrivateOrderOpenCache',
+		'privateAccountInformationCache',
+		'symbolAvaregePriceCache',
+		'symbolBestPriceCache',
+		'symbolLatestPriceCache',
+		'futuresPrivateOrderOpenCache',
+		'exchangeTimeCache',
+		'orderBookLastOrdersCache'
+	],
 	#category : #'Pharocks-Cryptobot-Exchanges'
 }
 
 { #category : #initialization }
 PharocksBinanceOperations >> exchangeInfo [
-	^ self queryExchangeInfo
+	| get |
+	get := [ self queryExchangeInfo.
+	] on: Error do: [ :error | PharocksLog logAdd: error asString,'. Loading CACHE ',exchangeInfoCache asString. ^ exchangeInfoCache ].
+	exchangeInfoCache := get.
+	^ exchangeInfoCache
 ]
 
 { #category : #initialization }
@@ -31,12 +49,11 @@ PharocksBinanceOperations >> exchangeStatus [
 
 { #category : #initialization }
 PharocksBinanceOperations >> exchangeTime [
-	| answerSystemStatus status |
-	answerSystemStatus := self queryExchangeTime.
-	status := answerSystemStatus isNil 
-		ifTrue: [ false ]
-		ifFalse: [ answerSystemStatus at: #serverTime ].
-	^ status
+	| get |
+	get := [ self queryExchangeTime.
+		] on: Error do: [ :error | PharocksLog logAdd: error asString,'. Loading CACHE ', exchangeTimeCache asString. ^ exchangeTimeCache ].
+	exchangeTimeCache := get at: #serverTime.
+	^ exchangeTimeCache
 ]
 
 { #category : #initialization }
@@ -52,8 +69,11 @@ PharocksBinanceOperations >> futuresAccountTransfer: aString1 amount: aInteger t
 
 { #category : #initialization }
 PharocksBinanceOperations >> futuresBalance [
-
-	^ [((self queryFuturesBalance at: 1) at: 'availableBalance') asNumber] on: Error do: [:ignore | ^ 0 ].
+	| get |
+	get := [ ((self queryFuturesBalance at: 1) at: 'availableBalance') asNumber 
+		] on: Error do: [ :error | PharocksLog logAdd: error asString,'. Loading CACHE ',futuresBalanceCache asString. ^ futuresBalanceCache ].
+	futuresBalanceCache := get.
+	^ futuresBalanceCache
 ]
 
 { #category : #initialization }
@@ -65,7 +85,11 @@ PharocksBinanceOperations >> futuresOrderCancelAll: aString [
 { #category : #initialization }
 PharocksBinanceOperations >> futuresPositions [
 
-	^ self queryFuturesPositions
+	| get |
+	get := [self queryFuturesPositions.
+		] on: Error do: [ :error | PharocksLog logAdd: error asString,'. Loading CACHE ',futuresPositionsCache asString. ^ futuresPositionsCache ].
+	futuresPositionsCache := get.
+	^ futuresPositionsCache
 ]
 
 { #category : #initialization }
@@ -81,29 +105,40 @@ PharocksBinanceOperations >> futuresPrivateOrderCreate: aString1 side: aString2 
 { #category : #initialization }
 PharocksBinanceOperations >> futuresPrivateOrderOpen: aString [
 
-	^ self queryFuturesPrivateOrderOpen:  aString
+	| get |
+	get := [ self queryFuturesPrivateOrderOpen:  aString.
+	] on: Error do: [ :error | PharocksLog logAdd: error asString,'. Loading CACHE ',futuresPrivateOrderOpenCache asString. ^ futuresPrivateOrderOpenCache ].
+	futuresPrivateOrderOpenCache := get.
+	^ futuresPrivateOrderOpenCache
 ]
 
 { #category : #initialization }
 PharocksBinanceOperations >> futuresSymbolLatestPrice: aString [
 
-	^ ((self queryFuturesSymbolLatestPrice: aString) at: 'price') asNumber
+	| get |
+	get := [((self queryFuturesSymbolLatestPrice: aString) at: 'price') asNumber.
+	] on: Error do: [ :error | PharocksLog logAdd: error asString,'. Loading CACHE ',futuresSymbolLatestPriceCache asString. ^ futuresSymbolLatestPriceCache ].
+	futuresSymbolLatestPriceCache := get.
+	^ futuresSymbolLatestPriceCache
 ]
 
 { #category : #initialization }
 PharocksBinanceOperations >> futuresSymbolPrivateOrderOpen: aString [
 
-	^ ((self queryFuturesPrivateOrderOpen:  aString) at: 'price') asNumber
+	| get |
+	get := [((self queryFuturesPrivateOrderOpen:  aString) at: 'price') asNumber.
+	] on: Error do: [ :error | PharocksLog logAdd: error asString,'. Loading CACHE ',futuresSymbolPrivateOrderOpenCache asString. ^ futuresSymbolPrivateOrderOpenCache ].
+	futuresSymbolPrivateOrderOpenCache := get.
+	^ futuresSymbolPrivateOrderOpenCache
 ]
 
 { #category : #initialization }
 PharocksBinanceOperations >> orderBook: aString lastOrders: aNumber [
-	| answer result msg |
-	answer := self queryOrderBook: aString lastOrders: aNumber.
-	(answer includesKey: 'code') ifTrue: [ ((answer at: 'code') = -1100)
-		ifTrue: [ msg := answer at: 'msg'.
-			Object new error: msg ] ]
-		ifFalse: [ ^ answer ]
+	| get |
+	get := [self queryOrderBook: aString lastOrders: aNumber.
+		] on: Error do: [ :error | PharocksLog logAdd: error asString,'. Loading CACHE ', orderBookLastOrdersCache asString. ^ orderBookLastOrdersCache ].
+	orderBookLastOrdersCache := get.
+	^ orderBookLastOrdersCache
 ]
 
 { #category : #initialization }
@@ -128,7 +163,11 @@ PharocksBinanceOperations >> orderCreateSell: aString atPrice: aNumber [
 
 { #category : #operations }
 PharocksBinanceOperations >> privateAccountInformation [
-	^ self queryPrivateAccountInformation
+	| get |
+	get := [self queryPrivateAccountInformation.
+	] on: Error do: [ :error | PharocksLog logAdd: error asString,'. Loading CACHE ',privateAccountInformationCache asString. ^ privateAccountInformationCache ].
+	privateAccountInformationCache := get.
+	^ privateAccountInformationCache
 ]
 
 { #category : #initialization }
@@ -156,23 +195,31 @@ PharocksBinanceOperations >> privateOrders: aString last: anInteger [
 { #category : #initialization }
 PharocksBinanceOperations >> symbolAvaregePrice: aString [
 	"Average of price of a cryptocoin in the last 5 minutes"
-	| price | 
-	price := self querySymbolAveragePrice: aString.
-	^ (price at: 'price') asNumber
+	| get | 
+	get := [self querySymbolAveragePrice: aString.
+	] on: Error do: [ :error | PharocksLog logAdd: error asString,'. Loading CACHE ',symbolAvaregePriceCache asString. ^ symbolAvaregePriceCache ].
+	symbolAvaregePriceCache := (get at: 'price') asNumber.
+	^ symbolAvaregePriceCache
 ]
 
 { #category : #initialization }
 PharocksBinanceOperations >> symbolBestPrice: aString [
 	"Average of price of a cryptocoin in the last 5 minutes"
-	^ self querySymbolBestPrice: aString.
+	| get |
+	get := [self querySymbolBestPrice: aString.
+		] on: Error do: [ :error | PharocksLog logAdd: error asString,'. Loading CACHE ',symbolBestPriceCache asString. ^ symbolBestPriceCache ].
+	symbolBestPriceCache := get.
+	^ symbolBestPriceCache
 ]
 
 { #category : #initialization }
 PharocksBinanceOperations >> symbolLatestPrice: aString [
 	"Average of price of a cryptocoin in the last 5 minutes"
-	| price | 
-	price := self querySymbolLatestPrice: aString.
-	^ (price at: 'price') asNumber
+	| get | 
+	get := [self querySymbolLatestPrice: aString.
+		] on: Error do: [ :error | PharocksLog logAdd: error asString,'. Loading CACHE ',symbolBestPriceCache asString. ^ symbolBestPriceCache ].
+	symbolBestPriceCache := (get at: 'price') asNumber.
+	^ symbolBestPriceCache
 ]
 
 { #category : #initialization }
