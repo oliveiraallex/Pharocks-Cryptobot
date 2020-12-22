@@ -5,7 +5,6 @@ Class {
 		'wallet',
 		'strategy',
 		'exchange',
-		'result',
 		'orderFilled',
 		'orderWaiting',
 		'orderFilledOCO'
@@ -167,7 +166,6 @@ PharocksBroker >> createAssets [
 
 { #category : #accessing }
 PharocksBroker >> executeStrategyOnExchange [
-	result := OrderedCollection new.
 	self walletSync.
 	self createAssets.
 	self assetsBuy.
@@ -178,7 +176,6 @@ PharocksBroker >> executeStrategyOnExchange [
 PharocksBroker >> initialize [
 
 	wallet := PharocksWallet new.
-	result := OrderedCollection new
 ]
 
 { #category : #control }
@@ -204,16 +201,6 @@ PharocksBroker >> orderFilled [
 { #category : #accessing }
 PharocksBroker >> orderFilled: anObject [
 	orderFilled := anObject
-]
-
-{ #category : #accessing }
-PharocksBroker >> result [
-	^ result
-]
-
-{ #category : #accessing }
-PharocksBroker >> result: anObject [
-	result := anObject
 ]
 
 { #category : #initialization }
