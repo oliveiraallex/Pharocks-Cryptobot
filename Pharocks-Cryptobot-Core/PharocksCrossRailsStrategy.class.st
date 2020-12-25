@@ -75,7 +75,7 @@ PharocksCrossRailsStrategy >> checkOrdersRatio [
 	0 = There is no order or there is the same number of Long and Short orders
 	1 = There is one more Longs than Short
 	2 = There is two more Longs than Short.
-	-1 = There is one more Shorts than Long"
+	-1 = There is one more Shorts than Long" 
 	^ (buyOrdersOpen size) - (sellOrdersOpen size)
 ]
 
@@ -128,7 +128,7 @@ PharocksCrossRailsStrategy >> getPositions [
 PharocksCrossRailsStrategy >> initialize [
 	super initialize. 
 	market := 'BTCUSDT'.
-	coinIndex := 54.
+	coinIndex := 55.
 
 	leverage := 25.
 	railsRatio := 0.002.
@@ -154,30 +154,25 @@ PharocksCrossRailsStrategy >> openLong: numberOfOrdersInteger weight: weightInte
 	| orderPrice stopLossActivated isEntryPrice|
 
 	isEntryPrice := (aString = 'entry') and: [entryPrice > 0].
-	isEntryPrice ifTrue: [ latestPrice := entryPrice ] .
+	isEntryPrice ifTrue: [ latestPrice := entryPrice ].
 	stopLossActivated := quantity > quantityToStopLoss.
 
 	orderPrice := self calculateOrderPriceWithJump: jumpsInteger shortOrLong: 'long'.
 	
 	stopLossActivated ifTrue: [
-	
 	exchange futuresPrivateOrderCreateSell: market 
 		type: 'STOP_MARKET' 
 		quantity: (((quantityGlobal * weightInteger / 2 )roundDownTo: 0.001) round:3) 
 		atPrice: nil 
 		stopPrice: orderPrice. 
-	
 	] ifFalse: [ 
-	
 	1 to: numberOfOrdersInteger do: [  :i |	
 		exchange futuresPrivateOrderCreateBuy: market 
 			type: 'LIMIT' 
 			quantity: (((quantityGlobal * weightInteger)roundDownTo: 0.001) round:3) 
 			atPrice: (orderPrice * i) 
 			stopPrice: nil ].
-	
 	]
-
 ]
 
 { #category : #accessing }
