@@ -16,5 +16,9 @@ Metacello new
   baseline: 'Pharocks';
   repository: 'github://oliveiraallex/Pharocks-Cryptobot';
   load.
+Metacello new
+  baseline: 'TelePharo';
+  repository: 'github://pharo-ide/TelePharo:pharo7';
+  load. 
 Iceberg enableMetacelloIntegration: true.
 Smalltalk saveSession."
