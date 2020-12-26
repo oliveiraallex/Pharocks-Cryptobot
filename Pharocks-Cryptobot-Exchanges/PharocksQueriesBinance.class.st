@@ -76,6 +76,37 @@ PharocksQueriesBinance >> queryFuturesBalance [
 ]
 
 { #category : #controling }
+PharocksQueriesBinance >> queryFuturesCandleStick: aString contractType: aString2 interval: intervalInteger limit: limitInteger [
+	^ self
+		getPrivate: self apiUrlSecondary , '/fapi/v1/continuousKlines'
+		parameters:
+			{('pair' -> aString asString).
+			('contractType' -> aString2 asString).
+			('interval' -> intervalInteger asString).
+			"('startTime' -> aNumber asString).
+			('endTime' -> aNumber asString)."
+			('limit' -> limitInteger asNumber)} asDictionary
+			
+"Kline/Candlestick chart intervals:
+m -> minutes; h -> hours; d -> days; w -> weeks; M -> months
+1m
+3m
+5m
+15m
+30m
+1h
+2h
+4h
+6h
+8h
+12h
+1d
+3d
+1w
+1M"
+]
+
+{ #category : #controling }
 PharocksQueriesBinance >> queryFuturesOrderCancelAll: aString [ 
 	^ self
 		deletePrivate: self apiUrlSecondary , '/fapi/v1/allOpenOrders'

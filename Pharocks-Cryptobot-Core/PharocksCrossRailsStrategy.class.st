@@ -85,7 +85,7 @@ PharocksCrossRailsStrategy >> checkOrdersToRun [
 	| ordersRatio ordersOpen |
 	self getPositions.
 	self getOrders.
-	
+
 	ordersRatio := self checkOrdersRatio.
 	ordersOpen := self  checkOrdersOpen.
 	

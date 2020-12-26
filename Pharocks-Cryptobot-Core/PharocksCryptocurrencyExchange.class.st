@@ -94,6 +94,12 @@ PharocksCryptocurrencyExchange >> futuresBalance [
 ]
 
 { #category : #operation }
+PharocksCryptocurrencyExchange >> futuresCandleStick: aString contractType: aString2 interval: intervalInteger limit: limitInteger [
+
+	^ exchangePlugin futuresCandleStick: aString contractType: aString2 interval: intervalInteger limit: limitInteger
+]
+
+{ #category : #operation }
 PharocksCryptocurrencyExchange >> futuresOrderCancelAll: sString [
 
 	^ exchangePlugin futuresOrderCancelAll: sString

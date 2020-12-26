@@ -77,6 +77,11 @@ PharocksBinanceOperations >> futuresBalance [
 ]
 
 { #category : #initialization }
+PharocksBinanceOperations >> futuresCandleStick: aString contractType: aString2 interval: intervalInteger limit: limitInteger [
+	^ self queryFuturesCandleStick: aString contractType: aString2 interval: intervalInteger limit: limitInteger
+]
+
+{ #category : #initialization }
 PharocksBinanceOperations >> futuresOrderCancelAll: aString [
 
 	^ self queryFuturesOrderCancelAll: aString
