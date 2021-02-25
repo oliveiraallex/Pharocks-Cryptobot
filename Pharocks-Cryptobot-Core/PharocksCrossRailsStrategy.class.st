@@ -35,7 +35,9 @@ Class {
 		'position',
 		'quantity',
 		'entryPrice',
-		'quantityToStopLoss'
+		'quantityToStopLoss',
+		'log',
+		'waitTime'
 	],
 	#category : #'Pharocks-Cryptobot-Core'
 }
@@ -55,7 +57,7 @@ PharocksCrossRailsStrategy >> cancellAllOrders [
 { #category : #'as yet unclassified' }
 PharocksCrossRailsStrategy >> checkBalanceToTransfer [
 
-	balance > (amountTrading * 1.1)
+	balance > (amountTrading * 1.05)
 		ifTrue: [ 
 			exchange	futuresAccountTransferFromFuturesToSpot: 'USDT' amount: (balance - (amountTrading ) round: 2)
 		]
@@ -82,17 +84,24 @@ PharocksCrossRailsStrategy >> checkOrdersRatio [
 { #category : #'as yet unclassified' }
 PharocksCrossRailsStrategy >> checkOrdersToRun [
 
-	| ordersRatio ordersOpen |
+	| ordersRatio ordersOpen result|
 	self getPositions.
 	self getOrders.
 
 	ordersRatio := self checkOrdersRatio.
 	ordersOpen := self  checkOrdersOpen.
-	
+
 	"1st = There is more orders Short or Long with or without opened position
 	2nd = There is no orders opened"
-	^ (ordersRatio = 1 or: ordersRatio= -1) or: (ordersOpen = 0).
+	result := (ordersRatio = 1 or: ordersRatio= -1) or: (ordersOpen = 0).
+	log = true ifTrue: [Transcript show: 'Run: ', result asString ; cr;cr].
+	^ result
 	
+]
+
+{ #category : #initialization }
+PharocksCrossRailsStrategy >> cleanCache [ 
+	exchange exchangePlugin cleanChache
 ]
 
 { #category : #'as yet unclassified' }
@@ -110,39 +119,42 @@ PharocksCrossRailsStrategy >> getOrders [
 	buyOrdersOpen := OrderedCollection  new.
 	sellOrdersOpen := OrderedCollection  new.
 	orders := exchange futuresPrivateOrderOpen: market.
+	log = true ifTrue: [Transcript show: 'Orders: ', orders asString ; cr].
 	[orders do: [ :i | side := i at: 'side'. (side = 'BUY') ifTrue: [  buyOrdersOpen add: i ] ]] on: Error do: [:ignore | ^ nil ].
-	[orders do: [ :i | side := i at: 'side'. (side = 'SELL') ifTrue: [  sellOrdersOpen add: i ] ]] on: Error do: [:ignore | ^ nil ]
-
+	[orders do: [ :i | side := i at: 'side'. (side = 'SELL') ifTrue: [  sellOrdersOpen add: i ] ]] on: Error do: [:ignore | ^ nil ].
+	log = true ifTrue: [Transcript show: 'buyOrdersOpen: ', buyOrdersOpen asString ; cr].
+	log = true ifTrue: [Transcript show: 'sellOrdersOpen ', sellOrdersOpen asString ; cr].
+	
 ]
 
 { #category : #'as yet unclassified' }
 PharocksCrossRailsStrategy >> getPositions [
 	|coinList|
 	coinList := (exchange futuresPositions).
-	position := [ coinList at:coinIndex] on: Error do: [:ignore | ^ nil ].
+	position := [ coinList detect: [ :a | (a at: 'symbol') = market ] ] on: Error do: [:ignore | ^ nil ].
 	quantity := ((position at: 'positionAmt') asNumber).
 	entryPrice := (position at: 'entryPrice') asNumber.
+	log = true ifTrue: [Transcript show: 'Position: ', position asString ; cr].
 	^ coinList.
 ]
 
 { #category : #initialization }
 PharocksCrossRailsStrategy >> initialize [
 	super initialize. 
+	log := false.
 	market := 'BCHUSDT'.
-	coinIndex := 20.
-
-	leverage := 60.
+	leverage := 75.
 	railsRatio := 0.004.
-	
-	quantityGlobal := 0.002.
-	
-	amountTrading := 20.
-	
-	quantityToStopLoss := 1.
-	
-	coinRules := PharocksCoins rules: 'BCHUSDT'.
-	
+	quantityGlobal := 0.01.
+	amountTrading := 60.
+	quantityToStopLoss := 7.
+	waitTime := 1.
+	coinRules := PharocksCoins rules: market
+]
 
+{ #category : #'logging-Deprecated' }
+PharocksCrossRailsStrategy >> log: boolean [
+	log := boolean
 ]
 
 { #category : #'as yet unclassified' }
@@ -193,7 +205,7 @@ PharocksCrossRailsStrategy >> openLong: numberOfOrdersInteger weight: weightInte
 		atPrice: nil 
 		stopPrice: orderPrice. 
 	] ifFalse: [ 
-	1 to: numberOfOrdersInteger do: [  :i |	
+	1 to: numberOfOrdersInteger do: [  :i |
 		exchange futuresPrivateOrderCreateBuy: market 
 			type: 'LIMIT' 
 			quantity: ((((quantityGlobal * weightInteger) + quantityNumber)roundDownTo: 0.001) round:3) 
@@ -207,7 +219,7 @@ PharocksCrossRailsStrategy >> openOrdersAsLongPosition [
 
 	| weightLongPosition |
 	weightLongPosition := ((( quantity / quantityGlobal )roundDownTo: 1) round:3 ).
-	self openShort: 1 weight: weightLongPosition entryPriceOrCurrentPrice: 'entry' jumps: 1 addQuantity: quantityGlobal.
+	self openShort: 1 weight: weightLongPosition entryPriceOrCurrentPrice: 'entry' jumps: 1 addQuantity: quantityGlobal "0".
 	self openLong: 1 weight: (2 * weightLongPosition) entryPriceOrCurrentPrice: 'entry' jumps: 3.
 ]
 
@@ -224,7 +236,7 @@ PharocksCrossRailsStrategy >> openOrdersAsShortPosition [
 
 	| weightShortPosition |
 	weightShortPosition := ((( quantity / quantityGlobal * -1)roundDownTo: 1) round:3 ).
-	self openLong: 1 weight: weightShortPosition entryPriceOrCurrentPrice: 'entry' jumps: 1  addQuantity: quantityGlobal.
+	self openLong: 1 weight: weightShortPosition entryPriceOrCurrentPrice: 'entry' jumps: 1  addQuantity: quantityGlobal "0".
 	self openShort: 1 weight: (2 * weightShortPosition) entryPriceOrCurrentPrice: 'entry' jumps: 3.
 ]
 
@@ -306,7 +318,7 @@ PharocksCrossRailsStrategy >> singleTrack [
 		
 	].
 	
-	1 second wait ] on: Error do: [:ignore | ^ nil ] ; repeat 
+	waitTime second wait ] on: Error do: [:ignore | ^ nil ] ; repeat 
 ]
 
 { #category : #accessing }

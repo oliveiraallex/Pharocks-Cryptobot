@@ -18,6 +18,23 @@ Class {
 	#category : #'Pharocks-Cryptobot-Exchanges'
 }
 
+{ #category : #'as yet unclassified' }
+PharocksBinanceOperations >> cleanChache [
+	exchangeInfoCache := nil.
+	exchangeTimeCache := nil.
+	futuresBalanceCache := nil.
+	futuresPositionsCache := nil.
+	futuresPrivateOrderOpenCache := nil.
+	futuresSymbolLatestPriceCache := nil.
+	futuresSymbolPrivateOrderOpenCache := nil.
+	orderBookLastOrdersCache := nil.
+	privateAccountInformationCache := nil.
+	symbolAvaregePriceCache := nil.
+	symbolBestPriceCache := nil.
+	symbolLatestPriceCache := nil.
+	
+]
+
 { #category : #initialization }
 PharocksBinanceOperations >> exchangeInfo [
 	| get |
