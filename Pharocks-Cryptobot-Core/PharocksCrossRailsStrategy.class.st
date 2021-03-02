@@ -217,7 +217,7 @@ PharocksCrossRailsStrategy >> openLong: numberOfOrdersInteger weight: weightInte
 	1 to: numberOfOrdersInteger do: [  :i | 
 		exchange futuresPrivateOrderCreateBuy: market 
 			type: 'LIMIT' 
-			quantity: ((((quantityOrder) + quantityNumber )roundDownTo: 0.001) round:3) 
+			quantity: ((((quantityOrder * weightInteger) + quantityNumber )roundDownTo: 0.001) round:3) 
 			atPrice: (orderPrice * i) 
 			stopPrice: nil ].
 	]
@@ -227,9 +227,9 @@ PharocksCrossRailsStrategy >> openLong: numberOfOrdersInteger weight: weightInte
 PharocksCrossRailsStrategy >> openOrdersAsLongPosition [
 
 	| weightLongPosition |
-	weightLongPosition := ((( quantity / quantityGlobal )roundDownTo: 1) round:3 ). 
-	self openShort: 1 weight: (weightLongPosition) entryPriceOrCurrentPrice: 'entry' jumps: 1 addQuantity: quantityGlobal "0".
-	self openLong: 1 weight: ("2*" weightLongPosition) entryPriceOrCurrentPrice: 'entry' jumps: 3.
+	weightLongPosition := ((( quantity / quantityGlobal )roundDownTo: 1) round:3 ).
+	self openShort: 1 weight: "weightLongPosition" 1 entryPriceOrCurrentPrice: 'entry' jumps: 1 addQuantity: quantityGlobal "0".
+	self openLong: 1 weight: "2* weightLongPosition" 2  entryPriceOrCurrentPrice: 'entry' jumps: 3.
 ]
 
 { #category : #accessing }
@@ -244,9 +244,9 @@ PharocksCrossRailsStrategy >> openOrdersAsNoPosition [
 PharocksCrossRailsStrategy >> openOrdersAsShortPosition [
 
 	| weightShortPosition |
-	weightShortPosition := ((( quantity / quantityGlobal * -1)roundDownTo: 1) round:3 ).
-	self openLong: 1 weight: weightShortPosition entryPriceOrCurrentPrice: 'entry' jumps: 1  addQuantity: quantityGlobal "0".
-	self openShort: 1 weight: ("2 *" weightShortPosition) entryPriceOrCurrentPrice: 'entry' jumps: 3.
+	weightShortPosition := ((( quantity / quantityGlobal * -1)roundDownTo: 1) round:3 ). 
+	self openLong: 1 weight: "weightShortPosition" 1 entryPriceOrCurrentPrice: 'entry' jumps: 1  addQuantity: quantityGlobal "0".
+	self openShort: 1 weight: "2 * weightShortPosition" 2 entryPriceOrCurrentPrice: 'entry' jumps: 3.
 ]
 
 { #category : #'as yet unclassified' }
@@ -283,7 +283,7 @@ PharocksCrossRailsStrategy >> openShort: numberOfOrdersInteger weight: weightInt
 		1 to: numberOfOrdersInteger do: [  :i | 
 		exchange futuresPrivateOrderCreateSell: market 
 			type: 'LIMIT' 
-			quantity: ((((quantityOrder ) + quantityNumber )roundDownTo: 0.001) round:3)
+			quantity: ((((quantityOrder * weightInteger) + quantityNumber )roundDownTo: 0.001) round:3)
 			atPrice:( orderPrice ) 
 			stopPrice: nil ].
 	]	
