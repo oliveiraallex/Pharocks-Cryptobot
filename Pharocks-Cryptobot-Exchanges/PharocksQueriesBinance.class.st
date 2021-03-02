@@ -121,6 +121,18 @@ PharocksQueriesBinance >> queryFuturesPositions [
 ]
 
 { #category : #controling }
+PharocksQueriesBinance >> queryFuturesPrivateOrderCreate: aString1 side: aString2 type: aString3 closePosition: aBoolean [
+	^ self
+		postPrivate: self apiUrlSecondary , '/fapi/v1/order'
+		parameters:
+			{('symbol' -> aString1 asString).
+			('side' -> aString2 asString).
+			('type' -> aString3 asString).
+			('closePosition' -> aBoolean).
+			('stopLimitTimeInForce' -> 'GTC')} asDictionary
+]
+
+{ #category : #controling }
 PharocksQueriesBinance >> queryFuturesPrivateOrderCreate: aString1 side: aString2 type: aString3 quantity: aNumber1 [
 	^ self
 		postPrivate: self apiUrlSecondary , '/fapi/v1/order'

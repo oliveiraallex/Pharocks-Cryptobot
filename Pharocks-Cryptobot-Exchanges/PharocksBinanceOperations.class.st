@@ -115,6 +115,13 @@ PharocksBinanceOperations >> futuresPositions [
 ]
 
 { #category : #initialization }
+PharocksBinanceOperations >> futuresPrivateOrderCreate: aString1 side: aString2 type: aString3 closePosition: aBoolean [
+		
+		^ self queryFuturesPrivateOrderCreate: aString1 side: aString2 type: aString3 closePosition: aBoolean
+	
+]
+
+{ #category : #initialization }
 PharocksBinanceOperations >> futuresPrivateOrderCreate: aString1 side: aString2 type: aString3 quantity: aNumber1 atPrice: aNumber2 stopPrice: aNumber3 [
 	aNumber2 
 		ifNil: [  

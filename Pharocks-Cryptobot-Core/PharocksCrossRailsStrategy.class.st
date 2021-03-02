@@ -37,15 +37,17 @@ Class {
 		'entryPrice',
 		'quantityToStopLoss',
 		'log',
-		'waitTime'
+		'waitTime',
+		'priceRatio',
+		'quantityRatio'
 	],
 	#category : #'Pharocks-Cryptobot-Core'
 }
 
 { #category : #accessing }
 PharocksCrossRailsStrategy >> calculateOrderPriceWithJump: jumpsInteger shortOrLong: aString [
-	(aString = 'short') ifTrue: [ ^ (latestPrice + (latestPrice * railsRatio * jumpsInteger)	roundDownTo: 0.01) round: 2 ].
-	(aString = 'long') ifTrue: [ ^ (latestPrice - (latestPrice * railsRatio * jumpsInteger)	roundDownTo: 0.01) round: 2 ]
+	(aString = 'short') ifTrue: [ ^ (latestPrice + (latestPrice * priceRatio * jumpsInteger)	roundDownTo: 0.01) round: 2 ].
+	(aString = 'long') ifTrue: [ ^ (latestPrice - (latestPrice * priceRatio * jumpsInteger)	roundDownTo: 0.01) round: 2 ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -61,6 +63,15 @@ PharocksCrossRailsStrategy >> checkBalanceToTransfer [
 		ifTrue: [ 
 			exchange	futuresAccountTransferFromFuturesToSpot: 'USDT' amount: (balance - (amountTrading ) round: 2)
 		]
+]
+
+{ #category : #'as yet unclassified' }
+PharocksCrossRailsStrategy >> checkIfPositionIsLessThanMinimum [
+
+	quantity > 0 ifTrue: [ quantity < quantityGlobal ifTrue: [ 
+			exchange futuresPrivateOrderCreateSell: market type: 'MARKET' quantity: ((((quantityGlobal * 2 ) - quantity) roundDownTo: 0.001) round:3) atPrice: nil stopPrice: nil. ] ].
+	quantity < 0 ifTrue: [ quantity > (quantityGlobal * -1) ifTrue: [ 
+			exchange futuresPrivateOrderCreateBuy: market type: 'MARKET' quantity: ((((quantityGlobal * 2 ) - quantity) roundDownTo: 0.001) round:3)  atPrice: nil stopPrice: nil.  ] ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -105,6 +116,20 @@ PharocksCrossRailsStrategy >> cleanCache [
 ]
 
 { #category : #'as yet unclassified' }
+PharocksCrossRailsStrategy >> closeAllPositions [
+	
+	"draft"
+]
+
+{ #category : #'as yet unclassified' }
+PharocksCrossRailsStrategy >> closePosition: aString1 side: aString2 [
+	"Not working, need some work"
+
+	exchange futuresPrivateOrderCreate: aString1 side: aString2 type: 'MARKET' closePosition: true
+	
+]
+
+{ #category : #'as yet unclassified' }
 PharocksCrossRailsStrategy >> getBalances [
 
 	latestPrice := exchange futuresSymbolLatestPrice: market.
@@ -144,10 +169,11 @@ PharocksCrossRailsStrategy >> initialize [
 	log := false.
 	market := 'BCHUSDT'.
 	leverage := 75.
-	railsRatio := 0.004.
-	quantityGlobal := 0.01.
-	amountTrading := 60.
-	quantityToStopLoss := 7.
+	priceRatio := 0.004.
+	quantityRatio := 1.8.
+	quantityGlobal := 0.05.
+	amountTrading := 56.
+	quantityToStopLoss := 4.
 	waitTime := 1.
 	coinRules := PharocksCoins rules: market
 ]
@@ -164,39 +190,22 @@ PharocksCrossRailsStrategy >> openLong: anInteger [
 
 { #category : #'as yet unclassified' }
 PharocksCrossRailsStrategy >> openLong: numberOfOrdersInteger weight: weightInteger entryPriceOrCurrentPrice: aString jumps: jumpsInteger [
-	| orderPrice stopLossActivated isEntryPrice|
-
-	isEntryPrice := (aString = 'entry') and: [entryPrice > 0].
-	isEntryPrice ifTrue: [ latestPrice := entryPrice ].
-	stopLossActivated := quantity > quantityToStopLoss.
-
-	orderPrice := self calculateOrderPriceWithJump: jumpsInteger shortOrLong: 'long'.
 	
-	stopLossActivated ifTrue: [
-	exchange futuresPrivateOrderCreateSell: market 
-		type: 'STOP_MARKET' 
-		quantity: (((quantityGlobal * weightInteger / 2 )roundDownTo: 0.001) round:3) 
-		atPrice: nil 
-		stopPrice: orderPrice. 
-	] ifFalse: [ 
-	1 to: numberOfOrdersInteger do: [  :i |	
-		exchange futuresPrivateOrderCreateBuy: market 
-			type: 'LIMIT' 
-			quantity: (((quantityGlobal * weightInteger)roundDownTo: 0.001) round:3) 
-			atPrice: (orderPrice * i) 
-			stopPrice: nil ].
-	]
+	self openLong: numberOfOrdersInteger weight: weightInteger entryPriceOrCurrentPrice: aString jumps: jumpsInteger addQuantity: 0
 ]
 
 { #category : #'as yet unclassified' }
 PharocksCrossRailsStrategy >> openLong: numberOfOrdersInteger weight: weightInteger entryPriceOrCurrentPrice: aString jumps: jumpsInteger addQuantity: quantityNumber [
-	| orderPrice stopLossActivated isEntryPrice|
+	| orderPrice stopLossActivated isEntryPrice quantityOrder |
 
 	isEntryPrice := (aString = 'entry') and: [entryPrice > 0].
 	isEntryPrice ifTrue: [ latestPrice := entryPrice ].
 	stopLossActivated := quantity > quantityToStopLoss.
 
 	orderPrice := self calculateOrderPriceWithJump: jumpsInteger shortOrLong: 'long'.
+	
+	quantity > 0 ifTrue: [quantityOrder := quantity ].
+	quantity < 0 ifTrue: [quantityOrder := quantity * -1 ].
 	
 	stopLossActivated ifTrue: [
 	exchange futuresPrivateOrderCreateSell: market 
@@ -205,10 +214,10 @@ PharocksCrossRailsStrategy >> openLong: numberOfOrdersInteger weight: weightInte
 		atPrice: nil 
 		stopPrice: orderPrice. 
 	] ifFalse: [ 
-	1 to: numberOfOrdersInteger do: [  :i |
+	1 to: numberOfOrdersInteger do: [  :i | 
 		exchange futuresPrivateOrderCreateBuy: market 
 			type: 'LIMIT' 
-			quantity: ((((quantityGlobal * weightInteger) + quantityNumber)roundDownTo: 0.001) round:3) 
+			quantity: ((((quantityOrder) + quantityNumber )roundDownTo: 0.001) round:3) 
 			atPrice: (orderPrice * i) 
 			stopPrice: nil ].
 	]
@@ -218,9 +227,9 @@ PharocksCrossRailsStrategy >> openLong: numberOfOrdersInteger weight: weightInte
 PharocksCrossRailsStrategy >> openOrdersAsLongPosition [
 
 	| weightLongPosition |
-	weightLongPosition := ((( quantity / quantityGlobal )roundDownTo: 1) round:3 ).
-	self openShort: 1 weight: weightLongPosition entryPriceOrCurrentPrice: 'entry' jumps: 1 addQuantity: quantityGlobal "0".
-	self openLong: 1 weight: (2 * weightLongPosition) entryPriceOrCurrentPrice: 'entry' jumps: 3.
+	weightLongPosition := ((( quantity / quantityGlobal )roundDownTo: 1) round:3 ). 
+	self openShort: 1 weight: (weightLongPosition) entryPriceOrCurrentPrice: 'entry' jumps: 1 addQuantity: quantityGlobal "0".
+	self openLong: 1 weight: ("2*" weightLongPosition) entryPriceOrCurrentPrice: 'entry' jumps: 3.
 ]
 
 { #category : #accessing }
@@ -237,7 +246,7 @@ PharocksCrossRailsStrategy >> openOrdersAsShortPosition [
 	| weightShortPosition |
 	weightShortPosition := ((( quantity / quantityGlobal * -1)roundDownTo: 1) round:3 ).
 	self openLong: 1 weight: weightShortPosition entryPriceOrCurrentPrice: 'entry' jumps: 1  addQuantity: quantityGlobal "0".
-	self openShort: 1 weight: (2 * weightShortPosition) entryPriceOrCurrentPrice: 'entry' jumps: 3.
+	self openShort: 1 weight: ("2 *" weightShortPosition) entryPriceOrCurrentPrice: 'entry' jumps: 3.
 ]
 
 { #category : #'as yet unclassified' }
@@ -247,39 +256,22 @@ PharocksCrossRailsStrategy >> openShort: anInteger [
 
 { #category : #'as yet unclassified' }
 PharocksCrossRailsStrategy >> openShort: numberOfOrdersInteger weight: weightInteger entryPriceOrCurrentPrice: aString jumps: jumpsInteger [
-	| orderPrice stopLossActivated isEntryPrice |
 	
-	isEntryPrice := (aString = 'entry') and: [entryPrice > 0].
-	isEntryPrice ifTrue: [ latestPrice := entryPrice ] .
-	stopLossActivated := quantity < (quantityToStopLoss * -1).
-	
-	orderPrice := self calculateOrderPriceWithJump: jumpsInteger shortOrLong: 'short'.
-
-	stopLossActivated ifTrue: [
-	exchange futuresPrivateOrderCreateBuy: market 
-		type: 'STOP_MARKET' 
-		quantity: (((quantityGlobal * weightInteger / 2)roundDownTo: 0.001) round:3) 
-		atPrice: nil 
-		stopPrice: orderPrice.
-	] ifFalse: [ 
-		1 to: numberOfOrdersInteger do: [  :i | 
-		exchange futuresPrivateOrderCreateSell: market 
-			type: 'LIMIT' 
-			quantity: (((quantityGlobal * weightInteger)roundDownTo: 0.001) round:3) 
-			atPrice:( orderPrice ) 
-			stopPrice: nil ].
-	]	
+	self openShort: numberOfOrdersInteger weight: weightInteger entryPriceOrCurrentPrice: aString jumps: jumpsInteger  addQuantity: 0	
 ]
 
 { #category : #'as yet unclassified' }
 PharocksCrossRailsStrategy >> openShort: numberOfOrdersInteger weight: weightInteger entryPriceOrCurrentPrice: aString jumps: jumpsInteger  addQuantity: quantityNumber [
-	| orderPrice stopLossActivated isEntryPrice |
+	| orderPrice stopLossActivated isEntryPrice quantityOrder |
 	
 	isEntryPrice := (aString = 'entry') and: [entryPrice > 0].
 	isEntryPrice ifTrue: [ latestPrice := entryPrice ] .
 	stopLossActivated := quantity < (quantityToStopLoss * -1).
 	
 	orderPrice := self calculateOrderPriceWithJump: jumpsInteger shortOrLong: 'short'.
+	
+	quantity > 0 ifTrue: [quantityOrder := quantity ].
+	quantity < 0 ifTrue: [quantityOrder := quantity * -1 ].
 
 	stopLossActivated ifTrue: [
 	exchange futuresPrivateOrderCreateBuy: market 
@@ -291,7 +283,7 @@ PharocksCrossRailsStrategy >> openShort: numberOfOrdersInteger weight: weightInt
 		1 to: numberOfOrdersInteger do: [  :i | 
 		exchange futuresPrivateOrderCreateSell: market 
 			type: 'LIMIT' 
-			quantity: ((((quantityGlobal * weightInteger) + quantityNumber)roundDownTo: 0.001) round:3) 
+			quantity: ((((quantityOrder ) + quantityNumber )roundDownTo: 0.001) round:3)
 			atPrice:( orderPrice ) 
 			stopPrice: nil ].
 	]	
@@ -306,6 +298,7 @@ PharocksCrossRailsStrategy >> singleTrack [
 		self cancellAllOrders.
 		self getPositions.
 		self getBalances.
+		self checkIfPositionIsLessThanMinimum.
 		self checkBalanceToTransfer.
 		
 		isLongPosition := quantity > 0.

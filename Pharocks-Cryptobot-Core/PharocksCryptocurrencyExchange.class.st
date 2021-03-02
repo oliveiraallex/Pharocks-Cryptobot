@@ -112,6 +112,12 @@ PharocksCryptocurrencyExchange >> futuresPositions [
 ]
 
 { #category : #operation }
+PharocksCryptocurrencyExchange >> futuresPrivateOrderCreate: aString1 side: aString2 type: aString3 closePosition: aBoolean [
+
+	^ exchangePlugin futuresPrivateOrderCreate: aString1 side: aString2 type: aString3 closePosition: aBoolean
+]
+
+{ #category : #operation }
 PharocksCryptocurrencyExchange >> futuresPrivateOrderCreateBuy: aString1 type: aString3 quantity: aNumber1 atPrice: aNumber2 stopPrice: aNumber3 [ 
 
 	^ exchangePlugin futuresPrivateOrderCreate: aString1 side: 'BUY' type: aString3 quantity: aNumber1 atPrice: aNumber2 stopPrice: aNumber3
