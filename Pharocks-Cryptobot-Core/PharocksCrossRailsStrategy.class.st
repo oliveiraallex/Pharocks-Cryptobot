@@ -39,7 +39,8 @@ Class {
 		'log',
 		'waitTime',
 		'priceRatio',
-		'quantityRatio'
+		'quantityRatio',
+		'processCleaner'
 	],
 	#category : #'Pharocks-Cryptobot-Core'
 }
@@ -210,7 +211,7 @@ PharocksCrossRailsStrategy >> openLong: numberOfOrdersInteger weight: weightInte
 	stopLossActivated ifTrue: [
 	exchange futuresPrivateOrderCreateSell: market 
 		type: 'STOP_MARKET' 
-		quantity: (((quantityGlobal * weightInteger / 2 )roundDownTo: 0.001) round:3) 
+		quantity: (((quantityOrder )roundDownTo: 0.001) round:3) 
 		atPrice: nil 
 		stopPrice: orderPrice. 
 	] ifFalse: [ 
@@ -276,7 +277,7 @@ PharocksCrossRailsStrategy >> openShort: numberOfOrdersInteger weight: weightInt
 	stopLossActivated ifTrue: [
 	exchange futuresPrivateOrderCreateBuy: market 
 		type: 'STOP_MARKET' 
-		quantity: (((quantityGlobal * weightInteger / 2)roundDownTo: 0.001) round:3) 
+		quantity: (((quantityOrder )roundDownTo: 0.001) round:3) 
 		atPrice: nil 
 		stopPrice: orderPrice.
 	] ifFalse: [ 
@@ -317,11 +318,13 @@ PharocksCrossRailsStrategy >> singleTrack [
 { #category : #accessing }
 PharocksCrossRailsStrategy >> startMonitor [
 	
-	processMonitor := [ self singleTrack  ] forkNamed: 'Pharocks processMonitor'  
+	processMonitor := [ self singleTrack  ] forkNamed: 'Pharocks processMonitor' .
+	processCleaner := [ PharocksCrossRailsStrategy allInstances do: [ :instance | instance cleanCache]. 20 minutes wait  ] forkNamed: 'CacheCleaner processMonitor'
 ]
 
 { #category : #accessing }
 PharocksCrossRailsStrategy >> stopMonitor [
 
-	processMonitor terminate
+	processMonitor terminate.
+	processCleaner terminate
 ]
