@@ -23,40 +23,6 @@ Metacello new
   load
 ```
 
-## Starting Pharocks
-
-Setting the exchange:
-
-```
-binance := PharocksBinance new apiKey: 'abc123'; apiSecretKey: 'abc123'.
-exchange := PharocksCryptocurrencyExchange exchangePlugin: binance.
-```
-
-Creating the Pharocks operator with the exchange configured:
-
-```
-cryptoRobot := PharocksOperator setExchange: exchange.
-```
-
-Appyling the strategy:
-```
-cryptoRobot setStrategy: PharocksStrategy simpleWinLossPercentage.
-```
-
-Syncing the wallet with the exchange and creating the assets in your wallet localy. This assests will be created again when you start Pharocks, so this is just to you check if the values and crypto pairs are according your strategy.
-
-```
-cryptoRobot walletSync.
-cryptoRobot createAssets. 
-```
-
-Start Pharocks and create the buy and sell OCO orders:
-
-```
-cryptoRobot executeStrategyOnExchange. 
-```
-
-
 ## Under construction
 
 This project is under construction. 
