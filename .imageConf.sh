@@ -3,9 +3,9 @@ set -ev
 
 export PROJECT_NAME='Pharocks'
 
-PHARO[0]=70
+#PHARO[0]=70
 PHARO[1]=80
-PHARO[2]=90
+#PHARO[2]=90
 
 export ARCH_32=true
 export ARCH_64=true
@@ -18,7 +18,7 @@ Metacello new
   load.
 Metacello new
   baseline: 'TelePharo';
-  repository: 'github://pharo-ide/TelePharo:pharo7';
+  repository: 'github://pharo-ide/TelePharo:pharo8';
   load. 
 Iceberg enableMetacelloIntegration: true.
 Smalltalk saveSession."
