@@ -19,7 +19,6 @@ Class {
 	#superclass : #PharocksBroker,
 	#instVars : [
 		'market',
-		'coinIndex',
 		'leverage',
 		'railsRatio',
 		'quantityTotal',

@@ -24,7 +24,6 @@ Class {
 	#superclass : #PharocksBroker,
 	#instVars : [
 		'market',
-		'coinIndex',
 		'stopLossRatio',
 		'stopGain1Ratio',
 		'stopGain2Ratio',
@@ -50,7 +49,6 @@ PharocksMarketShotStrategy >> cancellAll [
 PharocksMarketShotStrategy >> initialize [
 	super initialize. 
 	market := 'BTCUSDT'.
-	coinIndex := 54.
 
 	leverage := 25.
 	limitRatio := 0.0001.
@@ -75,7 +73,7 @@ PharocksMarketShotStrategy >> initialize [
 
 { #category : #'as yet unclassified' }
 PharocksMarketShotStrategy >> openLong [
-	|  latestPrice balance quantity entryPrice stopLoss stopGain1 stopGain2 |
+	|  latestPrice balance quantity entryPrice stopLoss stopGain1 stopGain2 coinList position|
 	
 	latestPrice := exchange futuresSymbolLatestPrice: market.
 	balance := exchange futuresBalance.
@@ -83,7 +81,12 @@ PharocksMarketShotStrategy >> openLong [
 	"exchange futures: market leverage: leverage."
 	quantity := ((((balance / latestPrice) * leverage)/2) roundDownTo: 0.001) round:3.
 	exchange futuresPrivateOrderCreateBuy: market type: 'MARKET' quantity: quantity atPrice: nil stopPrice: nil. 
-	entryPrice := ((exchange futuresPositions at:coinIndex) at: 'entryPrice')asNumber.  
+	
+	coinList := (exchange futuresPositions).
+	position :=  coinList detect: [ :a | (a at: 'symbol') = market ].
+	
+	entryPrice :=( position at: 'entryPrice')asNumber.  
+	
 	stopLoss := ((entryPrice - (entryPrice * stopLossRatio)) roundDownTo: 0.01) round:2.
 	stopGain1 := ((entryPrice + (entryPrice * stopGain2Ratio)) roundDownTo: 0.01) round:2.
 	stopGain2 := ((entryPrice + (entryPrice * stopGain3Ratio)) roundDownTo: 0.01) round:2.
@@ -99,15 +102,20 @@ PharocksMarketShotStrategy >> openLong [
 
 { #category : #'as yet unclassified' }
 PharocksMarketShotStrategy >> openShort [
-	|  latestPrice balance quantity entryPrice stopLoss stopGain1 stopGain2 |
+	|  latestPrice balance quantity entryPrice stopLoss stopGain1 stopGain2 coinList position|
 	
 	latestPrice := exchange futuresSymbolLatestPrice: market.
 	balance := exchange futuresBalance.
 	PharocksLog logAdd: 'USD: ',  balance asString.
 	"exchange futures: market leverage: leverage."
-	quantity := ((((balance / latestPrice) * leverage)/2) roundDownTo: 0.001) round:3.
+	quantity := ((((balance / latestPrice) * leverage)"/2") roundDownTo: 0.001) round:3.
 	exchange futuresPrivateOrderCreateSell: market type: 'MARKET' quantity: quantity atPrice: nil stopPrice: nil. 
-	entryPrice := ((exchange futuresPositions at:coinIndex) at: 'entryPrice')asNumber.  
+	
+	coinList := (exchange futuresPositions).
+	position :=  coinList detect: [ :a | (a at: 'symbol') = market ].
+	
+	entryPrice :=( position at: 'entryPrice')asNumber.  
+	
 	stopLoss := ((entryPrice + (entryPrice * stopLossRatio)) roundDownTo: 0.01) round:2.
 	stopGain1 := ((entryPrice - (entryPrice * stopGain2Ratio)) roundDownTo: 0.01) round:2.
 	stopGain2 := ((entryPrice - (entryPrice * stopGain3Ratio)) roundDownTo: 0.01) round:2.
@@ -115,7 +123,7 @@ PharocksMarketShotStrategy >> openShort [
 	PharocksLog logAdd: 'ENTRY: ' ,  entryPrice asString.
 	PharocksLog logAdd: 'LOSS: ' ,  stopLoss asString.
 	PharocksLog logAdd: 'GAIN1: ',  stopGain1 asString.
-	PharocksLog logAdd: 'GAIN2: ',  stopGain1 asString.
+	PharocksLog logAdd: 'GAIN2: ',  stopGain1 asString. 
 	exchange futuresPrivateOrderCreateBuy: market type: 'STOP_MARKET' quantity: ((quantity)roundDownTo: 0.001) atPrice: nil stopPrice: stopLoss. 
 	exchange futuresPrivateOrderCreateBuy: market type: 'TAKE_PROFIT_MARKET' quantity: ((quantity/2)roundDownTo: 0.001) atPrice: nil stopPrice: stopGain1. 
 	exchange futuresPrivateOrderCreateBuy: market type: 'TAKE_PROFIT_MARKET' quantity: ((quantity/2)roundDownTo: 0.001) atPrice: nil stopPrice: stopGain2
@@ -123,10 +131,13 @@ PharocksMarketShotStrategy >> openShort [
 
 { #category : #'as yet unclassified' }
 PharocksMarketShotStrategy >> retargetLongFirst [
-	| quantity entryPrice position stopLoss stopGain1 stopGain2 stopGain3 |
+	| quantity entryPrice position stopLoss stopGain1 stopGain2 stopGain3 coinList |
 	
 	exchange futuresOrderCancelAll: market.
-	position := (exchange futuresPositions) at:coinIndex.
+
+	coinList := (exchange futuresPositions).
+	position :=  coinList detect: [ :a | (a at: 'symbol') = market ].
+	
 	entryPrice := (position at: 'entryPrice') asNumber. 
 	quantity := ((position at: 'positionAmt') asNumber).
 	quantity positive ifFalse: [ quantity := quantity * -1 ].
@@ -144,10 +155,13 @@ PharocksMarketShotStrategy >> retargetLongFirst [
 
 { #category : #'as yet unclassified' }
 PharocksMarketShotStrategy >> retargetLongSecond [
-	| quantity entryPrice stopLoss position stopGain1 stopGain2 stopGain3 |
+	| quantity entryPrice stopLoss position stopGain1 stopGain2 stopGain3 coinList |
 	
 	exchange futuresOrderCancelAll: market.
-	position := (exchange futuresPositions) at:coinIndex.
+
+	coinList := (exchange futuresPositions).
+	position :=  coinList detect: [ :a | (a at: 'symbol') = market ].
+	
 	entryPrice := (position at: 'entryPrice') asNumber. 
 	quantity := ((position at: 'positionAmt') asNumber).
 	quantity positive ifFalse: [ quantity := quantity * -1 ].
@@ -165,10 +179,13 @@ PharocksMarketShotStrategy >> retargetLongSecond [
 
 { #category : #'as yet unclassified' }
 PharocksMarketShotStrategy >> retargetLongThird [
-	| quantity entryPrice position stopLoss stopGain1 stopGain2 stopGain3 |
+	| quantity entryPrice position stopLoss stopGain1 stopGain2 stopGain3 coinList|
 	
 	exchange futuresOrderCancelAll: market.
-	position := (exchange futuresPositions) at:coinIndex.
+
+	coinList := (exchange futuresPositions).
+	position :=  coinList detect: [ :a | (a at: 'symbol') = market ].
+	
 	entryPrice := (position at: 'entryPrice') asNumber. 
 	quantity := ((position at: 'positionAmt') asNumber).
 	quantity positive ifFalse: [ quantity := quantity * -1 ].
@@ -186,10 +203,14 @@ PharocksMarketShotStrategy >> retargetLongThird [
 
 { #category : #'as yet unclassified' }
 PharocksMarketShotStrategy >> retargetShortFirst [
-	| quantity entryPrice position stopLoss stopGain1 stopGain2 stopGain3 |
+	| quantity entryPrice position stopLoss stopGain1 stopGain2 stopGain3 coinList |
 	 
 	exchange futuresOrderCancelAll: market.
-	position := (exchange futuresPositions) at:coinIndex.
+	
+	coinList := (exchange futuresPositions).
+	position :=  coinList detect: [ :a | (a at: 'symbol') = market ].
+	
+	
 	entryPrice := (position at: 'entryPrice') asNumber. 
 	quantity := ((position at: 'positionAmt') asNumber).
 	quantity positive ifFalse: [ quantity := quantity * -1 ].
@@ -207,10 +228,13 @@ PharocksMarketShotStrategy >> retargetShortFirst [
 
 { #category : #'as yet unclassified' }
 PharocksMarketShotStrategy >> retargetShortSecond [
-	| quantity entryPrice position stopLoss "stopGain1" stopGain2 stopGain3 |
+	| quantity entryPrice position stopLoss "stopGain1" stopGain2 stopGain3 coinList|
 	
 	exchange futuresOrderCancelAll: market.
-	position := (exchange futuresPositions) at:coinIndex.
+	
+	coinList := (exchange futuresPositions).
+	position :=  coinList detect: [ :a | (a at: 'symbol') = market ].
+	
 	entryPrice := (position at: 'entryPrice') asNumber. 
 	quantity := ((position at: 'positionAmt') asNumber).
 	quantity positive ifFalse: [ quantity := quantity * -1 ].
@@ -228,10 +252,13 @@ PharocksMarketShotStrategy >> retargetShortSecond [
 
 { #category : #'as yet unclassified' }
 PharocksMarketShotStrategy >> retargetShortThird [
-	| quantity entryPrice position stopLoss "stopGain1 stopGain2" stopGain3 |
+	| quantity entryPrice position stopLoss "stopGain1 stopGain2" stopGain3 coinList |
 	
 	exchange futuresOrderCancelAll: market.
-	position := (exchange futuresPositions) at:coinIndex.
+
+	coinList := (exchange futuresPositions).
+	position :=  coinList detect: [ :a | (a at: 'symbol') = market ].
+	
 	entryPrice := (position at: 'entryPrice') asNumber. 
 	quantity := ((position at: 'positionAmt') asNumber).
 	quantity positive ifFalse: [ quantity := quantity * -1 ].
