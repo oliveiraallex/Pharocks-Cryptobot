@@ -40,7 +40,8 @@ Class {
 		'waitTime',
 		'priceRatio',
 		'quantityRatio',
-		'processCleaner'
+		'processCleaner',
+		'jumps'
 	],
 	#category : #'Pharocks-Cryptobot-Core'
 }
@@ -60,7 +61,7 @@ PharocksCrossRailsStrategy >> cancellAllOrders [
 { #category : #'as yet unclassified' }
 PharocksCrossRailsStrategy >> checkBalanceToTransfer [
 
-	balance > (amountTrading * 1.05)
+	balance > (amountTrading * 1.01)
 		ifTrue: [ 
 			exchange	futuresAccountTransferFromFuturesToSpot: 'USDT' amount: (balance - (amountTrading ) round: 2)
 		]
@@ -171,10 +172,11 @@ PharocksCrossRailsStrategy >> initialize [
 	market := 'BCHUSDT'.
 	leverage := 75.
 	priceRatio := 0.004.
-	quantityRatio := 1.8.
-	quantityGlobal := 0.05.
-	amountTrading := 56.
-	quantityToStopLoss := 4.
+	quantityRatio := 2.
+	quantityGlobal := 0.012.
+	jumps := 3.
+	amountTrading := 10.
+	quantityToStopLoss := 0.8.
 	waitTime := 1.
 	coinRules := PharocksCoins rules: market
 ]
@@ -185,18 +187,19 @@ PharocksCrossRailsStrategy >> log: boolean [
 ]
 
 { #category : #'as yet unclassified' }
-PharocksCrossRailsStrategy >> openLong: anInteger [
-	self openLong: anInteger weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1
+PharocksCrossRailsStrategy >> openLong: aNumber [
+
+	self openLong: aNumber weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1
 ]
 
 { #category : #'as yet unclassified' }
-PharocksCrossRailsStrategy >> openLong: numberOfOrdersInteger weight: weightInteger entryPriceOrCurrentPrice: aString jumps: jumpsInteger [
+PharocksCrossRailsStrategy >> openLong: numberOfOrdersInteger weight: weightNumber entryPriceOrCurrentPrice: aString jumps: jumpsInteger [
 	
-	self openLong: numberOfOrdersInteger weight: weightInteger entryPriceOrCurrentPrice: aString jumps: jumpsInteger addQuantity: 0
+	self openLong: numberOfOrdersInteger weight: weightNumber entryPriceOrCurrentPrice: aString jumps: jumpsInteger addQuantity: 0
 ]
 
 { #category : #'as yet unclassified' }
-PharocksCrossRailsStrategy >> openLong: numberOfOrdersInteger weight: weightInteger entryPriceOrCurrentPrice: aString jumps: jumpsInteger addQuantity: quantityNumber [
+PharocksCrossRailsStrategy >> openLong: numberOfOrdersInteger weight: weightNumber entryPriceOrCurrentPrice: aString jumps: jumpsInteger addQuantity: quantityNumber [
 	| orderPrice stopLossActivated isEntryPrice quantityOrder |
 
 	isEntryPrice := (aString = 'entry') and: [entryPrice > 0].
@@ -205,6 +208,7 @@ PharocksCrossRailsStrategy >> openLong: numberOfOrdersInteger weight: weightInte
 
 	orderPrice := self calculateOrderPriceWithJump: jumpsInteger shortOrLong: 'long'.
 	
+	quantityOrder := quantityGlobal.
 	quantity > 0 ifTrue: [quantityOrder := quantity ].
 	quantity < 0 ifTrue: [quantityOrder := quantity * -1 ].
 	
@@ -218,7 +222,7 @@ PharocksCrossRailsStrategy >> openLong: numberOfOrdersInteger weight: weightInte
 	1 to: numberOfOrdersInteger do: [  :i | 
 		exchange futuresPrivateOrderCreateBuy: market 
 			type: 'LIMIT' 
-			quantity: ((((quantityOrder * weightInteger) + quantityNumber )roundDownTo: 0.001) round:3) 
+			quantity: ((((quantityOrder * weightNumber) + quantityNumber )roundDownTo: 0.001) round:3) 
 			atPrice: (orderPrice * i) 
 			stopPrice: nil ].
 	]
@@ -227,10 +231,8 @@ PharocksCrossRailsStrategy >> openLong: numberOfOrdersInteger weight: weightInte
 { #category : #accessing }
 PharocksCrossRailsStrategy >> openOrdersAsLongPosition [
 
-	| weightLongPosition |
-	weightLongPosition := ((( quantity / quantityGlobal )roundDownTo: 1) round:3 ).
-	self openShort: 1 weight: "weightLongPosition" 1 entryPriceOrCurrentPrice: 'entry' jumps: 1 addQuantity: quantityGlobal "0".
-	self openLong: 1 weight: "2* weightLongPosition" 2  entryPriceOrCurrentPrice: 'entry' jumps: 3.
+	self openShort: 1 weight: 1 entryPriceOrCurrentPrice: 'entry' jumps: 1  addQuantity: quantityGlobal.
+	self openLong: 1 weight: quantityRatio  entryPriceOrCurrentPrice: 'entry' jumps: jumps
 ]
 
 { #category : #accessing }
@@ -238,31 +240,30 @@ PharocksCrossRailsStrategy >> openOrdersAsNoPosition [
 
 	PharocksLog logAdd: 'USD: ',  balance asString.
 	self openLong: 1 weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1.
-	self openShort: 1 weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1.
+	self openShort: 1 weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1
 ]
 
 { #category : #accessing }
 PharocksCrossRailsStrategy >> openOrdersAsShortPosition [
 
-	| weightShortPosition |
-	weightShortPosition := ((( quantity / quantityGlobal * -1)roundDownTo: 1) round:3 ). 
-	self openLong: 1 weight: "weightShortPosition" 1 entryPriceOrCurrentPrice: 'entry' jumps: 1  addQuantity: quantityGlobal "0".
-	self openShort: 1 weight: "2 * weightShortPosition" 2 entryPriceOrCurrentPrice: 'entry' jumps: 3.
+	self openLong: 1 weight: 1 entryPriceOrCurrentPrice: 'entry' jumps: 1  addQuantity: quantityGlobal.
+	self openShort: 1 weight: quantityRatio entryPriceOrCurrentPrice: 'entry' jumps: jumps
 ]
 
 { #category : #'as yet unclassified' }
-PharocksCrossRailsStrategy >> openShort: anInteger [
-	self openShort: anInteger weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1
+PharocksCrossRailsStrategy >> openShort: aNumber [
+
+	self openShort: aNumber weight: 1 entryPriceOrCurrentPrice: 'current' jumps: 1
 ]
 
 { #category : #'as yet unclassified' }
-PharocksCrossRailsStrategy >> openShort: numberOfOrdersInteger weight: weightInteger entryPriceOrCurrentPrice: aString jumps: jumpsInteger [
+PharocksCrossRailsStrategy >> openShort: numberOfOrdersInteger weight: weightNumber entryPriceOrCurrentPrice: aString jumps: jumpsInteger [
 	
-	self openShort: numberOfOrdersInteger weight: weightInteger entryPriceOrCurrentPrice: aString jumps: jumpsInteger  addQuantity: 0	
+	self openShort: numberOfOrdersInteger weight: weightNumber entryPriceOrCurrentPrice: aString jumps: jumpsInteger  addQuantity: 0	
 ]
 
 { #category : #'as yet unclassified' }
-PharocksCrossRailsStrategy >> openShort: numberOfOrdersInteger weight: weightInteger entryPriceOrCurrentPrice: aString jumps: jumpsInteger  addQuantity: quantityNumber [
+PharocksCrossRailsStrategy >> openShort: numberOfOrdersInteger weight: weightNumber entryPriceOrCurrentPrice: aString jumps: jumpsInteger  addQuantity: quantityNumber [
 	| orderPrice stopLossActivated isEntryPrice quantityOrder |
 	
 	isEntryPrice := (aString = 'entry') and: [entryPrice > 0].
@@ -271,6 +272,7 @@ PharocksCrossRailsStrategy >> openShort: numberOfOrdersInteger weight: weightInt
 	
 	orderPrice := self calculateOrderPriceWithJump: jumpsInteger shortOrLong: 'short'.
 	
+	quantityOrder := quantityGlobal.
 	quantity > 0 ifTrue: [quantityOrder := quantity ].
 	quantity < 0 ifTrue: [quantityOrder := quantity * -1 ].
 
@@ -284,7 +286,7 @@ PharocksCrossRailsStrategy >> openShort: numberOfOrdersInteger weight: weightInt
 		1 to: numberOfOrdersInteger do: [  :i | 
 		exchange futuresPrivateOrderCreateSell: market 
 			type: 'LIMIT' 
-			quantity: ((((quantityOrder * weightInteger) + quantityNumber )roundDownTo: 0.001) round:3)
+			quantity: ((((quantityOrder * weightNumber) + quantityNumber )roundDownTo: 0.001) round:3)
 			atPrice:( orderPrice ) 
 			stopPrice: nil ].
 	]	
@@ -318,13 +320,11 @@ PharocksCrossRailsStrategy >> singleTrack [
 { #category : #accessing }
 PharocksCrossRailsStrategy >> startMonitor [
 	
-	processMonitor := [ self singleTrack  ] forkNamed: 'Pharocks processMonitor' .
-	processCleaner := [ PharocksCrossRailsStrategy allInstances do: [ :instance | instance cleanCache]. 20 minutes wait  ] forkNamed: 'CacheCleaner processMonitor'
+	processMonitor := [ self singleTrack  ] forkNamed: 'Pharocks processMonitor'
 ]
 
 { #category : #accessing }
 PharocksCrossRailsStrategy >> stopMonitor [
 
-	processMonitor terminate.
-	processCleaner terminate
+	processMonitor terminate
 ]
