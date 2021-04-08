@@ -172,10 +172,10 @@ PharocksCrossRailsStrategy >> initialize [
 	leverage := 75.
 	priceRatio := 0.004.
 	quantityRatio := 2.
-	quantityGlobal := 0.012.
+	quantityGlobal := 1.2.
 	jumps := 3.
-	amountTrading := 10.
-	quantityToStopLoss := 0.01.
+	amountTrading := 1000.
+	quantityToStopLoss := 30.
 	waitTime := 1.
 	coinRules := PharocksCoins rules: market
 ]
@@ -241,7 +241,7 @@ PharocksCrossRailsStrategy >> openLong: numberOfOrdersInteger weight: weightNumb
 PharocksCrossRailsStrategy >> openOrdersAsLongPosition [
 
 	self openShort: 1 weight: 1 entryPriceOrCurrentPrice: 'entry' jumps: 1  addQuantity: quantityGlobal.
-	self openLong: 1 weight: quantityRatio  entryPriceOrCurrentPrice: 'entry' jumps: jumps addQuantity: quantityGlobal
+	self openLong: 1 weight: quantityRatio  entryPriceOrCurrentPrice: 'entry' jumps: jumps "addQuantity: quantityGlobal"
 ]
 
 { #category : #accessing }
@@ -256,7 +256,7 @@ PharocksCrossRailsStrategy >> openOrdersAsNoPosition [
 PharocksCrossRailsStrategy >> openOrdersAsShortPosition [
 
 	self openLong: 1 weight: 1 entryPriceOrCurrentPrice: 'entry' jumps: 1  addQuantity: quantityGlobal.
-	self openShort: 1 weight: quantityRatio entryPriceOrCurrentPrice: 'entry' jumps: jumps addQuantity: quantityGlobal
+	self openShort: 1 weight: quantityRatio entryPriceOrCurrentPrice: 'entry' jumps: jumps "addQuantity: quantityGlobal"
 ]
 
 { #category : #'as yet unclassified' }
