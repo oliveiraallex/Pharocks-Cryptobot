@@ -175,7 +175,7 @@ PharocksCrossRailsStrategy >> initialize [
 	quantityGlobal := 0.012.
 	jumps := 3.
 	amountTrading := 10.
-	quantityToStopLoss := 0.8.
+	quantityToStopLoss := 0.01.
 	waitTime := 1.
 	coinRules := PharocksCoins rules: market
 ]
@@ -214,9 +214,19 @@ PharocksCrossRailsStrategy >> openLong: numberOfOrdersInteger weight: weightNumb
 	stopLossActivated ifTrue: [
 	exchange futuresPrivateOrderCreateSell: market 
 		type: 'STOP_MARKET' 
-		quantity: (((quantityOrder )roundDownTo: 0.001) round:3) 
+		quantity: ((quantityOrder roundDownTo: 0.001) round:3) 
 		atPrice: nil 
 		stopPrice: orderPrice. 
+	exchange futuresPrivateOrderCreateBuy: market 
+			type: 'LIMIT' 
+			quantity: (((quantityNumber )roundDownTo: 0.001) round:3) 
+			atPrice: orderPrice
+			stopPrice: nil.
+	exchange futuresPrivateOrderCreateBuy: market 
+			type: 'LIMIT' 
+			quantity: (((quantityNumber )roundDownTo: 0.001) round:3) 
+			atPrice: (((orderPrice * (1 - priceRatio))roundDownTo: 0.001) round:2) 
+			stopPrice: nil
 	] ifFalse: [ 
 	1 to: numberOfOrdersInteger do: [  :i | 
 		exchange futuresPrivateOrderCreateBuy: market 
@@ -231,7 +241,7 @@ PharocksCrossRailsStrategy >> openLong: numberOfOrdersInteger weight: weightNumb
 PharocksCrossRailsStrategy >> openOrdersAsLongPosition [
 
 	self openShort: 1 weight: 1 entryPriceOrCurrentPrice: 'entry' jumps: 1  addQuantity: quantityGlobal.
-	self openLong: 1 weight: quantityRatio  entryPriceOrCurrentPrice: 'entry' jumps: jumps
+	self openLong: 1 weight: quantityRatio  entryPriceOrCurrentPrice: 'entry' jumps: jumps addQuantity: quantityGlobal
 ]
 
 { #category : #accessing }
@@ -246,7 +256,7 @@ PharocksCrossRailsStrategy >> openOrdersAsNoPosition [
 PharocksCrossRailsStrategy >> openOrdersAsShortPosition [
 
 	self openLong: 1 weight: 1 entryPriceOrCurrentPrice: 'entry' jumps: 1  addQuantity: quantityGlobal.
-	self openShort: 1 weight: quantityRatio entryPriceOrCurrentPrice: 'entry' jumps: jumps
+	self openShort: 1 weight: quantityRatio entryPriceOrCurrentPrice: 'entry' jumps: jumps addQuantity: quantityGlobal
 ]
 
 { #category : #'as yet unclassified' }
@@ -278,9 +288,19 @@ PharocksCrossRailsStrategy >> openShort: numberOfOrdersInteger weight: weightNum
 	stopLossActivated ifTrue: [
 	exchange futuresPrivateOrderCreateBuy: market 
 		type: 'STOP_MARKET' 
-		quantity: (((quantityOrder )roundDownTo: 0.001) round:3) 
+		quantity: ((quantityOrder roundDownTo: 0.001) round:3) 
 		atPrice: nil 
 		stopPrice: orderPrice.
+	exchange futuresPrivateOrderCreateSell: market 
+			type: 'LIMIT' 
+			quantity: ((quantityNumber roundDownTo: 0.001) round:3)
+			atPrice: orderPrice
+			stopPrice: nil.
+	exchange futuresPrivateOrderCreateSell: market 
+			type: 'LIMIT' 
+			quantity: ((quantityNumber roundDownTo: 0.001) round:3)
+			atPrice: (((orderPrice * (1 + priceRatio))roundDownTo: 0.001) round:2) 
+			stopPrice: nil
 	] ifFalse: [ 
 		1 to: numberOfOrdersInteger do: [  :i | 
 		exchange futuresPrivateOrderCreateSell: market 
@@ -301,7 +321,7 @@ PharocksCrossRailsStrategy >> singleTrack [
 		self getPositions.
 		self getBalances.
 		self checkIfPositionIsLessThanMinimum.
-		self checkBalanceToTransfer.
+		"self checkBalanceToTransfer."
 		
 		isLongPosition := quantity > 0.
 		isShortPosition := quantity < 0.
