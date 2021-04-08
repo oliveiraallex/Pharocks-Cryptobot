@@ -23,6 +23,13 @@ PharocksQueriesBinance >> initialize [
 ]
 
 { #category : #controling }
+PharocksQueriesBinance >> queryCloseListenKey [  
+	^ self
+		deletePrivate: self apiUrlSecondary , '/fapi/v1/listenKey'
+		parameters: {} asDictionary
+]
+
+{ #category : #controling }
 PharocksQueriesBinance >> queryExchangeInfo [
 	^ self get: self apiUrl,'/api/v3/exchangeInfo'
 ]
@@ -269,6 +276,13 @@ PharocksQueriesBinance >> queryPrivateOrdersOpenGet [
 		getPrivate: self apiUrl , '/api/v3/openOrders'
 		parameters:
 			{} asDictionary
+]
+
+{ #category : #controling }
+PharocksQueriesBinance >> queryStartListenKey [  
+	^ self
+		postPrivate: self apiUrlSecondary , '/fapi/v1/listenKey'
+		parameters: {} asDictionary
 ]
 
 { #category : #controling }

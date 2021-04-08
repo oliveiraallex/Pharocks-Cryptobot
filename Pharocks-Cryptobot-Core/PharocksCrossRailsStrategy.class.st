@@ -327,3 +327,8 @@ PharocksCrossRailsStrategy >> stopMonitor [
 
 	processMonitor terminate
 ]
+
+{ #category : #accessing }
+PharocksCrossRailsStrategy >> streamOpen [
+	exchange streamOpen
+]

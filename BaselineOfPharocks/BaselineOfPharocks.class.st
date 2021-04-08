@@ -18,7 +18,10 @@ BaselineOfPharocks >> baseline: spec [
 		with: [ spec repository: 'github://PierceNg/OpenSSL-Pharo/src-st' ].
 	spec
 		baseline: 'NeoJSON'
-		with: [ spec repository: 'github://svenvc/NeoJSON/repository' ]
+		with: [ spec repository: 'github://svenvc/NeoJSON/repository' ].
+	spec
+		baseline: 'ZincHTTPComponents'
+		with: [ spec loads: #('WebSocket'); repository: 'github://svenvc/zinc/repository' ]
 ]
 
 { #category : #baselines }

@@ -13,7 +13,11 @@ Class {
 		'symbolLatestPriceCache',
 		'futuresPrivateOrderOpenCache',
 		'exchangeTimeCache',
-		'orderBookLastOrdersCache'
+		'orderBookLastOrdersCache',
+		'listenKey',
+		'webSocket',
+		'streamMonitor',
+		'streamLine'
 	],
 	#category : #'Pharocks-Cryptobot-Exchanges'
 }
@@ -33,6 +37,11 @@ PharocksBinanceOperations >> cleanChache [
 	symbolBestPriceCache := nil.
 	symbolLatestPriceCache := nil.
 	
+]
+
+{ #category : #operating }
+PharocksBinanceOperations >> closeListenKey [
+	^ self queryCloseListenKey
 ]
 
 { #category : #initialization }
@@ -219,6 +228,39 @@ PharocksBinanceOperations >> privateOrderOpenGet: aString1 [
 { #category : #operating }
 PharocksBinanceOperations >> privateOrders: aString last: anInteger [ 
 	^ self queryPrivateOrders: aString last: anInteger 
+]
+
+{ #category : #operating }
+PharocksBinanceOperations >> startListenKey [
+	^ self queryStartListenKey
+]
+
+{ #category : #operation }
+PharocksBinanceOperations >> streamOpen [
+	listenKey := self startListenKey at: 'listenKey'.
+	webSocket := ZnWebSocket to: 'wss://fstream.binance.com/ws/' , listenKey.
+	streamMonitor := [ [ webSocket
+		runWith: [ :message | 
+			streamLine := NeoJSONReader fromString: message asString.
+			Transcript
+				show: 'Received message: ' , message printString;
+				cr ] ]
+		on: ConnectionClosed
+		do: [ Transcript show: 'Connection close, cleaning up'.
+			self closeListenKey.
+			streamMonitor terminate ] ] forkNamed: 'Pharocks streamMonitor'
+]
+
+{ #category : #operation }
+PharocksBinanceOperations >> streamStop [
+	self closeListenKey.
+	webSocket close.
+	streamMonitor terminate
+]
+
+{ #category : #operation }
+PharocksBinanceOperations >> streamUpdate [
+	listenKey := self startListenKey at: 'listenKey'
 ]
 
 { #category : #initialization }

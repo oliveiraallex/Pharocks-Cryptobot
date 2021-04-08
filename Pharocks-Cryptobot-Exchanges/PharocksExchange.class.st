@@ -6,7 +6,8 @@ Class {
 		'apiSecretKey',
 		'website',
 		'apiUrl',
-		'apiUrlSecondary'
+		'apiUrlSecondary',
+		'webSocketStream'
 	],
 	#category : #'Pharocks-Cryptobot-Exchanges'
 }

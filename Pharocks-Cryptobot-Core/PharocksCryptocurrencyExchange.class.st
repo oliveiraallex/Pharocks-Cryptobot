@@ -279,6 +279,21 @@ PharocksCryptocurrencyExchange >> privateSellEverything [
 ]
 
 { #category : #operation }
+PharocksCryptocurrencyExchange >> streamOpen [
+	^ exchangePlugin streamOpen
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> streamStop [
+	^ exchangePlugin streamStop
+]
+
+{ #category : #operation }
+PharocksCryptocurrencyExchange >> streamUpdate [
+	^ exchangePlugin streamUpdate
+]
+
+{ #category : #operation }
 PharocksCryptocurrencyExchange >> symbolAvaregePrice: aString [ 
 	"Average of price of a cryptocoin in the last 5 minutes"
 	^ exchangePlugin symbolAvaregePrice: aString.
